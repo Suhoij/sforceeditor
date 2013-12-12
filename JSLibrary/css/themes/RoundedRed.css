@@ -1,0 +1,225 @@
+@charset "utf-8";
+/*================================== Table of Contents ===================================================================================== */
+/*  1. Sortable Widget
+/*  2. Slider Widget
+/*  3. Chart Widget  
+/*	4.  
+/*=============================================================================================================================================*/
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   1. Sortable Widget */
+
+ul.sortablewidget {
+	position:relative;
+	width:100%;
+	font-family:inherit;
+	}
+	
+	/* ---------------------------- sortable item */
+	ul.sortablewidget li {
+		position:relative;
+    	border: none;
+		background-color:#d4d7db;  /* background for every 1st items */ 
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
+				box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 5px 0px rgba(0, 0, 0, 0.2); 
+		font-size:18px;
+		color:#181818;       /* text-color for all items  */
+    	font-weight: normal;
+		line-height:20px;
+		cursor:default;
+		padding:11px 20px 9px 40px;
+		margin:14px 10px;
+		}
+ 		ul.sortablewidget li[val*='5'],
+		ul.sortablewidget li[val*='10'],
+		ul.sortablewidget li[val*='15'],
+		ul.sortablewidget li[val*='20'] { background-color:#70767e; } /* background  for every 5th items */
+		ul.sortablewidget li[val*='4'],
+		ul.sortablewidget li[val*='9'],
+		ul.sortablewidget li[val*='14'],
+		ul.sortablewidget li[val*='19'] { background-color:#d72008; } /* background for every 4th items */
+		ul.sortablewidget li[val*='3'],
+		ul.sortablewidget li[val*='8'],
+		ul.sortablewidget li[val*='13'],
+		ul.sortablewidget li[val*='18'] { background-color:#ff5543; } /* background for every 3th items */
+		ul.sortablewidget li[val*='2'],
+		ul.sortablewidget li[val*='7'],
+		ul.sortablewidget li[val*='12'],
+		ul.sortablewidget li[val*='17'] { background-color:#eeb2ac;  } /* background for every 2nd items */
+
+		
+		/* ----------------------------------- sortable icon */
+		ul.sortablewidget li span.ui-icon {
+			position:absolute;
+			left:13px;
+			top:50%;
+			height: 12px;
+    		width: 12px;
+			background:#181818;   /* background icon */
+			border:none !important;
+			-webkit-border-radius: 10px;
+					border-radius: 10px;
+			-webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 1), inset 0px 1px 1px 0px rgba(0, 0, 0, 0.65);
+					box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 1), inset 0px 1px 1px 0px rgba(0, 0, 0, 0.65); 
+			display: block;
+    		overflow: hidden;
+    		text-indent: -99999px;
+			margin-top:-6px;
+			}
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   2. Slider Widget */
+
+.sliderwidget {
+	position:relative;
+	height:9px;
+	background:#d4d7db;      /* background slider main axis  */
+	-webkit-border-radius: 6px;
+			border-radius: 6px;
+	-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.6);
+			box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.6); 
+	margin:54px 5% 90px;
+	}
+		
+	/* ----------------------------------- slider range */
+	.sliderwidget .ui-slider-range {
+		position:absolute;
+    	top:0;
+    	height:9px;
+		background: #ff5543;    /* background slider range    */ 
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.85);
+				box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.85); 
+		z-index:1;
+		}
+		
+	/* ----------------------------------- slider handle */
+	.sliderwidget .ui-slider-handle {
+		position:absolute;
+		top:-17px;
+		height: 35px;
+		width: 35px;
+		background:#d4d7db;
+		border:3px solid #d72008;
+		-webkit-border-radius: 30px;
+				border-radius: 30px;
+		-webkit-box-shadow: 0px 0px 1px #555555, 2px 2px 8px 0px rgba(0, 0, 0, 0.6), inset 0px 0px 2px 0px rgba(0, 0, 0, 0.3); 
+				box-shadow: 0px 0px 1px #555555, 2px 2px 8px 0px rgba(0, 0, 0, 0.6), inset 0px 0px 2px 0px rgba(0, 0, 0, 0.3); 			
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:14px;
+		color:#d72008;			/* text slider  handle  */ 
+		line-height:38px;
+		text-align:center;
+		margin-left:-19px;
+		z-index:4;
+		}
+		
+		/* ----------------------------------- slider tooltip */
+		#tooltip {
+			position:absolute;
+			top:-50px;
+			left:-22px;
+			width:82px;
+			height:30px;
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e4e4e4), color-stop(100%,#bebcbc));  /* background  tooltip   */
+			background: -webkit-linear-gradient(top,  #e4e4e4 0%,#bebcbc 100%);  
+			background: linear-gradient(to bottom,  #e4e4e4 0%,#bebcbc 100%);
+			-webkit-box-shadow: inset 0px -1px 2px 0px rgba(0, 0, 0, 0.4);
+					box-shadow: inset 0px -1px 2px 0px rgba(0, 0, 0, 0.4); 
+			-webkit-border-radius: 5px;
+					border-radius: 5px;
+			display:none;
+			font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+			font-size:18px;
+			color:#181818;		/* text slider  tooltip  */ 
+			line-height:32px;
+			text-align:center;
+			text-decoration:none;
+			z-index:5;
+			}
+			#tooltip:after {   /* arrow slider  tooltip  */  
+				content:'';
+				position:absolute;
+				top:26px;
+				left:0;
+				width:82px;
+				height:12px;
+				background:no-repeat center center;  
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAMCAYAAACEJVa/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVtJREFUeNqkk81OAjEQgLubnlBYOchrePEhPHKCYOLTecKQYGJIPKuJJw/e5eJl2y4Cu+h2Cd0ZZwpEMRAxNpk07cx8nb8GD/d3KP65pFs4EQSBCMPwz84AIBBRSJMYUalUvEgp9wY450Se517k8GX4VK/XT44bDXkURXuBGJCmqTDGuMlk8izfxuPT3NqzhXM3iCCjX0BrgFLKaW2a1tqB5LwopFutdZNsrjnFqFbbCvKALFsBtAf4mqBAXxy+0Fq1hMArEln7AWJA9gVoWVsMAMHrQsENxmWlCdTXSrdUrFxGIZfkSC/4nc98z3q2Y/u1r+Qo1qsskVPrK607JUAXUIQH1LUP6kAcx5AkSceSHnBztOQS96336EG9JDFtKnT3sFoN32czGI1G7Ty3PVylsAnZMq9syA5U/fPpNL2cz+cXJD0E2D6xu2aeHYqi6JI80vEVcffv+BRgAN1YGcrVsiTsAAAAAElFTkSuQmCC);
+				z-index:6;
+				}
+
+	/* ----------------------------------- slider calibration */
+	.sliderwidget .calibration {
+		position:absolute;
+		left:0;
+		top:9px;
+		height:33px;
+		width:100%;
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:14px;
+		color:#272727;     /* text  calibration  */ 
+		line-height:16px;
+		}
+		.sliderwidget .calibration .separator {
+			float:left;
+			position:relative;
+			height:17px;
+			padding-top:16px;
+			}
+			.sliderwidget .calibration .separator:after {
+				content:'';
+				position:absolute;
+				top:1px;
+				right:0;
+				width:1px;
+				height:6px;
+				background:#272727;  /* color  calibre */ 
+				}
+				.sliderwidget .calibration .separator:first-child:after,
+				.sliderwidget .calibration .separator:last-child:after { display:none; }
+				
+			.sliderwidget .calibration .separator:first-child {
+				width:0px !important;
+				text-indent:0px !important; 
+				}
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   3. Chart  Widget */
+
+.chartwidget {
+	background: none;    /* background chart widget */
+	border: none ;      /* border chart widget */
+	margin:15px 10px;
+	} 
+ 
+	/* ----------------------------------------------------------------------------- chart */
+	.chartwidget .ui-jqchart-tooltip {
+		background-color:#ffffff !important;   /* background chart tooltip */
+		border:2px solid #70767e !important;  /* border chart tooltip */
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.4);
+				box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.4);
+		font-size:14px;
+		line-height:18px;
+		color:#d72008;    /* label name chart tooltip */
+		padding:3px 5px;
+		z-index:100;
+		}
+		.chartwidget .ui-jqchart-tooltip b {
+			font-size:16px;
+			line-height:18px;
+			color:#181818;    /* label value or series chart tooltip */
+			}
+		.chartwidget .ui-jqchart-tooltip span {
+			font-size:13px;
+			color:#d72008 !important;    /* label name chart tooltip */
+			}
+ 
+

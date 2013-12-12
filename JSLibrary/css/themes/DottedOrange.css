@@ -1,0 +1,224 @@
+@charset "utf-8";
+/*================================== Table of Contents ===================================================================================== */
+/*  1. Sortable Widget
+/*  2. Slider Widget
+/*  3.  
+/*	4.  
+/*=============================================================================================================================================*/
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   1. Sortable Widget */
+
+ul.sortablewidget {
+	position:relative;
+	width:100%;
+	font-family:inherit;
+	}
+	
+	/* ---------------------------- sortable item */
+	ul.sortablewidget li {
+		position:relative;
+		background-color:#ffffff;  /* background  items */ 
+    	border: none;
+		border:3px solid #fbad18; /* border-color items for every 1th items */
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		font-size:18px;
+    	font-weight: normal;
+		color:#262726;       /* text-color for items */
+		line-height:20px;
+		cursor:default;
+		padding:11px 20px 9px 38px;
+		margin:17px 16px;
+		z-index:1;
+		}
+		ul.sortablewidget li[val*='5'],
+		ul.sortablewidget li[val*='10'],
+		ul.sortablewidget li[val*='15'],
+		ul.sortablewidget li[val*='20'] { border-color:#262726; } /* border-color for every 5th items */
+		ul.sortablewidget li[val*='4'],
+		ul.sortablewidget li[val*='9'],
+		ul.sortablewidget li[val*='14'],
+		ul.sortablewidget li[val*='19'] { border-color:#7c7876; } /* border-color for every 4th items */
+		ul.sortablewidget li[val*='3'],
+		ul.sortablewidget li[val*='8'],
+		ul.sortablewidget li[val*='13'],
+		ul.sortablewidget li[val*='18'] { border-color:#a93603; } /* border-color for every 3th items */
+		ul.sortablewidget li[val*='2'],
+		ul.sortablewidget li[val*='7'],
+		ul.sortablewidget li[val*='12'],
+		ul.sortablewidget li[val*='17'] { border-color:#f47929; } /* border-color for every 2nd items */
+			
+			
+		/* ----------------------------------------- sortable icon */
+		ul.sortablewidget li span.ui-icon {
+			position:absolute;
+			left:-11px;
+			top:-13px;
+			height: 34px;
+    		width: 34px;
+			background:#fbad18 no-repeat center center; /* icon  for every 1st items */
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAARCAYAAADpPU2iAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAINJREFUeNpi/P//PwMpgAmLGCcQb4FiTgxZkA1ImAeID/9HgANAzImsBl3xsf+Y4DBUDkUDPw7FMHAMpgmmAZ9iGNgOUstIjVAaqhq2g+KQAN6OHNOiQHweT5CeAWIh9JgWgkpgizR+bEkDW4yjKMYVcTxAvBHK9gfiL8iSJMc0QIABAJafP1RvWp48AAAAAElFTkSuQmCC);   /* icon  arrow */
+			-webkit-border-radius: 20px;
+					border-radius: 20px;
+			-webkit-box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.4);
+					box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.4);
+			display: block;
+    		overflow: hidden;
+    		text-indent: -99999px;
+			}
+			ul.sortablewidget li[val*='5'] span.ui-icon,
+			ul.sortablewidget li[val*='10'] span.ui-icon,
+			ul.sortablewidget li[val*='15'] span.ui-icon,
+			ul.sortablewidget li[val*='20'] span.ui-icon { background-color:#262726; } /* icon  for every 5th items */
+			ul.sortablewidget li[val*='4'] span.ui-icon,
+			ul.sortablewidget li[val*='9'] span.ui-icon,
+			ul.sortablewidget li[val*='14'] span.ui-icon,
+			ul.sortablewidget li[val*='19'] span.ui-icon { background-color:#7c7876; } /* icon for every 4th items */
+			ul.sortablewidget li[val*='3'] span.ui-icon,
+			ul.sortablewidget li[val*='8'] span.ui-icon,
+			ul.sortablewidget li[val*='13'] span.ui-icon,
+			ul.sortablewidget li[val*='18'] span.ui-icon { background-color:#a93603; } /* icon for every 3th items */
+			ul.sortablewidget li[val*='2'] span.ui-icon,
+			ul.sortablewidget li[val*='7'] span.ui-icon,
+			ul.sortablewidget li[val*='12'] span.ui-icon,
+			ul.sortablewidget li[val*='17'] span.ui-icon { background-color:#f47929; } /* icon for every 2nd items */
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   2. Slider Widget */
+
+.sliderwidget {
+	position:relative;
+	height:10px;
+	background:repeat-x 0 0;    /* background slider main axis */ 
+	background-image: url(data:image/gif;base64,R0lGODlhFAAKALMAAP///8XGx+Tk5dzd3fv7+8nKy/f3+Ojo6dTV1vDw8NHR0s3OztjZ2gAAAAAAAAAAACH5BAAAAAAALAAAAAAUAAoAAAQwEMijQlhC6r2H/QHCjQIIDuNWmCCRAgYLJm8sW/S73u5byqiXhMFC9IQAigWDBEQAADs=);		
+	margin:56px 5% 88px;
+	}
+	.sliderwidget:before,
+	.sliderwidget:after {
+		content:'';
+		position: absolute;
+		top:-5px;
+		height:20px;
+		width:20px;
+		-webkit-border-radius: 20px;
+				border-radius: 20px;
+		display:block;
+		z-index:2;
+		}
+		.sliderwidget:before { left:-5px; background:#e56304; }  /* background dott start  */ 
+		.sliderwidget:after  { right:-9px; background:#c5c6c7; }  /* background dott finish */
+		
+	/* ----------------------------------- slider range */
+	.sliderwidget .ui-slider-range {
+		position:absolute;
+    	height: 10px;
+    	top: 0;
+		background:repeat-x 0 0;     /* background slider range */ 
+		background-image: url(data:image/gif;base64,R0lGODlhFAAKALMAAP///+VjBPO2iu+haP317uqCNvzq3udtFeyNR/XBm/jVvOh4Je6XWAAAAAAAAAAAACH5BAAAAAAALAAAAAAUAAoAAAQwEMhUQlhC6r2H/QHCjQIIDuN2mCCRAgYLKm8sW/S73u5byqiXhMFC9IQAigWDBEQAADs=);
+		z-index:1;
+		}
+		
+		/* ----------------------------------- slider handle */
+		.sliderwidget .ui-slider-handle {
+			position:absolute;
+			top:-18px;
+			height: 44px;
+			width: 44px;
+			background:#a93603;		/* background slider  handle */ 
+			border: none;
+			-webkit-border-radius: 30px;
+					border-radius: 30px;
+			-webkit-box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.4);
+					box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.4);
+			font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+			font-size:18px;
+			color:#ffffff;			/* text slider  handle  */ 
+			line-height:48px;
+			text-align:center;
+			margin-left:-22px;
+			z-index:4;
+			}
+			
+			/* ----------------------------------- slider tooltip */
+			#tooltip {
+				position:absolute;
+				top:-65px;
+				left:-3px;
+				width:44px;
+				height:44px;
+				background:#ffffff;	      /* background slider  tooltip */ 
+				border:3px solid #c5c6c7; /* border slider  tooltip */ 
+				-webkit-border-radius: 30px;
+						border-radius: 30px;
+				display:none;
+				font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+				font-size:18px;
+				color:#262726;	  /* text slider  tooltip  */ 	
+				line-height:48px;
+				text-align:center;
+				text-decoration:none;
+				z-index:5;
+				}
+
+	/* ----------------------------------- slider calibration */
+	.sliderwidget .calibration {
+		position:absolute;
+		left:0;
+		top:10px;
+		height:33px;
+		width:100%;
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:14px;
+		color:#262726;    /* text  calibration  */ 
+		line-height:16px;
+		}
+		.sliderwidget .calibration .separator {
+			float:left;
+			position:relative;
+			height:16px;
+			padding-top:17px;
+			}
+			.sliderwidget .calibration .separator:first-child {
+				width:0px !important;
+				text-indent:0px !important; 
+				}
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   3. Chart  Widget */
+
+.chartwidget {
+	background: none;    /* background chart widget */
+	border: none ;      /* border chart widget */
+	margin:15px 10px;
+	} 
+ 
+	/* ----------------------------------------------------------------------------- chart */
+	.chartwidget .ui-jqchart-tooltip {
+		background-color:#fbdcb7 !important;   /* background chart tooltip */
+		border:2px solid #a93603 !important;  /* border chart tooltip */
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.4);
+				box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.4);
+		font-size:14px;
+		line-height:18px;
+		color:#262726;    /* label name chart tooltip */
+		padding:3px 5px;
+		z-index:100;
+		}
+		.chartwidget .ui-jqchart-tooltip b {
+			font-size:16px;
+			line-height:18px;
+			color:#a93603;    /* label value or series chart tooltip */
+			}
+		.chartwidget .ui-jqchart-tooltip span {
+			font-size:13px;
+			color:#262726 !important;    /* label name chart tooltip */
+			}
+ 
+
+ 
+

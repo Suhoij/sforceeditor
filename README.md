@@ -1,0 +1,1 @@
+Content-sforce-editor for application based on sforce platform

@@ -1,0 +1,223 @@
+@charset "utf-8";
+/*================================== Table of Contents ===================================================================================== */
+/*  1. Sortable Widget
+/*  2. Slider Widget
+/*  3.  
+/*	4.  
+/*=============================================================================================================================================*/
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   1. Sortable Widget */
+ul.sortablewidget {
+	position:relative;
+	width:100%;
+	font-family:inherit;
+	}
+	
+	/* ---------------------------- sortable item */
+	ul.sortablewidget li {
+		position:relative;
+		background-color:#fbc51f;  /* background for every 1st items */ 
+    	border: none;
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
+				box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 5px 0px rgba(0, 0, 0, 0.2); 
+		font-size:18px;
+    	font-weight: normal;
+		line-height:20px;
+		color:#ffffff;  /* text-color for all items */
+		cursor:default;
+		padding:11px 20px 9px 40px;
+		margin:14px 10px;
+		}
+		ul.sortablewidget li[val*='5'],
+		ul.sortablewidget li[val*='10'],
+		ul.sortablewidget li[val*='15'],
+		ul.sortablewidget li[val*='20'] { background:#303130; } /* background for every 5th items */
+		ul.sortablewidget li[val*='4'],
+		ul.sortablewidget li[val*='9'],
+		ul.sortablewidget li[val*='14'],
+		ul.sortablewidget li[val*='19'] { background:#ec4435; } /* background for every 4th items */
+		ul.sortablewidget li[val*='3'],
+		ul.sortablewidget li[val*='8'],
+		ul.sortablewidget li[val*='13'],
+		ul.sortablewidget li[val*='18'] { background:#1f88cc; } /* background for every 3th items */
+		ul.sortablewidget li[val*='2'],
+		ul.sortablewidget li[val*='7'],
+		ul.sortablewidget li[val*='12'],
+		ul.sortablewidget li[val*='17'] { background:#52b344; } /* background for every 2nd items */
+		
+		
+		/* ----------------------------------- sortable icon */
+		ul.sortablewidget li span.ui-icon {
+			position:absolute;
+			left:13px;
+			top:50%;
+			height: 12px;
+    		width: 12px;
+			background:#f7f7f7;  /* background icon for all items */
+			-webkit-border-radius: 10px;
+					border-radius: 10px;
+			-webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 1), inset 0px 1px 1px 0px rgba(0, 0, 0, 0.65);
+					box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 1), inset 0px 1px 1px 0px rgba(0, 0, 0, 0.65); 
+			display: block;
+    		overflow: hidden;
+    		text-indent: -99999px;
+			margin-top:-6px;
+			} 
+
+
+ 
+/* ---------------------------------------------------------------------------------------------------------------------   2. Slider Widget */
+
+.sliderwidget {
+	position:relative;
+	height:9px;
+	background:#dee2de; /* background slider main axis  */ 
+	-webkit-border-radius: 6px;
+			border-radius: 6px;
+	-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.6);
+			box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.6); 
+	margin:54px 5% 90px;
+	}
+		
+	/* ----------------------------------- slider range */
+	.sliderwidget .ui-slider-range {
+		position:absolute;
+    	top:0;
+    	height:9px;
+		background:#303130;  /* background slider range  */ 
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.85);
+				box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.85); 
+		z-index:1;
+		}
+		
+	/* ----------------------------------- slider handle */
+	.sliderwidget .ui-slider-handle {
+		position:absolute;
+		top:-16px;
+		height: 36px;
+		width: 36px;
+		background:#1f88cc;    /* background slider  handle */ 
+		border: 2px solid #c4c4c4;
+		-webkit-border-radius: 30px;
+				border-radius: 30px;
+		-webkit-box-shadow: inset 0px 0px 2px rgba(196, 196, 196, 0.7), 1px 2px 3px 0px rgba(0, 0, 0, 0.6); 
+				box-shadow: inset 0px 0px 2px rgba(196, 196, 196, 0.7), 1px 2px 3px 0px rgba(0, 0, 0, 0.6); 			
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:14px;
+		color:#ffffff;   /* text slider  handle  */ 
+		line-height:40px;
+		text-align:center;
+		margin-left:-20px;
+		z-index:4;
+		}
+		
+		/* ----------------------------------- slider tooltip */
+		#tooltip {
+			position:absolute;
+			top:-52px;
+			left:-22px;
+			width:82px;
+			height:30px;
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#66d157), color-stop(100%,#43a934));  
+			background: -webkit-linear-gradient(top,  #66d157 0%,#43a934 100%);  
+			background: linear-gradient(to bottom,  #66d157 0%,#43a934 100%);  
+			-webkit-box-shadow: inset 0px -1px 2px 0px rgba(0, 0, 0, 0.4);
+					box-shadow: inset 0px -1px 2px 0px rgba(0, 0, 0, 0.4); 
+			-webkit-border-radius: 5px;
+					border-radius: 5px;
+			display:none;
+			font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+			font-size:18px;
+			color:#ffffff;      /* text slider  tooltip  */ 
+			line-height:32px;
+			text-align:center;
+			text-decoration:none;
+			z-index:5;
+			}
+			#tooltip:after {   /* arrow slider  tooltip  */  
+				content:'';
+				position:absolute;
+				top:26px;
+				left:0;
+				width:82px;
+				height:12px;
+				background:no-repeat center center;  
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAMCAYAAACEJVa/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQRJREFUeNqk0UtqwzAQBuDxY1FyHt+g64JXKe2NcpRAIatAb9BVofvssgmxnUAfWG9N9Ss4OE4TTKON0Iz+T5aV3M8LphtHyo6J/8kgh3yu9pqyu4zySUZJlowHQti2jpx0lP6sxbvcGqu/bGyMBbAfOeRT/WmLthIPqhoHdYCqjQ258mO2KlL2HD7Jv4qdLNG4BvUB0cgy5Jbxx8bmAVqGxlQ3xprvcwhr1NHHPuxH7oj0oEVbyylO6kMdEK9QR2DRASfIAHqSlfYIeu0jgDXqQ+AM6UEvolGPYqu9qBTFOaxRHwJ/IidQrZ7bjTKYLwEY+cWnBKTcPFznjZnXdOXlfwUYAP+zLWJgqq/xAAAAAElFTkSuQmCC);			
+				z-index:6;
+				}
+
+	/* ----------------------------------- slider calibration */
+	.sliderwidget .calibration {
+		position:absolute;
+		left:0;
+		top:9px;
+		height:33px;
+		width:100%;
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:14px;
+		color:#303130;    /* text  calibration  */ 
+		line-height:16px;
+		}
+		.sliderwidget .calibration .separator {
+			float:left;
+			position:relative;
+			height:17px;
+			padding-top:16px;
+			}
+			.sliderwidget .calibration .separator:after {
+				content:'';
+				position:absolute;
+				top:1px;
+				right:0;
+				width:1px;
+				height:6px;
+				background:#303130; /* color  calibre */ 
+				}
+				.sliderwidget .calibration .separator:first-child:after,
+				.sliderwidget .calibration .separator:last-child:after { display:none; }
+				
+			.sliderwidget .calibration .separator:first-child {
+				width:0px !important;
+				text-indent:0px !important; 
+				}
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   3. Chart  Widget */
+
+.chartwidget {
+	background: none;		 /* background chart widget */
+	border: none ;      /* border chart widget */
+	margin:15px 10px;
+	} 
+ 
+	/* ----------------------------------------------------------------------------- chart */
+	.chartwidget .ui-jqchart-tooltip {
+		background-color:#e6e9e6 !important;   /* background chart tooltip */
+		border:2px solid ;  /* border chart tooltip */
+		-webkit-border-radius: 6px;
+				border-radius: 6px;
+		-webkit-box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.4);
+				box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.4);
+		font-size:14px;
+		line-height:18px;
+		color:#303130;    /* label name chart tooltip */
+		padding:3px 5px;
+		z-index:100;
+		}
+		.chartwidget .ui-jqchart-tooltip b {
+			font-size:16px;
+			line-height:18px;
+			color:#303130;    /* label value or series chart tooltip */
+			}
+		.chartwidget .ui-jqchart-tooltip span {
+			font-size:13px;
+			color:#303130 !important;    /* label name chart tooltip */
+			}
+
+

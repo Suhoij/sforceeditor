@@ -1,0 +1,231 @@
+@charset "utf-8";
+/*================================== Table of Contents ===================================================================================== */
+/*  RESET
+/*  1. Global Structure
+/*  2. General tags
+/*  3. Content
+/*  4. Text styles
+/*=============================================================================================================================================*/
+
+@font-face {
+	font-family: 'HelveticaBold';
+	src: local('☺'), url('../fonts/helveticaneueltpro-bd-webfont.svg#webfontsC5OPmDU') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'HelveticaRoman';
+	src: local('☺'), url('../fonts/helveticaneueltpro-roman-webfont.svg#webfont6JuGpmcG') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'HelveticaLight';
+	src: local('☺'), url('../fonts/helveticaneueltpro-lt-webfont.svg#webfontdL0Tl53h') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'HelveticaMedium';
+	src: local('☺'), url('../fonts/helveticaneueltpro-md-webfont.svg#webfont947olrv7') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'HelveticaBoldCondensed';
+	src: local('☺'), url('../fonts/helveticaneueltpro-bdcn-webfont.svg#webfont3qjPKZU5') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+/* ============================================================================================================================================ */
+/*      RESET     */                                                             								                 /*    RESET    */
+/* ============================================================================================================================================ */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+del, dfn, em, font, img, ins, q, 
+small, strike, strong, sub, sup, 
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+footer, header, 
+article, aside, canvas, nav, section, 
+table, caption, tbody, tfoot, thead, tr, th, td {
+	background: transparent;
+	border: 0;
+	font-size: 100%; 
+	vertical-align: baseline;
+	outline: 0;
+	padding: 0; 
+	margin: 0; 	
+	}
+		
+/* HTML5 display-role reset for older browsers */
+article, footer, header, menu, nav, section, aside, canvas { display: block; }
+
+body { line-height: 1; }
+
+ol, ul { list-style: none;}
+
+a:focus { outline:none; }
+
+blockquote { quotes: none; }
+blockquote:before, blockquote:after { 
+	content: ''; 
+	content: none; 
+	}
+
+table, caption, tbody, tfoot, thead, tr, th, td { 
+	border:none; 
+	border-collapse: collapse; 
+	border-spacing: 0;
+	vertical-align: middle;
+	margin: 0; 	
+	padding: 0;
+	}
+	
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; /* Disable selection/Copy of UIWebView */
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+
+
+/* ============================================================================================================================================ */
+/*      1.  Global   Structure     */                                                                            /*    1.  Global   Structure   */
+/* ============================================================================================================================================ */
+
+html { 
+	height:100%; 
+	width:100%;
+	background:#cccccc;
+	}
+	
+body { 
+	height:768px; 
+	width:1024px;
+	background:#ffffff;
+	font-family:'HelveticaRoman', Arial, Helvetica, sans-serif;  
+	}
+	.wrapper { 
+		position:relative;
+        height:681px; 
+		width:984px;
+		overflow:hidden;
+		padding:14px 20px 20px;
+		}
+
+/* ----------------------------------------------------------------------------  Header */
+header {
+	position:relative;
+	border-bottom:2px solid #737a84;
+	padding-bottom:5px;
+	}
+
+
+			
+/* ----------------------------------------------------------------------------  Content */
+section.Stage_plate {
+	position:relative;
+	height:auto;
+	width:984px;
+	margin-top:25px;
+	}
+				
+	
+/* ------------------------------------------------------------------------------  Footer */
+footer { 
+	position: relative;
+	height:60px;
+	border-top:2px solid #737a84;
+	margin:0 20px;
+	z-index:100;
+	}
+	footer .logo {
+		height:30px;
+		width:auto;
+		display:block;
+		margin:10px 20px 0; 
+		}
+		
+
+/* ============================================================================================================================================ */
+/*      2.  General tags     */                                                                                        /*    2.  General tags   */
+/* ============================================================================================================================================ */
+
+a {
+	text-decoration:none;
+	}
+	
+sub, sup {
+    position: relative;
+	font-family: inherit;
+    font-size: 67%;
+    line-height: 0;
+	font-weight:400;
+    vertical-align: baseline;
+	}
+	sup { top: -7px; }
+	sub { top: -4px; }
+
+	
+.fl_left 	{ float:left; }
+.fl_right 	{ float:right; }
+.center		{ margin-left:auto; margin-right:auto; }
+.block 		{ display:block; }
+.hidden		{ visibility:hidden; }
+
+.clear { 
+	height:0px; 
+	clear:both; 
+	display:block; 
+	}
+.clearfix { zoom:1; }		
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+	}	
+
+
+	
+
+/* ============================================================================================================================================= */
+/*      3.   Content     */                               		                 	             					    /*      3.   Content     */
+/* ============================================================================================================================================= */
+
+.Stage_plate .fl_left,
+.Stage_plate .fl_right { width:480px; }
+	
+		
+
+
+
+
+
+
+
+
+/* ============================================================================================================================================ */
+/*     4.    Text  Styles    */                                                                					    /*     4.   Text  Styles    */   
+/* ============================================================================================================================================ */
+
+h1 {
+	font-family: 'HelveticaBold', Arial, sans-serif;
+	font-size:26px;
+	font-weight:400;
+	line-height:28px;
+	color:#333333;
+	}
+
+
+

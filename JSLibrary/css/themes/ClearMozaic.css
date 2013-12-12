@@ -1,0 +1,264 @@
+@charset "utf-8";
+/*================================== Table of Contents ===================================================================================== */
+/*  1. Sortable Widget
+/*  2. Slider Widget
+/*  3.  
+/*	4.  
+/*=============================================================================================================================================*/
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   1. Sortable Widget */
+ul.sortablewidget {
+	position:relative;
+	width:100%;
+	font-family:inherit;
+	}
+	
+	/* ---------------------------- sortable item */
+	ul.sortablewidget li {
+		position:relative;
+    	border: none;
+		background:#303130 repeat-x 0 bottom;  /* background for all items */ 
+		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAACCAIAAABT4ozyAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAC1JREFUeNpiDNrswoADnL3awUAZOLsnk0IT+BtfUWhC+DtVYpQxMYwCMAAIMAAFXghNsGPOEQAAAABJRU5ErkJggg==);
+		border-bottom:3px solid #303130;     /* background for all items */ 
+		-webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.25);
+				box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.25);
+		font-size:18px;
+    	font-weight: normal;
+		line-height:20px;
+		color:#ffffff;    /* text-color for all items   */
+		cursor:default;
+		padding:12px 20px 10px 45px;
+		margin:16px;
+		z-index:1;
+		}
+		ul.sortablewidget li:before {
+			content: "";
+			display: block;
+			position: absolute;
+			right: 0px;
+			bottom:-7px;
+			width: 0px;
+			height: 0px;
+			border-bottom: 27px solid rgba(0,0,0, 0.3);
+			border-left: 26px solid transparent;
+			z-index:2
+			}
+		ul.sortablewidget li:after {
+			content: "";
+			display: block;
+			position: absolute;
+			right: -2px;
+			bottom:-7px;
+			width: 0px;
+			height: 0px;
+			border-bottom: 22px solid #ec4435;
+			border-left: 26px solid transparent;
+			z-index:3;
+			}
+			ul.sortablewidget li[val*='5']:after,
+			ul.sortablewidget li[val*='10']:after,
+			ul.sortablewidget li[val*='15']:after,
+			ul.sortablewidget li[val*='20']:after { border-bottom-color: #6e6c6c; }/* right-down corner for every 5th items */
+				 
+			ul.sortablewidget li[val*='4']:after,
+			ul.sortablewidget li[val*='9']:after,
+			ul.sortablewidget li[val*='14']:after,
+			ul.sortablewidget li[val*='19']:after { border-bottom-color: #eda803; }/* right-down corner for every 4th items */
+				
+			ul.sortablewidget li[val*='3']:after,
+			ul.sortablewidget li[val*='8']:after,
+			ul.sortablewidget li[val*='13']:after,
+			ul.sortablewidget li[val*='18']:after { border-bottom-color: #52b344; } /* right-down corner for every 3th items */
+				
+			ul.sortablewidget li[val*='2']:after,
+			ul.sortablewidget li[val*='7']:after,
+			ul.sortablewidget li[val*='12']:after,
+			ul.sortablewidget li[val*='17']:after { border-bottom-color: #1f88cc; } /* right-down corner for every 2nd items */
+			
+			
+		/* ----------------------------------------- sortable icon */
+		ul.sortablewidget li span.ui-icon {
+			position:absolute;
+			left:0;
+			top:0;
+			height: 100%;
+    		width: 42px;
+			background:no-repeat center center;
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAARCAYAAADpPU2iAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAK9JREFUeNpi/P//PwMpgAVd4Pmr55xAajWUGyopJvkdWZ4R2QagYh4gtR2IbaBCB4HYE1kTE5riXUiKQcAeJAaVQ2gACvBDFVticbYNsiaYDdtxKIYBS5i/GEkNJSYGEsEg1MACDVZQKHkQULsDGIGeMBvigPgCHsVngTga7iSgztdAyhkqgQ6Og+SAat6h+AEq4AxVgKwYlJY+Yk18SGlqI5TrD1T8BWdqJQYABBgAHSNANLhT3DcAAAAASUVORK5CYII=);		
+			border:none;
+			display: block;
+    		overflow: hidden;
+    		text-indent: -99999px;
+			}
+ 
+ 
+ 
+/* ---------------------------------------------------------------------------------------------------------------------   2. Slider Widget */
+
+.sliderwidget {
+	position:relative;
+	height:3px;
+	background:#9fa2a6;   /* background slider main axis  */ 
+	margin:56px 5% 88px;
+	}
+		
+	/* ----------------------------------- slider range */
+	.sliderwidget .ui-slider-range {
+		position:absolute;
+    	top:0;
+    	height:3px;
+		background:#303130;  /* background slider range  */ 
+		z-index:1;
+		}
+		
+	/* ----------------------------------- slider handle */
+	.sliderwidget .ui-slider-handle {
+		position:absolute;
+		top:-22px;
+		height: 46px;
+		width: 46px;
+		background: no-repeat 0 0 ;    /* background slider  handle */ 
+		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAYAAABXuSs3AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABPJJREFUeNq0mc9rFkcYx2fexOprsHgQoYSopCGoF1FDEKGkNGj/AqGHHvQgaguC9VB8TSSx2t6KB1HBaw8F/wQN+jY22PCC9iDISwhCiIcXyevBEIQ00++zv975ufvu7L7zZneeeWay85lnn9lnZpdvzh9mHD/6CxNXMrWcXteu9Y1AqDDOg/zY5H2q2GJCLAkIb09dbDI5cc4qYw3mk/rpJPDjIoYXIYlglrJat1br24vOJ1AaR3EshlEHF+q4EOzA4wf0v0S6iMHU3357qcU8E9/867BkuO4sv3Z9G8F+H1lWaqLegeOT98An9SZEMGYmkjLdiT9WpsbrfuAKlxt+beqzI8gu4jgYQ7qgKRF4xKuCq/AkvoH0AAP4Nwf4IQNQhwfwbmQ/ofCVDJkGTdnxb+6Hjphm9UAl4sHM4/z7yvT4hyzwijL8JBOJDGhYlz3MC82SwfOkSeLv2hzgnWtQHw+Hflk8mA2u3zsJfm1q+wlc7A6Ke3JD6+os+I5Afd0B/IkMiwtmg29P7ziKi9xGabsPdJAlRucmvNY8GUyooz5vA/5otqtI8O0bOwbxz7NJvQ8048yC2YHXR2HqqO9ZwA9muwpZ+kZ1AH38BsWuItBc8nPuGky6v7OIAZb/ZyDbVTirQRgqDs2c8Dn8ndJ+CLVUV2nP7KQJcbIMaCOA8RyTVfV3Sif1yVqJhfbsTpIvlwatVHENnjvdPAX+CuArFh9np3F8USa0ei3uILSA2ifr3ohRsngIf6ZUaD0a+/q7OlnPKJOzfXNgFC2GS4XmKqz6KPQOTsNwl1EmPacnyoZWn9vcvP3+wWlC9vGx0qF1i8luyAsFp2DdX2nf2lWFaqQn0C7rskLBaWTo1mK1AnEw2m6VDs1tO6LiwYnce5BOw723tAlbMDjtJ0sP9AJabaIFJMaLBqfPyeLVnkBzbn9EuPw9X3Cq9u+ufbBApQcT9yDUtl+++1HaqnW2bPEOS8mTvalDJ8kieo5vmGtyc43OtH2iUW9rq8Cq20KhXozJG1FpH22FxmmDnuPrdpgS4GULK9t9rc5i4RRoOq1TyF91wxSDV+znchWmX14dnDwAqX6VXGUZha2ewOuu4uHX6gCCtAVxOfbxpXRYP3gXrGFN0YVfd+7i0vOzLzfihXkjG9YDnpnWlAeiTsZMv46zhrzIqncHmxNeCEtVt26hQkv91OXNcjP09XLh80xG9WlieTiF8vLzcy+b+mb5keVZVQK8z2Q0/DqWHxmbZSifoEWrTPiCQUaXW8ieWMDZJirv6n0Vtrx/kNHlu3+fe7Vp2+VTmkejhdLgiwUZOVsA9HzKm6wg/WpGUz/4AkFG9uuVkCnzpWewdvmZ1gOlwPsFmWRNguwarL3uADcgVnHMmEuBnPD+QYZOFNpnAL2a8prZCkERahqKT77wBYLMJ2TTgG5kvB93QizguArFey94vyDzHi2uAnoh41OKYBnwr3Gch+JFbvj8QeYF5POAft3VB9rgqsbulHpNtmS0v7sGxRHofoBu1NFOKecIMk2c7iGcd/25sF+5T+nwlHBhcQG6Sei+Y/GLJBd89mSkD7R/Ypk65/VJPCc86eagm4OOXv0Gn8ShGzPg7UGmgWwRcv3ZgY1W39dvvD6J95vu3TU86VrQ0cInWvyI0agduVJfBPsfY8Hqkz3d97FpfSPgkf4XYAB/NXNCztE2DwAAAABJRU5ErkJggg==);		
+		border: none;
+		-webkit-border-radius: 30px;
+				border-radius: 30px;
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:12px;
+		color:#ffffff;   /* text slider  handle  */ 
+		line-height:24px;
+		text-align:center;
+		margin-left:-23px;
+		z-index:4;
+		}
+		.sliderwidget .ui-slider-handle:after {   /* background slider  handle dot */  
+			content:'';
+			position:absolute;
+			top:18px;
+			left:18px;
+			height: 10px;
+			width: 10px;
+			background:#303130;
+			-webkit-border-radius: 10px;
+					border-radius: 10px;
+			}
+		
+		/* ----------------------------------- slider tooltip */
+		#tooltip {
+			position:absolute;
+			top:-65px;
+			left:0;
+			width:44px;
+			height:41px;
+			background:#4ea0d7;  /* background slider  tooltip */ 
+			display:none;
+			font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+			font-size:18px;
+			color:#ffffff;      /* text slider  tooltip  */ 
+			line-height:48px;
+			text-align:center;
+			text-decoration:none;
+			z-index:5;
+			}
+			#tooltip:after {  /* border  tooltip */ 
+				content:'';
+				position:absolute;
+				top:0;
+				left:0;
+				width:44px;
+				height:3px;
+				background: no-repeat 0 0;
+				background-image: url(data:image/gif;base64,R0lGODlhLAADAJEAAPvFH+xENR+IzFKzRCH5BAAAAAAALAAAAAAsAAMAAAIXlI8Syx0Doxyg2guSdnx6DGoJ53gTiBUAOw==);
+				z-index:-1;
+				}
+			#tooltip:before {  /* arrow  tooltip */ 
+				content:'';
+				position:absolute;
+				top:41px;
+				left:0;
+				width:44px;
+				height:13px;
+				background: no-repeat 0 0 ;
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAANCAYAAADSdIySAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAASdJREFUeNpi9Ftw/QkDA4M0w9AAB5mAhBIQ5wLxi0Hs0GtA7LkpQdOBBcj4BcRTgHguEKcBcTUQiw4Sh4ICsQbo0LkwASYkye9APBEa4mVA/G4AHfoF5FCQW5AdCwKMwDSMSxMPEOcDcSkQ89PJob+gMQ0KVawBhs/BMABybBHU8bR0+BogrgQ69A4+RcQ4GAaEoKGdAw19aoHjQFwAdOgpYhST4mBkh9dBMygnBQ69CQ3R9aRoYiLDIlDaKoBmzinQdEcKeA3EWUCsDcTrSbWcicIiJxfq8FlEOByU85ug6qcD8V9yLGWiQhp8CsTpQKwBzeHoDvkL9ZAqENdDHU42YKJi5rkPxClQhy+Aim0CYj2oh6hSk7LQoHgCFUuJQFxMi8oHIMAAiltGDuzLg68AAAAASUVORK5CYII=);
+				}
+
+	/* ----------------------------------- slider calibration */
+	.sliderwidget .calibration {
+		position:absolute;
+		left:0;
+		top:3px;
+		height:33px;
+		width:100%;
+		font-family: 'HelveticaBoldCondensed', Helvetica, Arial, sans-serif;
+		font-size:14px;
+		color:#303130;     /* text  calibration  */ 
+		line-height:16px;
+		}
+		.sliderwidget .calibration .separator {
+			float:left;
+			position:relative;
+			height:17px;
+			padding-top:16px;
+			}
+			.sliderwidget .calibration .separator:after {
+				content:'';
+				position:absolute;
+				top:1px;
+				right:0;
+				width:1px;
+				height:6px;
+				background:#303130;   /* color  calibre */ 
+				}
+				.sliderwidget .calibration .separator:first-child:after,
+				.sliderwidget .calibration .separator:last-child:after { display:none; }
+				
+			.sliderwidget .calibration .separator:first-child {
+				width:0px !important;
+				text-indent:0px !important; 
+				}
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------   3. Chart  Widget */
+
+.chartwidget {
+	background: none;    /* background chart widget */
+	border: none ;      /* border chart widget */
+	margin:15px 10px;
+	} 
+ 
+	/* ----------------------------------------------------------------------------- chart */
+	.chartwidget .ui-jqchart-tooltip {
+		background-color:#e6e9e6 !important;   /* background chart tooltip */
+		border:2px solid #303130 !important;  /* border chart tooltip */
+		-webkit-box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.4);
+				box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.4);
+		font-size:14px;
+		line-height:18px;
+		color:#303130;    /* label name chart tooltip */
+		padding:3px 10px 3px 4px;
+		z-index:100;
+		}
+		.chartwidget .ui-jqchart-tooltip:after {
+			content:'';
+			position:absolute;
+			bottom:-2px;
+			right:-2px;
+			height:0px;
+			width:0px;
+			border-bottom:13px solid #303130;  /* arrow chart tooltip */
+			border-left:13px solid transparent;
+			z-index:101;   
+			}
+			.chartwidget .ui-jqchart-tooltip b {
+				font-size:16px;
+				line-height:18px;
+				color:#303130;    /* label value or series chart tooltip */
+				}
+			.chartwidget .ui-jqchart-tooltip span {
+				font-size:13px;
+				color:#303130 !important;    /* label name chart tooltip */
+				}
+ 
+
+
