@@ -1,5 +1,14 @@
-MyApp = new Backbone.Marionette.Application();
+//----------------------MAIN------------------------
+$(document).ready(function(){
+  $(document).foundation();
+  MyApp.start({'sf_app_params':{org_id:1,app_id:11,slide_id:111,session_id:1111}});
+  MyApp.vent.trigger("getSfparams"); 
+});
+//----------------------MAIN------------------------
+
 //------------------APP INIT----------------------
+MyApp = new Backbone.Marionette.Application();
+
 MyApp.addInitializer(function(options){
   this.state='init';
   this.sf_app_params={};
@@ -20,10 +29,5 @@ MyApp.on("initialize:after", function(options){
       console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
   }
 });
-//----------------------MAIN------------------------
-$(document).ready(function(){
-  $(document).foundation();
-  MyApp.start({'sf_app_params':{org_id:1,app_id:11,slide_id:111,session_id:1111}});
-  MyApp.vent.trigger("getSfparams"); 
-});
+
 

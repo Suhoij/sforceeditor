@@ -16,8 +16,8 @@ MyApp.vent.on("getSfparams", function(){
 });
 MyApp.on("initialize:after", function(options){
   if (Backbone.history){
-    Backbone.history.start();
-     console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
+      Backbone.history.start();
+      console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
   }
 });
 //----------------------MAIN------------------------
