@@ -13,6 +13,9 @@ MyApp.addInitializer(function(options){
   this.state='init';
   this.sf_app_params={};
   this.options=options;
+  this.initChartMenu=function() {  
+     $(".dropdown >li >a").click(function(){$("#chart-menu >a").text($(this).text())})
+  }
   // do useful stuff here
  //myView = new MyView({
  //   model: options.someModel
@@ -27,6 +30,7 @@ MyApp.on("initialize:after", function(options){
   if (Backbone.history){
       Backbone.history.start();
       console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
+      MyApp.initChartMenu();
   }
 });
 
