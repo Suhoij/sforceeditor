@@ -7,7 +7,9 @@ $(document).ready(function(){
 //----------------------MAIN------------------------
 
 //------------------APP INIT----------------------
-MyApp = new Backbone.Marionette.Application();
+MyApp    = new Backbone.Marionette.Application();
+RichText = Marionette.Region.extend({el:".rich-text"});
+Chart    = Marionette.Region.extend({el:".chart"});
 
 MyApp.addInitializer(function(options){
   this.state='init';
@@ -33,5 +35,21 @@ MyApp.on("initialize:after", function(options){
       MyApp.initChartMenu();
   }
 });
-
+MyApp.addRegions({
+  sidebarRegion: {
+    selector: "#left-sidebar",
+    regionType: RichText
+  },
+ 
+  titlechartRegion: {
+    selector: "#title-chart",
+    regionType: RichText
+  },
+  
+  bodychartRegion: {
+    selector: "#body-chart",
+    regionType: Chart
+  }
+ 
+});
 
