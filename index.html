@@ -71,7 +71,10 @@
              <a class="button lage right" href="#" data-reveal-id="myModal">Chart control</a>
 	      <figure class="chart-figure">
 		<figcaption>Simple chart</figcaption>
-		<img src="img/chart.png" alt=""/>
+		<div id="chartwidget"  style="width:100; height:100%;">
+		  <img src="img/chart.png" alt=""/>
+		</div>
+		<div id="chartwidget-code"></div>
 	      </figure>
           </div>
         </div>
@@ -178,6 +181,146 @@
 	
        <a class="close-reveal-modal">&#215;</a>
      </div>
+    <!--  -----------------------Chart templatea------------------- -->
+    <script type="text/template" id="chart-template">
+	  <!-- ------------b:-----init vars ---------------------------- -->
+
+	    console.log("tpl chart");
+	    var chartType = "<%= type %>";
+	    
+	    var strFormat = "";
+	    var valType = "";
+	    var maxScale = "<%= max %>";
+	    var minScale = "<%= min %>";
+	    var theme = "<%= themeName %>"; 
+	    var style = "<%= styleName %>";
+	    
+	  
+	    
+	    
+	    var shadowChart = true;
+	    var axesSet = [{maximum: maxScale, minimum: minScale}];
+            if (chartType == 'pie'){
+                strFormat = "%.1f%%";
+                var valType = "percentage";
+                axesSet = [];
+            }
+            if (chartType == 'bar'){
+                axesSet = [];
+                axesSet.push({maximum: 100, type: 'category'});
+            }
+            
+            switch (theme) { 
+	      case 'Grey': 
+		      var paletteColors = ['#c9c8c9', '#3d3d3d', '#a3a2a3', '#696769', '#888688']; 
+		      var strokeSeries = '#ffffff'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['13px sans-serif', '#333333']; 
+		      var legend = ['15px sans-serif', '#000000', '#a3a2a3', '#333333']; 
+		      break; 
+	      case 'Green': 
+		      var paletteColors = ['#eae0bf', '#96704f', '#769f3f', '#af9960', '#acd662']; 
+		      var strokeSeries = '#331e11'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#331e11'] : ['13px sans-serif', '#331e11']; 
+		      var legend = ['15px sans-serif', '#331e11', '#af9960', '#5f3b21']; 
+		      break; 
+	      case 'Orange': 
+		      var paletteColors = ['#fbcb93', '#fb8f49', '#a93603', '#d85d03', '#fbad18']; 
+		      var strokeSeries = '#ffffff'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#331e11'] : ['13px sans-serif', '#333333']; 
+		      var legend = ['15px sans-serif', '#262726', '#a93603', '#a93603']; 
+		      break; 
+	      case 'Red': 
+		      var paletteColors = ['#eeb2ac', '#ff5543', '#771211', '#d4d7db', '#d72008']; 
+		      var strokeSeries = '#ffffff'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['13px sans-serif', '#333333']; 
+		      var legend = ['15px sans-serif', '#262726', '#70767e', '#181818']; 
+		      break; 
+	      case 'Blue': 
+		      var paletteColors = ['#59abe4', '#0c476d', '#96d0fc', '#3472a7', '#dae5f4']; 
+		      var strokeSeries = '#111111'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#0a0a0a'] : ['13px sans-serif', '#333333']; 
+		      var legend = ['15px sans-serif', '#0a0a0a', '#7d8088', '#7d8088']; 
+		      break; 
+	      case 'Mozaic': 
+		      var paletteColors = ['#ec4435', '#1f88cc', '#52b344', '#fbc51f', '#303130']; 
+		      var strokeSeries = '#ffffff'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['12px sans-serif', '#303130']; 
+		      var legend = ['15px sans-serif', '#0a0a0a', '#aaaaaa', '#303130']; 
+		      break; 
+	      default : break; 
+	      }; 
+	      switch (style) { 
+		case 'Square': 
+		      var lineSeries = 1; 
+		      var legendLine = 2, legendCorner = 0; 
+		      break; 
+		case 'Dotted': 
+		case 'Rounded': 
+		      var lineSeries = 0; 
+		      var legendLine = 2, legendCorner = 6; 
+		      break; 
+		case 'Clear': 
+		      var lineSeries = 1; 
+		      var legendLine = 1, legendCorner = 0; 
+		      break; 
+		default : break; 
+	      }; 
+
+	    jQuery.noConflict();
+	    <!-- --------------------------e:-------init vars ----------------------- -->
+	    jQuery('#chartwidget').jqChart({
+                title: { text: '<%= title %>' },
+                legend: { 
+					title: { text: '<%= legend %>', fillStyle: legend[3], font: '17px sans-serif', }, 
+					location : '<%= legendlocation %>', // legend location 
+					border: { // legend border 
+						padding: 8, 
+						strokeStyle: legend[2], 
+						lineWidth : legendLine, 
+						cornerRadius: legendCorner 
+					}, 
+					font: legend[0], // item text font 
+					textFillStyle: legend[1], // item text color 
+					background: undefined, // legend background 
+					margin: 5, // legend margings 
+					visible : <%= showlegend %> 
+				}, 
+                border: { strokeStyle: '<%= bordercolor %>', lineWidth: 0},
+				paletteColors: { 
+					type: 'customColors', 
+					customColors: paletteColors // backgroung pie segments 
+				}, 
+				tooltips: { borderColor: 'auto' }, // tooltip border 
+				animation: 3, 
+				shadows: { enabled: shadowChart }, 
+                animation: 3,
+                axes: axesSet,
+                series: [
+                            {
+                                type: '<%= type %>',
+                                strokeStyle : strokeSeries, // border pie segments color 
+				 lineWidth : lineSeries, // border pie segments 
+                                labels: {
+                                    stringFormat: strFormat,
+                                    valueType: valType,
+                                    font: labelFont[0], // pie text 
+				     fillStyle: labelFont[1] // pie text color
+                                },
+                                data: [<%= chart_data %>]
+                            }
+                        ]
+            });
+
+            if (chartType == 'pie'){
+                jQuery('#chart').bind('tooltipFormat', function (e, data) {
+                    var percentage = data.series.getPercentage(data.value);
+                    percentage = data.chart.stringFormat(percentage, '%.2f%%');
+    
+                    return '<b>' + data.dataItem[0] + '</b></br>' +
+                           data.value + ' (' + percentage + ')';
+                });
+            }
+    </script>
     <!-- =========================Scripts=================================  -->
     <script src="bower_components/jquery/jquery.min.js"></script>
     <script src="bower_components/foundation/js/foundation.min.js"></script>
@@ -188,6 +331,8 @@
 <!-- <script src="backbone.marionette/backbone.wreqr.js"></script> -->  
     <script src="backbone.marionette/json2.js"></script> 
     <script src="ckeditor/ckeditor.js"></script>
+    <script src="JSLibrary/js/jquery.jqChart.min.js"></script>
+    
     <script src="js/app.js"></script>
   </body>
 </html>
