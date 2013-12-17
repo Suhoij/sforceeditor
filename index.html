@@ -102,25 +102,39 @@
 		      <!-- b:chart data item -->
 			  <tr>
 			  <td>
-			      <input id="chart-data-name-0" type="text" placeholder="New Name..." />			
+			    <input id="chart-data-name-0" type="text" placeholder="New Name..." />
 			  </td>
 			  <td>
-			      <input id="chart-data-value-0" type="text" placeholder="0" value=0 />
+			    <input id="chart-data-value-0" type="text" placeholder="0" value=0 />
 			  </td>
 			  <td>
-			      <a class="button tiny" href="#">Delete item</a>
-			  </td>
-		       <!-- e:chart data item -->
+			    <a class="button tiny" href="#">Delete item</a>
+			  </td>		       
 		      </tr>
+		      <!-- e:chart data item -->
 		    </tbody>
 		  </thead>
 		</table>
-		<a href="#" class="button">Add new item</a>
+		<a href="#" id="data-add-btn" class="button">Add new item</a>
 	       </div>
 	   </fieldset>
     	<a class="close-reveal-modal">&#215;</a> 
     </div>
-	<!-- ----------------------- TPL chart Control ------------------------ -->
+	<!-- ----------------------- TPL chart Control ---------------------------- -->
+ 	<script type="text/template" id="data-chart-item-template">
+ 	  	<tr>
+			  <td>
+			      <input id="data-chart-name-0" type="text" placeholder="New Name..." value="<%= data_name %>" />
+			  </td>
+			  <td>
+			      <input id="data-chart-value-0" type="text" placeholder="0" value=<%= data_value %> />
+			  </td>
+			  <td>
+			      <a id="data-del-btn-<%= data_i %>" class="data-del button tiny" href="javascript:MyApp.Chart.controller.delData(this.id)">Delete item</a>
+			  </td>
+		</tr>	
+ 	</script>
+	<!--  ------------------------- Control Modal window ---------------------- -->
     <div id="chartControlModal" class="reveal-modal" data-reveal> 
        <form name="chart-prop">
 	  <fieldset>
