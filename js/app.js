@@ -97,16 +97,18 @@ MyApp.module("Chart", function(Chart){
     var ChartModel = Backbone.Model.extend({
         defaults: {
             title: "Chart title",
-	    legend: 'true',
-	    showlegend: 'true',
-	    legendlocation:"left",
-	    bordercolor:"black",
-	    min:0,
-	    max:1,
-	    themeName: "Blue",
-	    styleName:"ClearBlue",
-	    type:"pie",
-	    chart_data:[['New Name' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
+            legendLine:1,
+      	    legend:  ['15px sans-serif', '#331e11', '#af9960', '#5f3b21'],
+      	    showlegend: 'true',
+      	    legendlocation:"left",
+      	    bordercolor:"black",
+            legendbackground:"#eeeeee",
+      	    min:0,
+      	    max:1,
+      	    themeName: "Blue",
+      	    styleName:"ClearBlue",
+      	    type:"pie",
+      	    chart_data:[['New Name' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
         }
     });
     // View
@@ -122,8 +124,9 @@ MyApp.module("Chart", function(Chart){
 	 // new ChartView().render();
 	  //this.view.model=this.model;
 	  //this.view.render();
-	  var chartwidget_code=this.chart_view.render().el.innerHTML;
-	  $("#chartwidget-code").html("<script>"+chartwidget_code+"</script>");
+    var chartwidget_code=this.chart_view.render().el.innerHTML;
+	  MyApp.chartwidget_code=this.chart_view.render().el.innerHTML;
+	  $("#chartwidget-code").empty().html("<script>"+chartwidget_code+"</script>");
 	  
     },
     Chart.addInitializer(function(){
