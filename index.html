@@ -68,20 +68,60 @@
         <div id="body-chart" class="ui-island">
           <div class="chart">
          <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
-             <a class="button lage right" href="#" data-reveal-id="myModal">Chart control</a>
-	      <figure class="chart-figure">
-		<figcaption>Simple chart</figcaption>
-		<div id="chartwidget"  style="width:100; height:100%;">
-		  <img src="img/chart.png" alt=""/>
-		</div>
-		<div id="chartwidget-code"></div>
-	      </figure>
+             <div class="row center">
+             		<a class="button lage left" href="#" data-reveal-id="chartControlModal">Chart control</a>
+             		<a class="button lage right" href="#" data-reveal-id="chartDataModal">Chart data</a>
+             </div>
+             <div class="row">
+			      <figure class="chart-figure">
+					
+					<div id="chartwidget"  style="width:100; height:100%;">
+					  <figcaption>Simple chart</figcaption>
+					  <img src="img/chart.png" alt=""/>
+					</div>
+
+			      </figure>
+	      </div>
+	      <div id="chartwidget-code"></div>
           </div>
         </div>
       </div>
     </div>
     <!-- =========================Templates=============================== -->
-    <div id="myModal" class="reveal-modal" data-reveal> 
+    <!-- -----------------------TPL chart Data ------------------------ -->
+    <div id="chartDataModal" class="reveal-modal" data-reveal>
+    	<fieldset>
+	      <legend>Chart Data</legend>
+	       <div class="row">
+		<table width="100%">
+		  <thead>
+		    <th width="50%">Name</th>
+		    <th width="30%">Data</th>
+		    <th width="20%">Control</th>
+		    <tbody>
+		      <!-- b:chart data item -->
+			  <tr>
+			  <td>
+			      <input id="chart-data-name-0" type="text" placeholder="New Name..." />			
+			  </td>
+			  <td>
+			      <input id="chart-data-value-0" type="text" placeholder="0" value=0 />
+			  </td>
+			  <td>
+			      <a class="button tiny" href="#">Delete item</a>
+			  </td>
+		       <!-- e:chart data item -->
+		      </tr>
+		    </tbody>
+		  </thead>
+		</table>
+		<a href="#" class="button">Add new item</a>
+	       </div>
+	   </fieldset>
+    	<a class="close-reveal-modal">&#215;</a> 
+    </div>
+	<!-- ----------------------- TPL chart Control ------------------------ -->
+    <div id="chartControlModal" class="reveal-modal" data-reveal> 
        <form name="chart-prop">
 	  <fieldset>
 	      <legend>Common setting</legend>
@@ -150,41 +190,12 @@
 	      </div>
 	   </fieldset>
 	   </form>
-	   <fieldset>
-	      <legend>Chart Data</legend>
-	       <div class="row">
-		<table width="100%">
-		  <thead>
-		    <th width="50%">Name</th>
-		    <th width="30%">Data</th>
-		    <th width="20%">Control</th>
-		    <tbody>
-		      <!-- b:chart data item -->
-			  <tr>
-			  <td>
-			      <input id="chart-data-name-0" type="text" placeholder="New Name..." />			
-			  </td>
-			  <td>
-			      <input id="chart-data-value-0" type="text" placeholder="0" value=0 />
-			  </td>
-			  <td>
-			      <a class="button tiny" href="#">Delete item</a>
-			  </td>
-		       <!-- e:chart data item -->
-		      </tr>
-		    </tbody>
-		  </thead>
-		</table>
-		<a href="#" class="button">Add new item</a>
-	       </div>
-	   </fieldset>
+
 	
        <a class="close-reveal-modal">&#215;</a>
      </div>
     <!--  -----------------------Chart templatea------------------- -->
     <script type="text/template" id="chart-template">
-	  <!-- ------------b:-----init vars ---------------------------- -->
-
 	    console.log("tpl chart");
 	    var chartType = "<%= type %>";
 	    
@@ -194,10 +205,7 @@
 	    var minScale = "<%= min %>";
 	    var theme = "<%= themeName %>"; 
 	    var style = "<%= styleName %>";
-	    
-	  
-	    
-	    
+	    	    
 	    var shadowChart = true;
 	    var axesSet = [{maximum: maxScale, minimum: minScale}];
             if (chartType == 'pie'){
@@ -210,7 +218,7 @@
                 axesSet.push({maximum: 100, type: 'category'});
             }
             
-            switch (theme) { 
+         switch (theme) { 
 	      case 'Grey': 
 		      var paletteColors = ['#c9c8c9', '#3d3d3d', '#a3a2a3', '#696769', '#888688']; 
 		      var strokeSeries = '#ffffff'; 
@@ -266,12 +274,12 @@
 		default : break; 
 	      }; 
 
-	    jQuery.noConflict();
-	    <!-- --------------------------e:-------init vars ----------------------- -->
+	    //jQuery.noConflict();
+	 	jQuery('#chartwidget').empty();
 	    jQuery('#chartwidget').jqChart({
                 title: { text: '<%= title %>' },
                 legend: { 
-					title: { text: '<%= legend %>', fillStyle: legend[3], font: '17px sans-serif', }, 
+					title: { text: '<%= title %>', fillStyle: legend[3], font: '17px sans-serif', }, 
 					location : '<%= legendlocation %>', // legend location 
 					border: { // legend border 
 						padding: 8, 
@@ -281,7 +289,7 @@
 					}, 
 					font: legend[0], // item text font 
 					textFillStyle: legend[1], // item text color 
-					background: undefined, // legend background 
+					background: '<%= legendbackground %>', // legend background 
 					margin: 5, // legend margings 
 					visible : <%= showlegend %> 
 				}, 
@@ -306,7 +314,7 @@
                                     font: labelFont[0], // pie text 
 				     fillStyle: labelFont[1] // pie text color
                                 },
-                                data: [<%= chart_data %>]
+                                data: [['New Name' , 10], ['New Name1' , 15], ['New Name2' , 20]]
                             }
                         ]
             });
