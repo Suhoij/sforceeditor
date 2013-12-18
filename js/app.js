@@ -24,10 +24,22 @@ MyApp.addInitializer(function(options){
 $(document).on('open', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal open ",modal[0].id);
+  if (modal[0].id=="chartControlModal") {
+      MyApp.Chart.FillScreenChartProp();
+  }
+  if (modal[0].id=="chartDataModal") {
+      MyApp.Chart.FillScreenChartData();
+  }
 });
 $(document).on('close', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
+  if (modal[0].id=="chartControlModal") {
+      MyApp.Chart.FillModelChartProp();
+  }
+  if (modal[0].id=="chartDataModal") {
+      MyApp.Chart.FillCollectionChartData();
+  }
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -145,10 +157,22 @@ MyApp.module("Chart", function(Chart){
     this.get_model=function(){
       return this.model;
     },
-
+    this.FillScreenChartProp=function() {
+      console.log("FillScreenChartProp");
+    },
+    this.FillScreenChartData=function() {
+      console.log("FillScreenChartData");
+    },
+    this.FillModelChartProp=function() {
+      console.log("FillModelChartProp");
+    },
+    this.FillCollectionChartData=function() {
+      console.log("FillCollectionChartData");
+    },
+    //------------------------Init ------------------------------
     Chart.addInitializer(function(){
       this.model=new ChartModel();
-      this.chart_view=new ChartView({template: "#chart-template",model:new ChartModel()});
+      this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
       this.data_chart_model=new DataChartModel();
       this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
       this.controller = new Controller();

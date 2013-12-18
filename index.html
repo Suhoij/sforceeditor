@@ -115,7 +115,7 @@
 		    </tbody>
 		  </thead>
 		</table>
-		<a href="#" id="data-add-btn" class="button">Add new item</a>
+		<a  id="data-add-btn" class="button">Add new item</a>
 	       </div>
 	   </fieldset>
     	<a class="close-reveal-modal">&#215;</a> 
@@ -141,7 +141,7 @@
 	      <legend>Common setting</legend>
 	      <div class="row">
 	      <label>Theme</label>
-		<select onchange="" id="themeList" width="50%">		
+		<select name="themeList" onchange="" id="themeList" width="50%">		
 		    <optgroup label="Clear"></optgroup>
 		    <option value="ClearBlue" selected="selected">Clear Blue</option>
 		    <option value="ClearMozaic">Clear Mozaic</option>
@@ -182,19 +182,19 @@
 	      <div class="row">
 		  <div class="large-4 columns">
 		    <label>Title</label>
-		    <input type="text" placeholder="Chart title..." />
+		    <input id="title" type="text" placeholder="Chart title..." />
 		    <label>Width</label>
-		    <input type="text" name="width" placeholder="100" value=100 />
+		    <input id="width" type="text" name="width" placeholder="100" value=100 />
 		    <label>Height</label>
-		    <input type="text" name="height" placeholder="100" value=100 />
+		    <input id="height" type="text" name="height" placeholder="100" value=100 />
 		    
 		    <label for="show-legend">Show legended</label>
 		    <input id="show-legend" type="checkbox">
 		    
 		    <label for="legend">Legend</label>
-		    <input type="text" name="legend" placeholder="100" value=100 />
+		    <input id="legend" type="text" name="legend" placeholder="100" value=100 />
 		      <label>Legend location</label>
-		      <select name="legendlocation" style="width:50%;">
+		      <select id="legendlocation" name="legendlocation" style="width:50%;">
 			  <option value="left">Left</option>
 			  <option selected="selected" value="right">Right</option>
 			  <option value="top">Top</option>
