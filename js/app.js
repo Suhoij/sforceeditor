@@ -77,18 +77,22 @@ MyApp.addRegions({
 MyApp.module("Chart", function(Chart){
     // ----------------------- Chart models --------------------------
     var ChartModel = Backbone.Model.extend({
+        
         defaults: {
             title: "Chart title",
+            width:120,
+            height:120,
             legendLine:1,
       	    legend:  ['15px sans-serif', '#331e11', '#af9960', '#5f3b21'],
       	    showlegend: 'true',
-      	    legendlocation:"left",
+      	    legendlocation:"right",
       	    bordercolor:"black",
             legendbackground:"#eeeeee",
       	    min:0,
       	    max:1,
       	    themeName: "Blue",
-      	    styleName:"ClearBlue",
+            styleName:"ClearBlue",
+      	    themeList:"ClearOrange",
       	    type:"pie",
       	    chart_data:[['New Name' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
         }
@@ -104,6 +108,17 @@ MyApp.module("Chart", function(Chart){
     var ChartView = Backbone.Marionette.ItemView.extend({
 	     //template: "#chart-template",
 	     //model:new ChartModel()
+    });
+    var PropChartView = Backbone.Marionette.ItemView.extend({
+      ui: {
+        title:    {id:"#title",type:"text"},
+        themeList:{id:"#themeList",type:"select"},
+        themeList:{id:"#custom-style",type:"checkbox"},
+        width:    {id:"#width",type:"text"},
+        height:   {id:"#height",type:"text"},
+        showlegend:   {id:"#height",type:"text"},
+        legendlocation: {id:"#legendlocation",type:"select"}
+      }
     });
     var DataItemChartView = Backbone.Marionette.ItemView.extend({
        events: {
@@ -145,26 +160,50 @@ MyApp.module("Chart", function(Chart){
     // };
     // ------------------------- Methods --------------------
     this.show_chart=function() {
-	  console.log("Module Chart ->show_chart");
-	 // new ChartView().render();
-	  //this.view.model=this.model;
-	  //this.view.render();
-    var chartwidget_code=this.chart_view.render().el.innerHTML;
-	  MyApp.chartwidget_code=this.chart_view.render().el.innerHTML;
-	  $("#chartwidget-code").empty().html("<script>"+chartwidget_code+"</script>");
-	  
+      	  console.log("Module Chart ->show_chart");
+      	 // new ChartView().render();
+      	  //this.view.model=this.model;
+      	  //this.view.render();
+          var chartwidget_code=this.chart_view.render().el.innerHTML;
+      	  MyApp.chartwidget_code=this.chart_view.render().el.innerHTML;
+      	  $("#chartwidget-code").empty().html("<script>"+chartwidget_code+"</script>");
+      	  
     },
     this.get_model=function(){
       return this.model;
     },
     this.FillScreenChartProp=function() {
       console.log("FillScreenChartProp");
+      var fields = _.keys(MyApp.Chart.model.attributes);
+      _.each (fields,function(f) {
+          var f_val=MyApp.Chart.model.get(f);
+          //---tags select
+          if (f=="themeList") {
+
+          }
+          //---tags checkbox
+          //---tags input
+          $("#"+f).val(f_val);
+          //console.log("field="+f,MyApp.Chart.model.get(f));
+      });
     },
     this.FillScreenChartData=function() {
       console.log("FillScreenChartData");
     },
     this.FillModelChartProp=function() {
       console.log("FillModelChartProp");
+      var screen_items=$("form[name='chart-prop'] select,input");//---check on ??
+      var chart_prop=[];
+      //--select id,name from screen_items
+      jQuery.each(screen_items,function(i,item){
+                                  chart_prop.push({id:item.id,value:item.value})
+                                }
+      );
+      console.log("chart_prop:",chart_prop);
+     
+      jQuery.each(chart_prop,function(i,prop){
+        MyApp.Chart.model.set(prop.id,prop.value);
+      })
     },
     this.FillCollectionChartData=function() {
       console.log("FillCollectionChartData");
@@ -175,6 +214,8 @@ MyApp.module("Chart", function(Chart){
       this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
       this.data_chart_model=new DataChartModel();
       this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
+      this.prop_chart_view=new PropChartView({template: "#chartControlModal",model:this.model});
+     
       this.controller = new Controller();
       //this.controller.initEvents();
        $("#data-add-btn").click(function(){MyApp.Chart.controller.addData()})
