@@ -104,6 +104,7 @@ MyApp.module("Chart", function(Chart){
           data_i:0
         }
     });
+    var DataChartCollection = Backbone.Collection.extend({})
     // ------------------------  Views ---------------------
     var ChartView = Backbone.Marionette.ItemView.extend({
 	     //template: "#chart-template",
@@ -154,10 +155,7 @@ MyApp.module("Chart", function(Chart){
         }
  
     });
-    // this.initEvents = function(master){
-    //     $("#data-add-btn").click(function(){this.addData()})
-    //     $("#data-del-btn").click(function(){this.delData()})
-    // };
+
     // ------------------------- Methods --------------------
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");
@@ -207,10 +205,20 @@ MyApp.module("Chart", function(Chart){
     },
     this.FillCollectionChartData=function() {
       console.log("FillCollectionChartData");
+      MyApp.Chart.data_chart_collection.reset();
+      $("#chartDataModal  table tbody tr").each(function(i) {
+          var fields = $(this).find("input");
+          var name = fields.eq(0).val();
+          var value = fields.eq(1).val();
+          console.log(name,value);
+          MyApp.Chart.data_chart_collection.add({data_name:name,data_value:value,data_i:i});
+          //--get prop: MyApp.Chart.data_chart_collection.at(0).attributes.data_name
+      });
     },
     //------------------------Init ------------------------------
     Chart.addInitializer(function(){
       this.model=new ChartModel();
+      this.data_chart_collection = new DataChartCollection({model:this.model})
       this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
       this.data_chart_model=new DataChartModel();
       this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
