@@ -28,10 +28,10 @@
             <li class="has-dropdown" id="chart-menu">
               <a href="#">Chart pie</a>
               <ul class="dropdown">
-                <li><a href="#">Pie chart</a></li>
-                <li><a href="#">Line chart</a></li>
-                <li><a href="#">Split chart</a></li>
-                <li><a href="#">Area chart</a></li>
+                <li><a href="#" jq-type="pie">Pie chart</a></li>
+                <li><a href="#" jq-type="line">Line chart</a></li>
+                <li><a href="#" jq-type="spline">Spline chart</a></li>
+                <li><a href="#" jq-type="area">Area chart</a></li>
               </ul>
             </li>
           </ul>
@@ -212,7 +212,7 @@
      </div>
     <!--  -----------------------Chart templatea------------------- -->
     <script type="text/template" id="chart-template">
-	    console.log("tpl chart");
+	    console.log("tpl chart <%= type %>");
 	    var chartType = "<%= type %>";
 	    
 	    var strFormat = "";
@@ -357,6 +357,6 @@
     <script src="ckeditor/ckeditor.js"></script>
     <script src="JSLibrary/js/jquery.jqChart.min.js"></script>
     
-    <script src="js/app.js"></script>
+    <script src="js/app.ob.js"></script>
   </body>
 </html>

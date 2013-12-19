@@ -16,7 +16,15 @@ MyApp.addInitializer(function(options){
   this.sf_app_params={};
   this.options=options;
   this.initChartMenu=function() {  
-     $(".dropdown >li >a").click(function(){$("#chart-menu >a").text($(this).text())})
+     $(".dropdown >li >a").click(function(){
+            var chart_type=$(this).attr("jq-type");
+            console.log(chart_type);
+
+            $("#chart-menu >a").text($(this).text());
+            MyApp.Chart.model.set("type",chart_type);
+            MyApp.Chart.drawChart();  
+          }
+      )
   }
  
 });
@@ -39,8 +47,9 @@ $(document).on('close', '[data-reveal]', function () {
   }
   if (modal[0].id=="chartDataModal") {
       MyApp.Chart.FillCollectionChartData();
+
   }
-  MyApp.Chart.show_chart();
+  MyApp.Chart.drawChart();  
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -91,7 +100,7 @@ MyApp.module("Chart", function(Chart){
             legendbackground:"#eeeeee",
       	    min:0,
       	    max:1,
-      	    themeName: "Blue",
+      	    themeName: "Green",
             styleName:"ClearBlue",
       	    themeList:"ClearOrange",
       	    type:"pie",
@@ -105,7 +114,7 @@ MyApp.module("Chart", function(Chart){
           data_i:0
         }
     });
-    var DataChartCollection = Backbone.Collection.extend({})
+    var DataChartCollection = Backbone.Collection.extend({});
     // ------------------------  Views ---------------------
     var ChartView = Backbone.Marionette.ItemView.extend({
 	     //template: "#chart-template",
@@ -125,7 +134,7 @@ MyApp.module("Chart", function(Chart){
     var DataItemChartView = Backbone.Marionette.ItemView.extend({
        events: {
         'click #data-add-btn': 'addItem',
-        'click .#data-del-btn': 'delItem'    
+        'click #data-del-btn': 'delItem'    
         },
         addItem:function() {alert("Add from dataView")},
         delItem:function() {alert("Del from dataView")}
@@ -174,36 +183,48 @@ MyApp.module("Chart", function(Chart){
     });
 
     // ------------------------- Methods --------------------
+    this.drawChart=function(){
+        this.show_chart();
+        this.setChartData();
+    },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");
       	 // new ChartView().render();
       	  //this.view.model=this.model;
       	  //this.view.render();
+          this.chart_view.model=this.model;
           var chartwidget_code=this.chart_view.render().el.innerHTML;
       	  MyApp.chartwidget_code=this.chart_view.render().el.innerHTML;
       	  $("#chartwidget-code").empty().html("<script>"+chartwidget_code+"</script>");
       	  
     },
-    this.get_model=function(){
-      return this.model;
+    this.setChartData=function(){
+           var collection_data=[];
+           var coll_length=MyApp.Chart.data_chart_collection.length;
+           for (var i=0;i<coll_length;i++) {   
+              var m=MyApp.Chart.data_chart_collection.at(i);
+              collection_data.push([m.get("data_name"),m.get("data_value")]);
+           };
+           $('#chartwidget').jqChart('option', 'series')[0].data=collection_data;
+           $('#chartwidget').jqChart('update');
     },
     this.FillScreenChartProp=function() {
       console.log("FillScreenChartProp");
       var fields = _.keys(MyApp.Chart.model.attributes);
       jQuery.each(fields,function(f) {
-          var f_val=MyApp.Chart.model.get(f);
-          //---tags select
-          if (f=="themeList") {
+              var f_val=MyApp.Chart.model.get(f);
+              //---tags select
+              if (f=="themeList") {
 
-          }
-          //---tags checkbox
-          //---tags input
-          $("#"+f).val(f_val);
-          //console.log("field="+f,MyApp.Chart.model.get(f));
+              }
+              //---tags checkbox
+              //---tags input
+              $("#"+f).val(f_val);
+              //console.log("field="+f,MyApp.Chart.model.get(f));
       });
     },
     this.FillScreenChartData=function() {
-          console.log("FillScreenChartData");
+          console.log("FillScreenChartData");        
           MyApp.Chart.controller.addCollectionData();
     },
     this.FillModelChartProp=function() {
@@ -212,7 +233,7 @@ MyApp.module("Chart", function(Chart){
           var chart_prop=[];
           //--select id,name from screen_items
           jQuery.each(screen_items,function(i,item){
-                                      chart_prop.push({id:item.id,value:item.value})
+                                      chart_prop.push({id:item.id,value:item.value});
                                     }
           );
           //console.log("chart_prop:",chart_prop);
@@ -246,8 +267,8 @@ MyApp.module("Chart", function(Chart){
          
           this.controller = new Controller();
           //this.controller.initEvents();
-           $("#data-add-btn").click(function(){MyApp.Chart.controller.addData()})
-           $("#data-del-btn").click(function(){MyApp.Chart.controller.delData()})
+           $("#data-add-btn").click(function(){MyApp.Chart.controller.addData()});
+           $("#data-del-btn").click(function(){MyApp.Chart.controller.delData()});
     });
   
 });
