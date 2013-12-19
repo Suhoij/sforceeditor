@@ -40,6 +40,7 @@ $(document).on('close', '[data-reveal]', function () {
   if (modal[0].id=="chartDataModal") {
       MyApp.Chart.FillCollectionChartData();
   }
+  MyApp.Chart.show_chart();
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -202,50 +203,51 @@ MyApp.module("Chart", function(Chart){
       });
     },
     this.FillScreenChartData=function() {
-      console.log("FillScreenChartData");
-      MyApp.Chart.controller.addCollectionData();
+          console.log("FillScreenChartData");
+          MyApp.Chart.controller.addCollectionData();
     },
     this.FillModelChartProp=function() {
-      console.log("FillModelChartProp");
-      var screen_items=$("form[name='chart-prop'] select,input");//---check on ??
-      var chart_prop=[];
-      //--select id,name from screen_items
-      jQuery.each(screen_items,function(i,item){
-                                  chart_prop.push({id:item.id,value:item.value})
-                                }
-      );
-      console.log("chart_prop:",chart_prop);
-     
-      jQuery.each(chart_prop,function(i,prop){
-        MyApp.Chart.model.set(prop.id,prop.value);
-      })
+          console.log("FillModelChartProp");
+          var screen_items=$("form[name='chart-prop'] select,input");//---check on ??
+          var chart_prop=[];
+          //--select id,name from screen_items
+          jQuery.each(screen_items,function(i,item){
+                                      chart_prop.push({id:item.id,value:item.value})
+                                    }
+          );
+          //console.log("chart_prop:",chart_prop);
+         
+          jQuery.each(chart_prop,function(i,prop){
+            MyApp.Chart.model.set(prop.id,prop.value);
+          });
+
     },
     this.FillCollectionChartData=function() {
-      console.log("FillCollectionChartData");
-      MyApp.Chart.data_chart_collection.reset();
-      $("#chartDataModal  table tbody tr").each(function(i) {
-          var fields = $(this).find("input");
-          var name = fields.eq(0).val();
-          var value = fields.eq(1).val();
-          console.log(name,value);
-          MyApp.Chart.data_chart_collection.add({data_name:name,data_value:value,data_i:i});
-          //--get prop: MyApp.Chart.data_chart_collection.at(0).attributes.data_name
-      });
+          console.log("FillCollectionChartData");
+          MyApp.Chart.data_chart_collection.reset();
+          $("#chartDataModal  table tbody tr").each(function(i) {
+              var fields = $(this).find("input");
+              var name = fields.eq(0).val();
+              var value = fields.eq(1).val();
+              console.log(name,value);
+              MyApp.Chart.data_chart_collection.add({data_name:name,data_value:value,data_i:i});
+              //--get prop: MyApp.Chart.data_chart_collection.at(0).attributes.data_name
+          });
     },
     //------------------------Init ------------------------------
     Chart.addInitializer(function(){
-      this.model=new ChartModel();
-      this.data_chart_collection = new DataChartCollection({data_name:"Name..",data_value:0,data_i:0});
-      //this.data_chart_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
-      this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
-      this.data_chart_model=new DataChartModel();
-      this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
-      this.prop_chart_view=new PropChartView({template: "#chartControlModal",model:this.model});
-     
-      this.controller = new Controller();
-      //this.controller.initEvents();
-       $("#data-add-btn").click(function(){MyApp.Chart.controller.addData()})
-       $("#data-del-btn").click(function(){MyApp.Chart.controller.delData()})
+          this.model=new ChartModel();
+          this.data_chart_collection = new DataChartCollection({data_name:"Name..",data_value:0,data_i:0});
+          //this.data_chart_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
+          this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
+          this.data_chart_model=new DataChartModel();
+          this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
+          this.prop_chart_view=new PropChartView({template: "#chartControlModal",model:this.model});
+         
+          this.controller = new Controller();
+          //this.controller.initEvents();
+           $("#data-add-btn").click(function(){MyApp.Chart.controller.addData()})
+           $("#data-del-btn").click(function(){MyApp.Chart.controller.delData()})
     });
   
 });
