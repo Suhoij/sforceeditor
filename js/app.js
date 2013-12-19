@@ -136,12 +136,28 @@ MyApp.module("Chart", function(Chart){
         initialize: function(options){
           //this.stuff = options.stuff;
         },
-       
+        addCollectionData:function() {
+            if ( MyApp.Chart.data_chart_collection.length <=1) {return;}
+            $("#chartDataModal table tbody").empty();
+            var coll_length=MyApp.Chart.data_chart_collection.length;
+            for (var i=0;i<coll_length;i++) {            
+                var chart_data_cur=MyApp.Chart.data_chart_collection.at(i);
+                MyApp.Chart.data_item_chart_view.model=chart_data_cur;
+                var row_tpl= MyApp.Chart.data_item_chart_view.render().el.innerHTML;
+                $("#chartDataModal table tbody").append(row_tpl);
+            };
+            //---for delete row-------------
+            $(".data-del").click(function(){
+              $(this).parent().parent().remove();
+            });
+           
+        },
         addData: function(){
           //this.trigger("data:done", this.stuff);
           //alert("addData from chart controller");
           var dt_tpl= MyApp.Chart.data_item_chart_view.render().el.innerHTML;
           $("#chartDataModal table tbody").append(dt_tpl);
+          //---for delete row-------------
           $(".data-del").click(function(){
               $(this).parent().parent().remove();
           });
@@ -173,7 +189,7 @@ MyApp.module("Chart", function(Chart){
     this.FillScreenChartProp=function() {
       console.log("FillScreenChartProp");
       var fields = _.keys(MyApp.Chart.model.attributes);
-      _.each (fields,function(f) {
+      jQuery.each(fields,function(f) {
           var f_val=MyApp.Chart.model.get(f);
           //---tags select
           if (f=="themeList") {
@@ -187,6 +203,7 @@ MyApp.module("Chart", function(Chart){
     },
     this.FillScreenChartData=function() {
       console.log("FillScreenChartData");
+      MyApp.Chart.controller.addCollectionData();
     },
     this.FillModelChartProp=function() {
       console.log("FillModelChartProp");
@@ -218,7 +235,8 @@ MyApp.module("Chart", function(Chart){
     //------------------------Init ------------------------------
     Chart.addInitializer(function(){
       this.model=new ChartModel();
-      this.data_chart_collection = new DataChartCollection({model:this.model})
+      this.data_chart_collection = new DataChartCollection({data_name:"Name..",data_value:0,data_i:0});
+      //this.data_chart_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
       this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
       this.data_chart_model=new DataChartModel();
       this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
