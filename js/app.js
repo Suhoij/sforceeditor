@@ -15,12 +15,17 @@ MyApp.addInitializer(function(options){
   this.state='init';
   this.sf_app_params={};
   this.options=options;
+  this.initHeadMenu=function() {
+      $("#head-menu-video").click(function() {MyApp.Video.showContent();}   );
+      $("#head-menu-slide").click(function() {MyApp.Slide.showContent();}   );
+      $("#head-menu-sortable").click(function() {MyApp.Sortable.showContent();}   );
+  };
   this.initChartMenu=function() {  
      $(".dropdown >li >a").click(function(){
             var chart_type=$(this).attr("jq-type");
             console.log(chart_type);
 
-            $("#chart-menu >a").text($(this).text());
+            $("#chart-menu >a").text($(this).text());           
             MyApp.Chart.model.set("type",chart_type);
             MyApp.Chart.drawChart();  
           }
@@ -59,6 +64,7 @@ MyApp.on("initialize:after", function(options){
   if (Backbone.history){
       Backbone.history.start();
       console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
+      MyApp.initHeadMenu();
       MyApp.initChartMenu();
       //----------Modules start----
       var chart_module = MyApp.module("Chart");
@@ -83,12 +89,70 @@ MyApp.addRegions({
  
 });
 
-//-----------------------------MODULES--------------------------------
+//============================ MODULES ===============================
+
+//--------------------------- Module Sortable-------------------------
+MyApp.module("Sortable", function(Sortable){
+   //------------------------Init ------------------------------
+    Sortable.addInitializer(function(){
+    });
+    //-------------------------Methods---------------------------
+    //-------------------------Models----------------------------
+    //-------------------------Views-----------------------------
+});
+//------------------------end Module Sortable-------------------------
+
+//--------------------------- Module Slide ---------------------------
+MyApp.module("Slide", function(Slide){
+   //------------------------Init ------------------------------
+    Slide.addInitializer(function(){
+    });
+    //-------------------------Methods---------------------------
+    //-------------------------Models----------------------------
+    //-------------------------Views-----------------------------
+});
+//------------------------end Module Slide -------------------------
+
+//----Video--Video--Video--Video - MODULE Video - Video--Video--Video-
+MyApp.module("Video", function(Video){
+   //------------------------Init ------------------------------
+    Video.addInitializer(function(){
+      this.model      = new VideoModel();
+      this.video_view = new VideoView();
+    });
+    //-------------------------Methods---------------------------
+    this.showContent=function() {
+      $("#chartwidget-content").hide();
+      $("#videowidget-content").show();
+      if ($("#videowidget-content").length==0) {
+          this.video_view.model=this.model;
+          $("#allwidget-content").append(this.video_view.render().el.innerHTML);
+      }
+    };
+    //-------------------------Models----------------------------
+    var VideoModel = Backbone.Model.extend({
+       defaults: {
+         video_id:"",
+         width:120,
+         height:120,
+         autoplay:0
+       }
+    });
+    //-------------------------Views-----------------------------
+     var VideoView = Backbone.Marionette.ItemView.extend({
+       template: "#main-video-template",
+       model:this.model
+    });
+});
+//------------------------end Module Video -------------------------
+
+//----CHART--CHART--CHART--CHART Module Chart --CHART--CHART--CHART--CHART--
 MyApp.module("Chart", function(Chart){
-    // ----------------------- Chart models --------------------------
+    // ---------------------- Chart models --------------------------
     var ChartModel = Backbone.Model.extend({
         
         defaults: {
+            activechart:1,
             title: "Chart title",
             width:120,
             height:120,
@@ -184,14 +248,37 @@ MyApp.module("Chart", function(Chart){
 
     // ------------------------- Methods --------------------
     this.drawChart=function(){
+        this.showContent();
         this.show_chart();
         this.setChartData();
+    },
+    this.setChartTheme=function() {
+      //---select params
+      //---write css link
+      var themeList=this.model.get("themeList");
+      console.log("Module Chart ->setChartTheme themeList=",themeList);
+      this.model.set("themeName",themeList.split("-")[1]);
+      this.model.set("styleName",themeList.split("-")[0]);
+      var theme_css_file="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
+      jQuery("#chartwidget-theme").html(theme_css_file);
+      //console.log(theme_css_file);
+    },
+    this.showContent=function() {
+      $("#chartwidget-content").show();
+      $("#videowidget-content").hide();
+      // if ($("#chartwidget-content").length==0) {
+      //       this.chart_view.model=this.model;
+      //       this.chart_view.template="#main-chart-template";
+      //       $("#allwidget-content").html(this.chart_view.render().el.innerHTML);
+      //       this.chart_view.template="#chart-template";
+      // }
     },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");
       	 // new ChartView().render();
       	  //this.view.model=this.model;
       	  //this.view.render();
+          this.setChartTheme();
           this.chart_view.model=this.model;
           var chartwidget_code=this.chart_view.render().el.innerHTML;
       	  MyApp.chartwidget_code=this.chart_view.render().el.innerHTML;

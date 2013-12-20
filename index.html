@@ -22,9 +22,9 @@
         <section class="top-bar-section">
           <ul>
             <li><a href="#">Home</a></li>
-            <li><a href="#">Widget video</a></li>
-            <li><a href="#">Widget slider</a></li>
-            <li><a href="#">Widget sortable</a></li>
+            <li><a href="#" id="head-menu-video">Widget video</a></li>
+            <li><a href="#" id="head-menu-slide" >Widget slider</a></li>
+            <li><a href="#" id="head-menu-sortable">Widget sortable</a></li>
             <li class="has-dropdown" id="chart-menu">
               <a href="#">Chart pie</a>
               <ul class="dropdown">
@@ -40,6 +40,9 @@
     </header>
 
     <div class="row  content">
+    <div id="allwidget-content">
+    <!-- chartwidget-content -->
+    <div id="chartwidget-content">
       <!--sidebar-->
       <aside class="large-4  columns">
         <div id="left-sidebar"  class="ui-island" contenteditable='true'>
@@ -84,12 +87,92 @@
 
 			      </figure>
 	      </div>
+	      <div id="chartwidget-theme"></div>
 	      <div id="chartwidget-code"></div>
           </div>
         </div>
       </div>
+      </div><!-- chartwidget-content -->
+    
+      </div>
     </div>
     <!-- =========================Templates=============================== -->
+	<!--   ---------------------- Video TPL ------------------------------ -->
+	<script type="text/template" id="main-video-template">
+	<!-- videowidget-content -->
+    <div id="videowidget-content">
+		 <div class="large-9  columns  ui-island content__main">
+			<div class="row">
+			    
+				<div class="large-4 columns">
+					<img src="img/youtube.png" />
+				</div>
+				<div class="large-4 columns">
+					<a  id="video-control-btn" class="button">Video controls</a>
+				</div>
+			</div>
+			
+		 </div>
+		 <div class="large-9 column left ui-island" id="video-content">
+		 </div>
+    </div><!-- videowidget-content -->
+	</script>
+
+	<!--  --------------------- Chart TPL ----------------------------- -->
+	<script type="text/template" id="main-chart-template">
+	<!-- chartwidget-content -->
+    <div id="chartwidget-content">
+      <!--sidebar-->
+      <aside class="large-4  columns">
+        <div id="left-sidebar"  class="ui-island" contenteditable='true'>
+          <div class="rich-text">
+	      <header>
+		<h2>Lorem ipsum</h2>
+	      </header>
+	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque eligendi esse harum maxime perferendis? Asperiores commodi exercitationem facere laudantium perspiciatis praesentium soluta? Ad asperiores at consectetur ipsa laudantium odit quod.</p>
+	      <footer>
+		<button class="custom-button">Lorem ipsum dolor</button>
+	      </footer>
+          </div>
+        </div>
+      </aside>
+      <!--main column-->
+      <div class="large-8  columns  content__main">
+        <div id="title-chart" class="ui-island  hero" contenteditable='true'>
+          <div class="rich-text">
+	      <header>
+		<h1>Lorem ipsum</h1>
+		
+	      </header>
+	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorem inventore nemo nesciunt optio quis sapiente sunt! Adipisci consectetur culpa ducimus id in, nam odit rem similique totam voluptas voluptatem?</p>
+	  </div>
+       </div>
+        <div id="body-chart" class="ui-island">
+          <div class="chart">
+         <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
+             <div class="row center">
+             		<a class="button lage left" href="#" data-reveal-id="chartControlModal">Chart control</a>
+             		<a class="button lage right" href="#" data-reveal-id="chartDataModal">Chart data</a>
+             </div>
+             <div class="row">
+			      <figure class="chart-figure">
+					<div id="chartstub">
+					  <figcaption>Simple chart</figcaption>
+					  <img src="img/chart.png" alt=""/>
+					</div>
+					<div id="chartwidget"  style="width:100; height:100%;">
+					
+					</div>
+
+			      </figure>
+	      </div>
+	      <div id="chartwidget-theme"></div>
+	      <div id="chartwidget-code"></div>
+          </div>
+        </div>
+      </div>
+      </div><!-- chartwidget-content -->
+	</script>
     <!-- -----------------------TPL chart Data ------------------------ -->
     <div id="chartDataModal" class="reveal-modal" data-reveal>
     	<fieldset>
@@ -142,67 +225,86 @@
 	  <fieldset>
 	      <legend>Common setting</legend>
 	      <div class="row">
-	      <label>Theme</label>
-		<select name="themeList" onchange="" id="themeList" width="50%">		
-		    <optgroup label="Clear"></optgroup>
-		    <option value="ClearBlue" selected="selected">Clear Blue</option>
-		    <option value="ClearMozaic">Clear Mozaic</option>
-		    <option value="ClearGreen">Clear Green</option>
-		    <option value="ClearGrey">Clear Grey</option>
-		    <option value="ClearOrange">Clear Orange</option>
-		    <option value="ClearRed">Clear Red</option>
+	        <!-- column-1-->
+	      	<div class="large-4 columns">
+	      		<label for="themeList">Theme</label>
+				<select name="themeList" onchange="" id="themeList" >		
+				    <optgroup label="Clear"></optgroup>
+				    <option value="Clear-Blue" selected="selected">Clear Blue</option>
+				    <option value="Clear-Mozaic">Clear Mozaic</option>
+				    <option value="Clear-Green">Clear Green</option>
+				    <option value="Clear-Grey">Clear Grey</option>
+				    <option value="Clear-Orange">Clear Orange</option>
+				    <option value="Clear-Red">Clear Red</option>
 
-		    <optgroup label="Dotted"></optgroup>
-		    <option value="DottedBlue">Dotted Blue</option>
-		    <option value="DottedMozaic">Dotted Mozaic</option>
-		    <option value="DottedGreen">Dotted Green</option>
-		    <option value="DottedGrey">Dotted Grey</option>
-		    <option value="DottedOrange">Dotted Orange</option>
-		    <option value="DottedRed">Dotted Red</option>
+				    <optgroup label="Dotted"></optgroup>
+				    <option value="Dotted-Blue">Dotted Blue</option>
+				    <option value="Dotted-Mozaic">Dotted Mozaic</option>
+				    <option value="Dotted-Green">Dotted Green</option>
+				    <option value="Dotted-Grey">Dotted Grey</option>
+				    <option value="Dotted-Orange">Dotted Orange</option>
+				    <option value="Dotted-Red">Dotted Red</option>
 
-		    <optgroup label="Rounded"></optgroup>
-		    <option value="RoundedBlue">Rounded Blue</option>
-		    <option value="RoundedMozaic">Rounded Mozaic</option>
-		    <option value="RoundedGreen">Rounded Green</option>
-		    <option value="RoundedGrey">Rounded Grey</option>
-		    <option value="RoundedOrange">Rounded Orange</option>
-		    <option value="RoundedRed">Rounded Red</option>
+				    <optgroup label="Rounded"></optgroup>
+				    <option value="Rounded-Blue">Rounded Blue</option>
+				    <option value="Rounded-Mozaic">Rounded Mozaic</option>
+				    <option value="Rounded-Green">Rounded Green</option>
+				    <option value="Rounded-Grey">Rounded Grey</option>
+				    <option value="Rounded-Orange">Rounded Orange</option>
+				    <option value="Rounded-Red">Rounded Red</option>
 
-		    <optgroup label="Square"></optgroup>
-		    <option value="SquareBlue">Square Blue</option>
-		    <option value="SquareMozaic">Square Mozaic</option>
-		    <option value="SquareGreen">Square Green</option>
-		    <option value="SquareGrey">Square Grey</option>
-		    <option value="SquareOrange">Square Orange</option>
-		    <option value="SquareRed">Square Red</option>
-		</select>
-		<input id="custom-style" type="checkbox"><label for="custom-style">Custom style</label>
+				    <optgroup label="Square"></optgroup>
+				    <option value="Square-Blue">Square Blue</option>
+				    <option value="Square-Mozaic">Square Mozaic</option>
+				    <option value="Square-Green">Square Green</option>
+				    <option value="Square-Grey">Square Grey</option>
+				    <option value="Square-Orange">Square Orange</option>
+				    <option value="Square-Red">Square Red</option>
+				</select>
+			</div><!-- column-1-->
+			<!-- column-2-->
+			<div class="large-4 columns">
+				<label for="custom-style">Custom style</label>
+				<input id="custom-style" type="checkbox">
+			</div><!-- column-2-->
+			<!-- column-3-->
+			<div class="large-4 columns">
+				<label for="activechart">Active</label>
+				<input id="activechart" type="checkbox">				
+			</div>
+			<!-- column-3-->
 	      </div>		
 	   </fieldset>
 	   <fieldset>
 	      <legend>Chart settings</legend>
 	      <div class="row">
-		  <div class="large-4 columns">
-		    <label>Title</label>
-		    <input id="title" type="text" placeholder="Chart title..." />
-		    <label>Width</label>
-		    <input id="width" type="text" name="width" placeholder="100" value=100 />
-		    <label>Height</label>
-		    <input id="height" type="text" name="height" placeholder="100" value=100 />
-		    
-		    <label for="showlegend">Show legended</label>
-		    <input  id="showlegend" type="checkbox">
-		    
-		    <label for="legend">Legend style</label>
-		    <input id="legend" type="text" name="legend" placeholder="100" value=100 />
-		      <label for="legendlocation">Legend location</label>
-		      <select id="legendlocation" name="legendlocation" style="width:50%;">
-			  <option value="left">Left</option>
-			  <option selected="selected" value="right">Right</option>
-			  <option value="top">Top</option>
-			  <option value="bottom">Bottom</option>
-		      </select>
-		   </div>
+	      <!-- colum 1 -->
+			  <div class="large-4 columns">
+			    <label>Title</label>
+			    <input id="title" type="text" placeholder="Chart title..." />
+			    <label>Width</label>
+			    <input id="width" type="text" name="width" placeholder="100" value=100 />
+			    <label>Height</label>
+			    <input id="height" type="text" name="height" placeholder="100" value=100 />			    
+		
+			   </div>
+			<!-- colum 1 -->
+			<!-- colum 2 -->
+			 <div class="large-4 columns">
+			 	    <label for="showlegend">Show legended</label>
+			    	<input  id="showlegend" type="checkbox" ></input>
+			    	<br>			  
+				    <label for="legend">Legend style</label>
+				    <input id="legend" type="text" name="legend" placeholder="100" value=100 />
+			      <label for="legendlocation">Legend location</label>
+			      <select id="legendlocation" name="legendlocation" >
+						  <option value="left">Left</option>
+						  <option selected="selected" value="right">Right</option>
+						  <option value="top">Top</option>
+						  <option value="bottom">Bottom</option>
+			      </select>
+			 </div>
+			<!-- colum 2 -->
 	      </div>
 	   </fieldset>
 	   </form>
@@ -233,7 +335,7 @@
                 axesSet = [];
                 axesSet.push({maximum: 100, type: 'category'});
             }
-            
+        
          switch (theme) { 
 	      case 'Grey': 
 		      var paletteColors = ['#c9c8c9', '#3d3d3d', '#a3a2a3', '#696769', '#888688']; 
@@ -271,7 +373,12 @@
 		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['12px sans-serif', '#303130']; 
 		      var legend = ['15px sans-serif', '#0a0a0a', '#aaaaaa', '#303130']; 
 		      break; 
-	      default : break; 
+	      default : //--Green
+ 			  var paletteColors = ['#eae0bf', '#96704f', '#769f3f', '#af9960', '#acd662']; 
+		      var strokeSeries = '#331e11'; 
+		      var labelFont = (chartType == "pie") ? ['18px sans-serif', '#331e11'] : ['13px sans-serif', '#331e11']; 
+		      var legend = ['15px sans-serif', '#331e11', '#af9960', '#5f3b21']; 
+	      break; 
 	      }; 
 	      switch (style) { 
 		case 'Square': 
@@ -357,6 +464,6 @@
     <script src="ckeditor/ckeditor.js"></script>
     <script src="JSLibrary/js/jquery.jqChart.min.js"></script>
     
-    <script src="js/app.ob.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
