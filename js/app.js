@@ -43,18 +43,25 @@ $(document).on('open', '[data-reveal]', function () {
   if (modal[0].id=="chartDataModal") {
       MyApp.Chart.FillScreenChartData();
   }
+  if (modal[0].id=="videoDataModal") {
+  }
 });
 $(document).on('close', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
   if (modal[0].id=="chartControlModal") {
       MyApp.Chart.FillModelChartProp();
+      MyApp.Chart.drawChart(); 
   }
   if (modal[0].id=="chartDataModal") {
       MyApp.Chart.FillCollectionChartData();
-
+      MyApp.Chart.drawChart(); 
   }
-  MyApp.Chart.drawChart();  
+  if (modal[0].id=="videoControlModal") {
+        MyApp.Video.FillModelVideoProp();
+        MyApp.Video.showVideoPlayer();
+  }
+  
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -117,30 +124,79 @@ MyApp.module("Slide", function(Slide){
 MyApp.module("Video", function(Video){
    //------------------------Init ------------------------------
     Video.addInitializer(function(){
-      this.model      = new VideoModel();
-      this.video_view = new VideoView();
+          this.ext_player=false;//--true if added in head control files
+          this.model      = new VideoModel();
+          this.video_view = new VideoView();
+          this.video_player_view = new VideoPlayerView();
     });
     //-------------------------Methods---------------------------
+    this.showVideoPlayer=function(){
+          this.video_player_view.model=this.model;
+          if (this.video_player_view.model.get("video_source")=="Youtube"){
+              this.video_player_view.template="#player-youtube-video-template";
+              $("#video-logo").html("<img src='img/youtube.png' />");
+          } else {
+              if (this.ext_player == false) {
+                  $('head').append('<link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet"/>');
+                  $('head').append('<script src="http://vjs.zencdn.net/4.1/video.js"></script>');
+                  this.ext_player=true;
+                  this.video_player_view.model.set("video_id","http://video-js.zencoder.com/oceans-clip.mp4");
+              }
+              this.video_player_view.template="#player-other-video-template";
+              $("#video-logo").html("<img src='img/video.jpeg'  />");
+          }
+          var vp_html=this.video_player_view.render().el.innerHTML;
+          // console.log("-------------------------vp html-------------------");
+          // console.log(vp_html);
+          $("#video-player").html(vp_html);
+    };
     this.showContent=function() {
-      $("#chartwidget-content").hide();
-      $("#videowidget-content").show();
-      if ($("#videowidget-content").length==0) {
-          this.video_view.model=this.model;
-          $("#allwidget-content").append(this.video_view.render().el.innerHTML);
-      }
+          $("#chartwidget-content").hide();
+          $("#videowidget-content").show();
+          if ($("#videowidget-content").length==0) {
+              this.video_view.model=this.model;         
+              $("#allwidget-content").append(this.video_view.render().el.innerHTML);
+              $("#video-control-btn").click(function(){ $("#videoControlModal").foundation('reveal', 'open');})
+          }
+    };
+    this.FillModelVideoProp=function() {
+          var screen_items=$("#videoControlModal  :input");
+          var prop_arr=[];
+          //--select id,name from screen_items
+          jQuery.each(screen_items,function(i,item){
+                                    var id_v=item.id,value_v=item.value;
+                                    if (item.type =="checkbox") {                                       
+                                        if (item.checked == true) {
+                                                value_v=1;
+                                        } else { value_v=0;}
+                                    }
+                                    prop_arr.push({id:id_v,value:value_v});
+                                    }
+          );
+          
+          jQuery.each(prop_arr,function(i,prop){
+              MyApp.Video.model.set(prop.id,prop.value);
+              //console.log("FillModelVideoProp prop.id=",prop.id,prop.value);
+          });
     };
     //-------------------------Models----------------------------
     var VideoModel = Backbone.Model.extend({
        defaults: {
-         video_id:"",
-         width:120,
-         height:120,
+         video_active:1,
+         video_source:"Youtube",
+         video_id:"nJQW-rbHMS0",//--salesforce--
+         video_width:"100%",
+         video_height:"100%",
          autoplay:0
        }
     });
     //-------------------------Views-----------------------------
      var VideoView = Backbone.Marionette.ItemView.extend({
        template: "#main-video-template",
+       model:this.model
+    });
+    var VideoPlayerView = Backbone.Marionette.ItemView.extend({
+       template: "#player-video-template",
        model:this.model
     });
 });
@@ -168,7 +224,7 @@ MyApp.module("Chart", function(Chart){
             styleName:"ClearBlue",
       	    themeList:"ClearOrange",
       	    type:"pie",
-      	    chart_data:[['New Name' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
+      	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
         }
     });
     var DataChartModel = Backbone.Model.extend({
@@ -317,16 +373,24 @@ MyApp.module("Chart", function(Chart){
     this.FillModelChartProp=function() {
           console.log("FillModelChartProp");
           var screen_items=$("form[name='chart-prop'] select,input");//---check on ??
-          var chart_prop=[];
+          var prop_arr=[];
           //--select id,name from screen_items
           jQuery.each(screen_items,function(i,item){
-                                      chart_prop.push({id:item.id,value:item.value});
-                                    }
+                                      //prop_arr.push({id:item.id,value:item.value});
+                                        var id_v=item.id,value_v=item.value;
+                                        if (item.type =="checkbox") {                                       
+                                            if (item.checked == true) {
+                                                    value_v=1;
+                                            } else { value_v=0;}
+                                        }
+                                        prop_arr.push({id:id_v,value:value_v});
+                                        }
+                                    
           );
           //console.log("chart_prop:",chart_prop);
          
-          jQuery.each(chart_prop,function(i,prop){
-            MyApp.Chart.model.set(prop.id,prop.value);
+          jQuery.each(prop_arr,function(i,prop){
+              MyApp.Chart.model.set(prop.id,prop.value);
           });
 
     },

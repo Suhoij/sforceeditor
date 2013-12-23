@@ -8,6 +8,7 @@
     <title>Sforce editor | Welcome</title>
     <link rel="stylesheet" href="css/app.css" />
     <script src="bower_components/modernizr/modernizr.js"></script>
+    	
   </head>
   <body>
     
@@ -96,27 +97,43 @@
     
       </div>
     </div>
-    <!-- =========================Templates=============================== -->
-	<!--   ---------------------- Video TPL ------------------------------ -->
+    <!-- ========================= TEMPLATES =============================== -->
+	<!--   ---------------------- main Video TPL ------------------------------ -->
 	<script type="text/template" id="main-video-template">
 	<!-- videowidget-content -->
     <div id="videowidget-content">
 		 <div class="large-9  columns  ui-island content__main">
 			<div class="row">
-			    
+
 				<div class="large-4 columns">
+					<br><br>
+					<a  id="video-control-btn" class="button" data-reveal-id="videoControlModal">Video controls</a>
+				</div>
+				<div class="large-4 columns" id="video-logo">
 					<img src="img/youtube.png" />
 				</div>
-				<div class="large-4 columns">
-					<a  id="video-control-btn" class="button">Video controls</a>
-				</div>
+
 			</div>
 			
 		 </div>
-		 <div class="large-9 column left ui-island" id="video-content">
+		 <div class="large-9 column left ui-island" id="video-player">
 		 </div>
     </div><!-- videowidget-content -->
 	</script>
+ 	<!--   ---------------------- player Video TPL ------------------------------ -->
+ 	<script type="text/template" id="player-youtube-video-template" >
+ 		<div class="flex-video">	
+			<iframe class="youtube-player" type="text/html" width="<%= video_width %>" height="<%= video_height %>" src="http://www.youtube.com/embed/<%= video_id %>?autohide=1&autoplay=<%= autoplay %>" frameborder="0"></iframe>
+		</div>
+ 	</script>
+
+ 	<script type="text/template" id="player-other-video-template" >
+ 		<video class="video-js vjs-default-skin" width="<%= video_width %>" height="<%= video_height %>"
+			poster="http://video-js.zencoder.com/oceans-clip.png"	data-setup='{ "controls": true, "autoplay": <%= autoplay %>, "preload": "auto" }' >
+
+			<source src="<%= video_id %>" type='video/mp4' />
+		</video>
+ 	</script>
 
 	<!--  --------------------- Chart TPL ----------------------------- -->
 	<script type="text/template" id="main-chart-template">
@@ -151,7 +168,7 @@
           <div class="chart">
          <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
              <div class="row center">
-             		<a class="button lage left" href="#" data-reveal-id="chartControlModal">Chart control</a>
+             		<a class="button lage left" href="#"  data-reveal-id="chartControlModal">Chart control</a>
              		<a class="button lage right" href="#" data-reveal-id="chartDataModal">Chart data</a>
              </div>
              <div class="row">
@@ -219,10 +236,46 @@
 			  </td>
 		</tr>	
  	</script>
+
+ 	<!--  ============================ MODAL WINDOWS ========================== -->
+ 	<div id="videoControlModal" class="reveal-modal" data-reveal>
+ 		<fieldset>
+ 			<legend>Video setting</legend>
+ 			<div class="row">
+ 				<!-- <form name="video-prop"> -->
+ 				<div class="large-5 columns">
+ 					<label for="video-source">Video source</label>
+ 					<select id="video_source">
+ 						<option value="Youtube" selected>Youtube</option>
+ 						<option value="Custom-URL">Custom URL</option>
+						<option value="SF-Content">SF Content</option>
+ 					</select>
+ 				
+					 <label>Width</label>
+				     <input id="video_width" type="text" name="video_width" placeholder="100%" value="100%" />
+				     <label>Height</label>
+				     <input id="video_height" type="text" name="video_height" placeholder="100%" value="500" />			    
+
+ 				</div>
+ 				<div class="large-4  large-offset-3 columns">
+ 					<label for="video_active">Active</label>
+					<input id="video_active" type="checkbox" checked /><br><br>
+					
+					<label for="autoplay">Autoplay</label>
+					<input id="autoplay" type="checkbox" /><br><br>
+					
+					<label for="video_id">Video Id</label>
+					<input  id="video_id" type="text" value="nJQW-rbHMS0" placeholder="nJQW-rbHMS0" />
+ 				</div>
+ 				<!-- </form> -->
+ 			</div>
+ 		</fieldset>
+ 		<a class="close-reveal-modal">&#215;</a> 
+ 	</div>
 	<!--  ------------------------- Control Modal window ---------------------- -->
     <div id="chartControlModal" class="reveal-modal" data-reveal> 
        <form name="chart-prop">
-	  <fieldset>
+	   <fieldset>
 	      <legend>Common setting</legend>
 	      <div class="row">
 	        <!-- column-1-->
@@ -463,7 +516,7 @@
     <script src="backbone.marionette/json2.js"></script> 
     <script src="ckeditor/ckeditor.js"></script>
     <script src="JSLibrary/js/jquery.jqChart.min.js"></script>
-    
+    <script src="http://vjs.zencdn.net/4.1/video.js"></script> 
     <script src="js/app.ob.js"></script>
   </body>
 </html>
