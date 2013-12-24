@@ -42,8 +42,15 @@
 
     <div class="row  content">
     <div id="allwidget-content">
-    <!-- chartwidget-content -->
-    <div id="chartwidget-content">
+    	
+     	<!-- slidewidget-content -->
+	  	<div id="sliderwidget-content">
+	  	</div>
+	   	<!-- sortablewidget-content -->
+	  	<div id="sortablewidget-content">
+	  	</div>
+	  <!-- chartwidget-content -->
+     <div id="chartwidget-content">
       <!--sidebar-->
       <aside class="large-4  columns">
         <div id="left-sidebar"  class="ui-island" contenteditable='true'>
@@ -94,10 +101,40 @@
         </div>
       </div>
       </div><!-- chartwidget-content -->
-    
+     
+
       </div>
     </div>
     <!-- ========================= TEMPLATES =============================== -->
+ 	<!--   ---------------------- main Sortable TPL ------------------------------ -->
+ 	 <script type="text/template" id="main-sortable-template">
+ 	 	<div class="large-9  columns  ui-island content__main">
+				<div class="row">
+					<div class="large-4 columns">
+						<a  id="sortable-control-btn" class="button" data-reveal-id="sortableControlModal">Sortable controls</a>
+					</div>
+					<div class="large-4 columns" id="slider-logo">
+						<img src="img/sortable.png" />
+					</div>
+				</div>
+			</div>
+ 	 </script>
+
+    <!--   ---------------------- main Slide TPL ------------------------------ -->
+    <script type="text/template" id="main-slide-template">
+
+			<div class="large-9  columns  ui-island content__main">
+				<div class="row">
+					<div class="large-4 columns">
+						<a  id="slider-control-btn" class="button" data-reveal-id="sliderControlModal">Slider controls</a>
+					</div>
+					<div class="large-4 columns" id="slider-logo">
+						<img src="img/slider.png" />
+					</div>
+				</div>
+			</div>
+		
+    </script>
 	<!--   ---------------------- main Video TPL ------------------------------ -->
 	<script type="text/template" id="main-video-template">
 	<!-- videowidget-content -->
@@ -238,6 +275,102 @@
  	</script>
 
  	<!--  ============================ MODAL WINDOWS ========================== -->
+ 	<!-- ----------------------------- Slider Control Modal -------------------- -->
+	<div id="sliderControlModal" class="reveal-modal" data-reveal>
+		<fieldset>
+ 			<legend>Slider setting</legend>
+ 			<div class="row">
+ 			    <!-- column-1-->
+	      	<div class="large-4 columns">
+	      		<label for="themeList">Theme</label>
+				<select name="themeList" onchange="" id="themeList" >		
+				    <optgroup label="Clear"></optgroup>
+				    <option value="Clear-Blue" selected="selected">Clear Blue</option>
+				    <option value="Clear-Mozaic">Clear Mozaic</option>
+				    <option value="Clear-Green">Clear Green</option>
+				    <option value="Clear-Grey">Clear Grey</option>
+				    <option value="Clear-Orange">Clear Orange</option>
+				    <option value="Clear-Red">Clear Red</option>
+
+				    <optgroup label="Dotted"></optgroup>
+				    <option value="Dotted-Blue">Dotted Blue</option>
+				    <option value="Dotted-Mozaic">Dotted Mozaic</option>
+				    <option value="Dotted-Green">Dotted Green</option>
+				    <option value="Dotted-Grey">Dotted Grey</option>
+				    <option value="Dotted-Orange">Dotted Orange</option>
+				    <option value="Dotted-Red">Dotted Red</option>
+
+				    <optgroup label="Rounded"></optgroup>
+				    <option value="Rounded-Blue">Rounded Blue</option>
+				    <option value="Rounded-Mozaic">Rounded Mozaic</option>
+				    <option value="Rounded-Green">Rounded Green</option>
+				    <option value="Rounded-Grey">Rounded Grey</option>
+				    <option value="Rounded-Orange">Rounded Orange</option>
+				    <option value="Rounded-Red">Rounded Red</option>
+
+				    <optgroup label="Square"></optgroup>
+				    <option value="Square-Blue">Square Blue</option>
+				    <option value="Square-Mozaic">Square Mozaic</option>
+				    <option value="Square-Green">Square Green</option>
+				    <option value="Square-Grey">Square Grey</option>
+				    <option value="Square-Orange">Square Orange</option>
+				    <option value="Square-Red">Square Red</option>
+				</select>
+				<input id="customStyleInput" required pattern="[a-zA-Z]+" type="text" onblur="MyApp.fieldValidate(this,'');" style="display:none">
+				<small id="customStyleInputError" class="error" style="display:none" >Name is required and must be a string.</small>
+			</div><!-- column-1-->
+			<!-- column-2-->
+			<div class="large-4 columns">
+				<label for="custom-style">Custom style</label>
+				<input id="custom-style" type="checkbox" onchange="MyApp.customStyleChange();">
+				
+			</div><!-- column-2-->
+			<!-- column-3-->
+			<div class="large-4 columns">
+				<label for="activechart">Active</label>
+				<input id="activechart" type="checkbox">				
+			</div>
+			<!-- column-3-->
+	     </div>
+ 		</fieldset>
+ 		<fieldset>
+ 			<legend>Fields & Objects</legend>
+ 			<div id="fieldsObjects-content"></div>
+ 		</fieldset>	
+ 		<fieldset>
+ 			<legend>Slider Settings</legend>
+ 			<div class="row">
+ 				<div class="large-4 columns">
+ 					<label>Minimum Value</label>
+ 					<input id="minVal" type="text" value="0" />
+ 				</div>
+ 				<div class="large-4 columns"></div>
+ 				<div class="large-4 columns">
+ 					<label>Maximum Value</label>
+ 					<input id="maxVal" type="text" value="0" />
+ 				</div>
+ 			</div>
+ 			<div class="row">
+ 				<div class="large-4 columns">
+ 					<label>Default Value</label>
+ 					<input id="defVal" type="text" value="0" />
+ 				</div>
+ 				<div class="large-4 columns"></div>
+ 				<div class="large-4 columns">
+ 					<label>Slider Title</label>
+ 					<input id="titleText" type="text" value="" />
+ 				</div>
+ 			</div>
+ 			<div class="row">
+ 				<div class="large-4 columns">
+ 					<label>Slider step</label>
+ 					<input id="step" type="text" value="0" />
+ 				</div>
+ 			</div>
+ 		</fieldset>	
+ 	  <a class="close-reveal-modal">&#215;</a>
+	</div>
+ 	<!-- ----------------------------- Video Control Modal -------------------- -->
  	<div id="videoControlModal" class="reveal-modal" data-reveal>
  		<fieldset>
  			<legend>Video setting</legend>
@@ -272,9 +405,9 @@
  		</fieldset>
  		<a class="close-reveal-modal">&#215;</a> 
  	</div>
-	<!--  ------------------------- Control Modal window ---------------------- -->
+	<!--  ------------------------- Chart Control Modal window ---------------------- -->
     <div id="chartControlModal" class="reveal-modal" data-reveal> 
-       <form name="chart-prop">
+       <form name="chart-prop" data-abide>
 	   <fieldset>
 	      <legend>Common setting</legend>
 	      <div class="row">
@@ -314,11 +447,14 @@
 				    <option value="Square-Orange">Square Orange</option>
 				    <option value="Square-Red">Square Red</option>
 				</select>
+				<input id="customStyleInput" required pattern="[a-zA-Z]+" type="text" onblur="MyApp.fieldValidate(this,'');" style="display:none">
+				<small id="customStyleInputError" class="error">Name is required and must be a string.</small>
 			</div><!-- column-1-->
 			<!-- column-2-->
 			<div class="large-4 columns">
 				<label for="custom-style">Custom style</label>
-				<input id="custom-style" type="checkbox">
+				<input id="custom-style" type="checkbox" onchange="MyApp.customStyleChange();">
+				
 			</div><!-- column-2-->
 			<!-- column-3-->
 			<div class="large-4 columns">
@@ -365,7 +501,34 @@
 	
        <a class="close-reveal-modal">&#215;</a>
      </div>
-    <!--  -----------------------Chart templatea------------------- -->
+    <!--  ----------------------- Slider Code templatea ------------------- -->
+    <script type="text/template" id="slide-template">
+     	jQuery.noConflict();
+        var defValue = <%= defVal %>;
+        var minValue = <%= minVal %>;
+        var maxValue = <%= maxVal %>;
+        var step = <%= step %>;
+        var handle = null;
+
+        function initSlider(){
+            var updateSliderValue = function(e, ui){
+                var slider = jQuery(this).data().slider;
+                slider.element.find(".ui-slider-handle").text(slider.value());
+                slider.element.find(".ui-slider-handle").text(ui.value);
+            };
+
+            jQuery("#sliderwidget").slider({
+                value: defValue,
+                min: minValue,
+                max: maxValue,
+                step: step,
+                animate: "fast",
+                create: updateSliderValue,
+                slide: updateSliderValue
+            });
+        }
+    </script>
+    <!--  ----------------------- Chart Code templatea  ------------------- -->
     <script type="text/template" id="chart-template">
 	    console.log("tpl chart <%= type %>");
 	    var chartType = "<%= type %>";
@@ -508,6 +671,7 @@
     <!-- =========================Scripts=================================  -->
     <script src="bower_components/jquery/jquery.min.js"></script>
     <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="bower_components/foundation/js/foundation.abide.js"></script>
     <script src="js/foundation/foundation.reveal.js"></script>
     <script src="backbone.marionette/underscore.js"></script>
     <script src="backbone.marionette/backbone.js"></script> 

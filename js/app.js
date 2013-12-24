@@ -8,8 +8,14 @@ $(document).ready(function(){
 
 //------------------APP INIT----------------------
 MyApp    = new Backbone.Marionette.Application();
-RichText = Marionette.Region.extend({el:".rich-text"});
-Chart    = Marionette.Region.extend({el:".chart"});
+MyApp.addRegions({
+    chartRegion:"#chartwidget-content",
+    videoRegion:"#chartwidget-content",
+    sliderRegion:"#sliderwidget-content",
+    sortableRegion:"#sortablewidget-content"
+  }
+);
+
 
 MyApp.addInitializer(function(options){
   this.state='init';
@@ -19,6 +25,19 @@ MyApp.addInitializer(function(options){
       $("#head-menu-video").click(function() {MyApp.Video.showContent();}   );
       $("#head-menu-slide").click(function() {MyApp.Slide.showContent();}   );
       $("#head-menu-sortable").click(function() {MyApp.Sortable.showContent();}   );
+  };
+  this.fieldValidate=function(el,cond){
+      if (el.value !=="") {
+         return true;
+      } else { el.focus();$('#customStyleInputError').show();}
+  };
+  this.customStyleChange=function() {
+    if ( $('#custom-style').prop("checked")){
+          $('#customStyleInput').show().focus();
+    } else {
+          $('#customStyleInput').hide();
+          $('#customStyleInputError').hide();
+    }
   };
   this.initChartMenu=function() {  
      $(".dropdown >li >a").click(function(){
@@ -50,12 +69,13 @@ $(document).on('close', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
   if (modal[0].id=="chartControlModal") {
-      MyApp.Chart.FillModelChartProp();
-      MyApp.Chart.drawChart(); 
+        
+        MyApp.Chart.FillModelChartProp();
+        MyApp.Chart.drawChart(); 
   }
   if (modal[0].id=="chartDataModal") {
-      MyApp.Chart.FillCollectionChartData();
-      MyApp.Chart.drawChart(); 
+        MyApp.Chart.FillCollectionChartData();
+        MyApp.Chart.drawChart(); 
   }
   if (modal[0].id=="videoControlModal") {
         MyApp.Video.FillModelVideoProp();
@@ -75,26 +95,29 @@ MyApp.on("initialize:after", function(options){
       MyApp.initChartMenu();
       //----------Modules start----
       var chart_module = MyApp.module("Chart");
+      var slide_module = MyApp.module("Slide");
+      MyApp.module("Sortable").start();
       chart_module.start();
+      slide_module.start();
   }
 });
-MyApp.addRegions({
-  sidebarRegion: {
-    selector: "#left-sidebar",
-    regionType: RichText
-  },
+// MyApp.addRegions({
+//   sidebarRegion: {
+//     selector: "#left-sidebar",
+//     regionType: RichText
+//   },
  
-  titlechartRegion: {
-    selector: "#title-chart",
-    regionType: RichText
-  },
+//   titlechartRegion: {
+//     selector: "#title-chart",
+//     regionType: RichText
+//   },
   
-  bodychartRegion: {
-    selector: "#body-chart",
-    regionType: Chart
-  }
+//   bodychartRegion: {
+//     selector: "#body-chart",
+//     regionType: Chart
+//   }
  
-});
+// });
 
 //============================ MODULES ===============================
 
@@ -102,23 +125,70 @@ MyApp.addRegions({
 MyApp.module("Sortable", function(Sortable){
    //------------------------Init ------------------------------
     Sortable.addInitializer(function(){
+      this.model         = new SortableModel();
+      this.sortable_view = new SortableView();
     });
     //-------------------------Methods---------------------------
+    this.showContent=function() {
+      //this.sortable_view.model=this.model;
+      MyApp.sortableRegion.show(this.sortable_view);
+      $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');})
+    };
     //-------------------------Models----------------------------
+    var SortableModel = Backbone.Model.extend({
+       defaults: {
+       }
+    });
     //-------------------------Views-----------------------------
+    var SortableView = Backbone.Marionette.ItemView.extend({
+       template: "#main-sortable-template",
+       model:this.model
+    });
 });
 //------------------------end Module Sortable-------------------------
+
+
+
 
 //--------------------------- Module Slide ---------------------------
 MyApp.module("Slide", function(Slide){
    //------------------------Init ------------------------------
     Slide.addInitializer(function(){
+      this.model      = new SlideModel();
+      this.slide_view = new SlideView();
     });
     //-------------------------Methods---------------------------
+    this.showContent=function() {
+      this.slide_view.model=this.model;
+      MyApp.sliderRegion.show(this.slide_view);
+      $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');})
+    };
     //-------------------------Models----------------------------
+    var SlideModel = Backbone.Model.extend({
+      defaults: {
+        defVal:1,
+        minVal:1,
+        maxVal:100,
+        sobjectName:"sforceObject",
+        sobjectField:"sobjectField",
+        titleText:"slider title",
+        step:1,
+        themeName: "Green",
+        customStyleInput:"",
+      }
+    });
     //-------------------------Views-----------------------------
+
+    var SlideView = Backbone.Marionette.ItemView.extend({
+       template: "#main-slide-template",
+       model:this.model
+    });
 });
 //------------------------end Module Slide -------------------------
+
+
+
+
 
 //----Video--Video--Video--Video - MODULE Video - Video--Video--Video-
 MyApp.module("Video", function(Video){
@@ -191,7 +261,7 @@ MyApp.module("Video", function(Video){
        }
     });
     //-------------------------Views-----------------------------
-     var VideoView = Backbone.Marionette.ItemView.extend({
+    var VideoView = Backbone.Marionette.ItemView.extend({
        template: "#main-video-template",
        model:this.model
     });
@@ -223,6 +293,7 @@ MyApp.module("Chart", function(Chart){
       	    themeName: "Green",
             styleName:"ClearBlue",
       	    themeList:"ClearOrange",
+            customStyleInput:"",
       	    type:"pie",
       	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
         }
