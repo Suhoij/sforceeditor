@@ -23,7 +23,7 @@ MyApp.addInitializer(function(options){
   this.options=options;
   this.initHeadMenu=function() {
       $("#head-menu-video").click(function() {MyApp.Video.showContent();}   );
-      $("#head-menu-slide").click(function() {MyApp.Slide.showContent();}   );
+      $("#head-menu-slider").click(function() {MyApp.Slider.showContent();}   );
       $("#head-menu-sortable").click(function() {MyApp.Sortable.showContent();}   );
   };
   this.fieldValidate=function(el,cond){
@@ -64,12 +64,14 @@ $(document).on('open', '[data-reveal]', function () {
   }
   if (modal[0].id=="videoDataModal") {
   }
+  if (modal[0].id=="sliderControlModal") {
+      MyApp.Slider.FillScreenSliderProp();
+  }
 });
 $(document).on('close', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
-  if (modal[0].id=="chartControlModal") {
-        
+  if (modal[0].id=="chartControlModal") {        
         MyApp.Chart.FillModelChartProp();
         MyApp.Chart.drawChart(); 
   }
@@ -80,6 +82,10 @@ $(document).on('close', '[data-reveal]', function () {
   if (modal[0].id=="videoControlModal") {
         MyApp.Video.FillModelVideoProp();
         MyApp.Video.showVideoPlayer();
+  }
+  if (modal[0].id=="sliderControlModal") {
+        MyApp.Slider.FillModelSliderProp();
+        MyApp.Slider.drawSlider();
   }
   
 });
@@ -95,10 +101,10 @@ MyApp.on("initialize:after", function(options){
       MyApp.initChartMenu();
       //----------Modules start----
       var chart_module = MyApp.module("Chart");
-      var slide_module = MyApp.module("Slide");
+      var slider_module = MyApp.module("Slider");
       MyApp.module("Sortable").start();
       chart_module.start();
-      slide_module.start();
+      slider_module.start();
   }
 });
 // MyApp.addRegions({
@@ -151,36 +157,111 @@ MyApp.module("Sortable", function(Sortable){
 
 
 //--------------------------- Module Slide ---------------------------
-MyApp.module("Slide", function(Slide){
+MyApp.module("Slider", function(Slider){
    //------------------------Init ------------------------------
-    Slide.addInitializer(function(){
-      this.model      = new SlideModel();
-      this.slide_view = new SlideView();
+    Slider.addInitializer(function(){
+          this.control_scripts=false;
+          this.model      = new SliderModel();
+          this.slider_view = new SliderView({model:this.model});
+          this.slider_code_view = new SliderCodeView({model:this.model});
     });
     //-------------------------Methods---------------------------
     this.showContent=function() {
-      this.slide_view.model=this.model;
-      MyApp.sliderRegion.show(this.slide_view);
-      $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');})
+          console.log("showContent");
+          this.slider_view.model=this.model;
+          MyApp.sliderRegion.show(this.slider_view);
+          $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');})
+    };
+    this.FillScreenSliderProp=function(){
+          var fields = _.keys(MyApp.Slider.model.attributes);
+          jQuery.each(fields,function(i,f) {
+              var f_val=MyApp.Slider.model.get(f);
+              //---tags select
+              if (f=="themeList") {
+
+              }
+              //---tags checkbox
+              //---tags input
+              $("#"+f).val(f_val);
+              //console.log("FillScreenSliderProp field="+f,MyApp.Slider.model.get(f));
+          });
+    };
+    this.FillModelSliderProp=function(){
+          var screen_items=$("#sliderControlModal  :input");
+          var prop_arr=[];
+          //--select id,name from screen_items
+          jQuery.each(screen_items,function(i,item){
+                                    var id_v=item.id,value_v=item.value;
+                                    if (item.type =="checkbox") {                                       
+                                        if (item.checked == true) {
+                                                value_v=1;
+                                        } else { value_v=0;}
+                                    }
+                                    prop_arr.push({id:id_v,value:value_v});
+                                    }
+          );
+          
+          jQuery.each(prop_arr,function(i,prop){
+              MyApp.Slider.model.set(prop.id,prop.value);          
+          });
+    };
+    this.drawSlider=function() {
+          this.setSliderTheme();
+          this.setSliderCode();
+    };
+    this.setSliderTheme=function() {
+            var themeList=this.model.get("themeList");
+            console.log("setSliderTheme...themeList=",themeList);
+            var css_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
+            console.log("css_str=",css_str);
+            $("#sliderwidget-theme").html(css_str);
+        
+            // <script type="text/javascript" src="JSLibrary/js/jquery-ui-1.9.1.min.js"></script>
+            //<script type="text/javascript" src="/JSLibrary/js/jquery.ui.touch-punch.min.js"></script>
+            //<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.JSLibrary, '/JSLibrary/css/themes/' + themeName + '.css')}"/>
+    };
+    this.setSliderCode=function() {
+        if (this.control_scripts ==false) {           
+            //$('head').append('<script type="text/javascript" src="JSLibrary/js/jquery-ui-1.9.1.min.js"></script>');
+            //$('head').append('<link rel="stylesheet" type="text/css" href="JSLibrary/css/jquery-ui-1.9.1.min.css"></link>');
+            
+            //$('head').append('<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">');
+            // <style>#slider { margin: 10px; }  </style>
+            //$('head').append('<script src="http://code.jquery.com/jquery-1.8.3.js"></script>');
+            //$('head').append('<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>');
+
+            //$('head').append('<script type="text/javascript" src="JSLibrary/js/jquery.ui.touch-punch.min.js"></script>');
+            this.control_scripts=true;
+            //console.log("setSliderCode...")
+        }
+        this.slider_code_view.model=this.model;
+        var sliderwidget_code   = this.slider_code_view.render().el.innerHTML;
+        MyApp.sliderwidget_code = sliderwidget_code;        
+        $("#sliderwidget-code").empty().html("<script>"+sliderwidget_code+"</script>");
     };
     //-------------------------Models----------------------------
-    var SlideModel = Backbone.Model.extend({
+    var SliderModel = Backbone.Model.extend({
       defaults: {
-        defVal:1,
+        defVal:90,
         minVal:1,
-        maxVal:100,
+        maxVal:99,
         sobjectName:"sforceObject",
         sobjectField:"sobjectField",
         titleText:"slider title",
         step:1,
-        themeName: "Green",
-        customStyleInput:"",
+        themeName: "ClearGreen",
+        themeList: "ClearGreen",
+        customStyleInput:""
       }
     });
     //-------------------------Views-----------------------------
 
-    var SlideView = Backbone.Marionette.ItemView.extend({
-       template: "#main-slide-template",
+    var SliderView = Backbone.Marionette.ItemView.extend({
+       template: "#main-slider-template",
+       model:this.model
+    });
+    var SliderCodeView = Backbone.Marionette.ItemView.extend({
+       template: "#slider-code-template",
        model:this.model
     });
 });

@@ -8,7 +8,8 @@
     <title>Sforce editor | Welcome</title>
     <link rel="stylesheet" href="css/app.css" />
     <script src="bower_components/modernizr/modernizr.js"></script>
-    	
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">	
+
   </head>
   <body>
     
@@ -24,7 +25,7 @@
           <ul>
             <li><a href="#">Home</a></li>
             <li><a href="#" id="head-menu-video">Widget video</a></li>
-            <li><a href="#" id="head-menu-slide" >Widget slider</a></li>
+            <li><a href="#" id="head-menu-slider" >Widget slider</a></li>
             <li><a href="#" id="head-menu-sortable">Widget sortable</a></li>
             <li class="has-dropdown" id="chart-menu">
               <a href="#">Chart pie</a>
@@ -112,16 +113,22 @@
 				<div class="row">
 					<div class="large-4 columns">
 						<a  id="sortable-control-btn" class="button" data-reveal-id="sortableControlModal">Sortable controls</a>
+						<a  id="sortable-data-btn" class="button" data-reveal-id="sortableDataModal">Sortable data</a>
 					</div>
 					<div class="large-4 columns" id="slider-logo">
 						<img src="img/sortable.png" />
 					</div>
 				</div>
-			</div>
+		</div>
+		<div class="large-9 column left ui-island" >
+			 	<div id="sortablewidget"></div>
+		</div>
+		<div id="sortablewidget-theme"></div>
+	    <div id="sortablewidget-code"></div>
  	 </script>
 
     <!--   ---------------------- main Slide TPL ------------------------------ -->
-    <script type="text/template" id="main-slide-template">
+    <script type="text/template" id="main-slider-template">
 
 			<div class="large-9  columns  ui-island content__main">
 				<div class="row">
@@ -133,6 +140,11 @@
 					</div>
 				</div>
 			</div>
+			<div class="large-9 column left ui-island" >
+			 	<div id="sliderwidget"></div>
+		    </div>
+		    <div id="sliderwidget-theme"></div>
+	      	<div id="sliderwidget-code"></div>
 		
     </script>
 	<!--   ---------------------- main Video TPL ------------------------------ -->
@@ -275,6 +287,66 @@
  	</script>
 
  	<!--  ============================ MODAL WINDOWS ========================== -->
+	<!-- ----------------------------- Sortable Control Modal -------------------- -->
+	<div id="sortableControlModal" class="reveal-modal" data-reveal>
+	<fieldset>
+ 			<legend>Sortable setting</legend>
+ 			<div class="row">
+ 			  <!-- column-1-->
+	      	  <div class="large-4 columns">
+	      		<label for="themeList">Theme</label>
+				<select name="themeList" onchange="" id="themeList" >		
+				    <optgroup label="Clear"></optgroup>
+				    <option value="Clear-Blue" selected="selected">Clear Blue</option>
+				    <option value="Clear-Mozaic">Clear Mozaic</option>
+				    <option value="Clear-Green">Clear Green</option>
+				    <option value="Clear-Grey">Clear Grey</option>
+				    <option value="Clear-Orange">Clear Orange</option>
+				    <option value="Clear-Red">Clear Red</option>
+
+				    <optgroup label="Dotted"></optgroup>
+				    <option value="Dotted-Blue">Dotted Blue</option>
+				    <option value="Dotted-Mozaic">Dotted Mozaic</option>
+				    <option value="Dotted-Green">Dotted Green</option>
+				    <option value="Dotted-Grey">Dotted Grey</option>
+				    <option value="Dotted-Orange">Dotted Orange</option>
+				    <option value="Dotted-Red">Dotted Red</option>
+
+				    <optgroup label="Rounded"></optgroup>
+				    <option value="Rounded-Blue">Rounded Blue</option>
+				    <option value="Rounded-Mozaic">Rounded Mozaic</option>
+				    <option value="Rounded-Green">Rounded Green</option>
+				    <option value="Rounded-Grey">Rounded Grey</option>
+				    <option value="Rounded-Orange">Rounded Orange</option>
+				    <option value="Rounded-Red">Rounded Red</option>
+
+				    <optgroup label="Square"></optgroup>
+				    <option value="Square-Blue">Square Blue</option>
+				    <option value="Square-Mozaic">Square Mozaic</option>
+				    <option value="Square-Green">Square Green</option>
+				    <option value="Square-Grey">Square Grey</option>
+				    <option value="Square-Orange">Square Orange</option>
+				    <option value="Square-Red">Square Red</option>
+				</select>
+				<input id="customStyleInput" required pattern="[a-zA-Z]+" type="text" onblur="MyApp.fieldValidate(this,'');" style="display:none">
+				<small id="customStyleInputError" class="error" style="display:none" >Name is required and must be a string.</small>
+			</div><!-- column-1-->
+			<!-- column-2-->
+			<div class="large-4 columns">
+				<label for="custom-style">Custom style</label>
+				<input id="custom-style" type="checkbox" onchange="MyApp.customStyleChange();">
+				
+			</div><!-- column-2-->
+			<!-- column-3-->
+			<div class="large-4 columns">
+				<label for="activechart">Active</label>
+				<input id="activechart" type="checkbox">				
+			</div>
+ 			</div>
+ 	<a class="close-reveal-modal">&#215;</a>
+ 	</fieldset>
+	</div>
+
  	<!-- ----------------------------- Slider Control Modal -------------------- -->
 	<div id="sliderControlModal" class="reveal-modal" data-reveal>
 		<fieldset>
@@ -502,31 +574,35 @@
        <a class="close-reveal-modal">&#215;</a>
      </div>
     <!--  ----------------------- Slider Code templatea ------------------- -->
-    <script type="text/template" id="slide-template">
-     	jQuery.noConflict();
+    <script type="text/template" id="slider-code-template">
+     	//jQuery.noConflict();
         var defValue = <%= defVal %>;
         var minValue = <%= minVal %>;
         var maxValue = <%= maxVal %>;
         var step = <%= step %>;
         var handle = null;
-
-        function initSlider(){
-            var updateSliderValue = function(e, ui){
+     	
+     	var updateSliderValue = function(e, ui){
                 var slider = jQuery(this).data().slider;
                 slider.element.find(".ui-slider-handle").text(slider.value());
                 slider.element.find(".ui-slider-handle").text(ui.value);
-            };
+        };
+        //function initSlider(){
+       
+			//jQuery("#sliderwidget").slider();
 
             jQuery("#sliderwidget").slider({
                 value: defValue,
                 min: minValue,
                 max: maxValue,
                 step: step,
-                animate: "fast",
-                create: updateSliderValue,
-                slide: updateSliderValue
+                animate: "fast"
+                //create: updateSliderValue,
+                //slide: updateSliderValue
             });
-        }
+       // };
+        //initSlider();
+       //jQuery("#sliderwidget").slider();
     </script>
     <!--  ----------------------- Chart Code templatea  ------------------- -->
     <script type="text/template" id="chart-template">
@@ -680,7 +756,11 @@
     <script src="backbone.marionette/json2.js"></script> 
     <script src="ckeditor/ckeditor.js"></script>
     <script src="JSLibrary/js/jquery.jqChart.min.js"></script>
-    <script src="http://vjs.zencdn.net/4.1/video.js"></script> 
+    <script src="http://vjs.zencdn.net/4.1/video.js"></script>
+
+	<!-- <script src="http://code.jquery.com/jquery-1.8.3.js"></script> -->
+	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
     <script src="js/app.ob.js"></script>
   </body>
 </html>
