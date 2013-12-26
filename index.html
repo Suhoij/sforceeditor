@@ -113,7 +113,7 @@
 				<div class="row">
 					<div class="large-4 columns">
 						<a  id="sortable-control-btn" class="button" data-reveal-id="sortableControlModal">Sortable controls</a>
-						<a  id="sortable-data-btn" class="button" data-reveal-id="sortableDataModal">Sortable data</a>
+						<a  id="sortable-data-btn" class="button" data-reveal-id="sortableDataModal">Sortable   data</a>
 					</div>
 					<div class="large-4 columns" id="slider-logo">
 						<img src="img/sortable.png" />
@@ -121,13 +121,16 @@
 				</div>
 		</div>
 		<div class="large-9 column left ui-island" >
-			 	<div id="sortablewidget"></div>
+			  <div id="sortcontainer">	
+			 	<ul id="sortablewidget" class="sortablewidget ui-sortable">
+			 	</ul>
+			 </div>	
 		</div>
 		<div id="sortablewidget-theme"></div>
 	    <div id="sortablewidget-code"></div>
  	 </script>
 
-    <!--   ---------------------- main Slide TPL ------------------------------ -->
+    <!--   ---------------------- main Slider TPL ------------------------------ -->
     <script type="text/template" id="main-slider-template">
 
 			<div class="large-9  columns  ui-island content__main">
@@ -285,8 +288,52 @@
 			  </td>
 		</tr>	
  	</script>
-
+	<script type="text/template" id="data-item-template">
+ 	  	<tr>
+			  <td>
+			      <input  type="text" placeholder="New Name..." value="" />
+			  </td>
+			  <td>
+			      <input  type="text" placeholder="0" value="" />
+			  </td>
+			  <td>
+			      <a  class="data-del button tiny" onclick="$(this).parent().parent().remove();">Delete item</a>
+			  </td>
+		</tr>	
+ 	</script>
  	<!--  ============================ MODAL WINDOWS ========================== -->
+    <!-- ----------------------------- Sortable Data Modal ----------------------- -->
+ 	<div id="sortableDataModal" class="reveal-modal" data-reveal>
+    	<fieldset>
+	      <legend>Sortable Data</legend>
+	       <div class="row">
+		<table id="sortableDataTable" width="100%">
+		  <thead>
+		    <th width="50%">Name</th>
+		    <th width="30%">Data</th>
+		    <th width="20%">Control</th>
+		    <tbody>
+		      <!-- b:sortable data item -->
+			  <tr>
+			  <td>
+			    <input id="sortable-data-name-0" type="text" placeholder="New Name..." />
+			  </td>
+			  <td>
+			    <input id="sortable-data-value-0" type="text" placeholder="0" value=0 />
+			  </td>
+			  <td>
+			    <a class="button tiny" onclick="$(this).parent().parent().remove();">Delete item</a>
+			  </td>		       
+		      </tr>
+		      <!-- e:sortable data item -->
+		    </tbody>
+		  </thead>
+		</table>
+		<a  id="data-add-sortable-btn" class="button">Add new item</a>
+	       </div>
+	   </fieldset>
+    	<a class="close-reveal-modal">&#215;</a> 
+    </div>
 	<!-- ----------------------------- Sortable Control Modal -------------------- -->
 	<div id="sortableControlModal" class="reveal-modal" data-reveal>
 	<fieldset>
@@ -343,6 +390,10 @@
 				<input id="activechart" type="checkbox">				
 			</div>
  			</div>
+ 			<fieldset>
+ 				<legend>Fields & Objects</legend>
+ 				<div id="fieldsObjects-content"></div>
+ 			</fieldset>	
  	<a class="close-reveal-modal">&#215;</a>
  	</fieldset>
 	</div>
@@ -596,9 +647,9 @@
                 min: minValue,
                 max: maxValue,
                 step: step,
-                animate: "fast"
-                //create: updateSliderValue,
-                //slide: updateSliderValue
+                animate: "fast",
+                create: updateSliderValue,
+                slide: updateSliderValue
             });
        // };
         //initSlider();

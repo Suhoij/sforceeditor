@@ -67,6 +67,9 @@ $(document).on('open', '[data-reveal]', function () {
   if (modal[0].id=="sliderControlModal") {
       MyApp.Slider.FillScreenSliderProp();
   }
+  if (modal[0].id=="sortableControlModal") {
+      MyApp.Sortable.FillScreenData();
+  }
 });
 $(document).on('close', '[data-reveal]', function () {
   var modal = $(this);
@@ -86,6 +89,14 @@ $(document).on('close', '[data-reveal]', function () {
   if (modal[0].id=="sliderControlModal") {
         MyApp.Slider.FillModelSliderProp();
         MyApp.Slider.drawSlider();
+  }
+  if (modal[0].id=="sortableControlModal") {
+        MyApp.Sortable.FillModelProp();
+        MyApp.Sortable.drawSortable();
+  }
+  if (modal[0].id=="sortableDataModal") {
+        MyApp.Sortable.FillCollectionData();
+        MyApp.Sortable.drawSortable();
   }
   
 });
@@ -131,20 +142,119 @@ MyApp.on("initialize:after", function(options){
 MyApp.module("Sortable", function(Sortable){
    //------------------------Init ------------------------------
     Sortable.addInitializer(function(){
-      this.model         = new SortableModel();
-      this.sortable_view = new SortableView();
+      this.controller      = new Controller();
+      this.model           = new SortableModel();
+      this.data_collection = new DataCollection({data_name:"Name..",data_value:0,data_i:0});
+      this.sortable_view   = new SortableView();
+      $("#data-add-sortable-btn").click(function(){MyApp.Sortable.controller.addData()});
+      $("#data-del-btn").click(function(){MyApp.Sortable.controller.delData()});
+    });
+    // ------------------------- Controllers ----------------
+    var Controller = Marionette.Controller.extend({
+        addData: function(){
+          var dt_tpl= MyApp.Sortable.data_item_view.render().el.innerHTML;
+          $("#sortableDataModal table tbody").append(dt_tpl);
+          //---for delete row-------------
+          $(".data-del").click(function(){
+              $(this).parent().parent().remove();
+          });
+        },
+        addData: function(){
+          //var dt_tpl= MyApp.Sortable.data_item_view.render().el.innerHTML;
+          var dt_tpl= $("#data-item-template").html();
+          $("#sortableDataModal table tbody").append(dt_tpl);
+        }
     });
     //-------------------------Methods---------------------------
     this.showContent=function() {
-      //this.sortable_view.model=this.model;
-      MyApp.sortableRegion.show(this.sortable_view);
-      $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');})
+          //this.sortable_view.model=this.model;
+          MyApp.sortableRegion.show(this.sortable_view);
+          $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');})
+          $("#sortable-data-btn").click(function(){ $("#sortableDataModal").foundation('reveal', 'open');})
+    };
+    this.FillScreenData=function() {
+         //MyApp.Sortable.controller.addCollectionData();
+    };
+    this.FillModelProp=function(){
+          var screen_items=$("#sortableControlModal  :input");
+          var prop_arr=[];
+          //--select id,name from screen_items
+          jQuery.each(screen_items,function(i,item){
+                                    var id_v=item.id,value_v=item.value;
+                                    if (item.type =="checkbox") {                                       
+                                        if (item.checked == true) {
+                                                value_v=1;
+                                        } else { value_v=0;}
+                                    }
+                                    prop_arr.push({id:id_v,value:value_v});
+                                    }
+          );
+          
+          jQuery.each(prop_arr,function(i,prop){
+              MyApp.Sortable.model.set(prop.id,prop.value);          
+          });
+    };
+    this.FillCollectionData=function() {
+          console.log("FillCollectionData");
+          MyApp.Sortable.data_collection.reset();
+          $("#sortableDataModal  table tbody tr").each(function(i) {
+              var fields = $(this).find("input");
+              var name = fields.eq(0).val();
+              var value = fields.eq(1).val();
+              //console.log(name,value);
+              MyApp.Sortable.data_collection.add({data_name:name,data_value:value,data_i:i});              
+          });
+    };
+    this.drawSortable=function() {
+          this.setTheme();
+          this.setCode();
+    };
+    this.setTheme=function(){
+          var themeList=this.model.get("themeList");
+          var theme_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
+          $("#sortablewidget-theme").html(theme_str);
+    };
+    this.setCode=function() {
+          //---fill li lists from collection----------------
+          var li_str="";
+          jQuery.each(this.data_collection.models,function(i,f) {
+              data_value = f.attributes.data_value;
+              data_name  = f.attributes.data_name;
+              //console.log("setCode...",data_value,data_name);
+              li_str=li_str+"<li val='"+data_value+"' class='ui-state-default'><span class='ui-icon ui-icon-arrowthick-2-n-s'></span>"+data_name+"</li>";
+          });
+          jQuery("#sortablewidget").html(li_str);
+          jQuery("#sortablewidget").sortable();
+          jQuery("#sortablewidget").disableSelection();
+    };
+    this.getSortablePosition=function(){//---Sasha code fro SF 
+             var getValString = "";
+             var getPosString = "";
+             var counter = 0;
+             jQuery("#sortablewidget li").each(function(){
+                 counter++;
+                 getValString += jQuery(this).attr("val")+";";
+                 getPosString += counter+";";
+             });
+            getValString = getValString.substring(0, getValString.length-1);
+            getPosString = getPosString.substring(0, getPosString.length-1);
+            return {
+                'values': getValString,
+                'positions': getPosString
+            };  
     };
     //-------------------------Models----------------------------
     var SortableModel = Backbone.Model.extend({
-       defaults: {
-       }
+        defaults: {
+            sobjectName:"sforceObject",
+            sobjectField:"sobjectField",
+            titleText:"Sortable title",
+            themeName: "ClearGreen",
+            themeList: "ClearGreen",
+            customStyleInput:""
+        }
     });
+    var DataCollection = Backbone.Collection.extend({});
     //-------------------------Views-----------------------------
     var SortableView = Backbone.Marionette.ItemView.extend({
        template: "#main-sortable-template",
@@ -170,7 +280,7 @@ MyApp.module("Slider", function(Slider){
           console.log("showContent");
           this.slider_view.model=this.model;
           MyApp.sliderRegion.show(this.slider_view);
-          $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');})
+          $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');});
     };
     this.FillScreenSliderProp=function(){
           var fields = _.keys(MyApp.Slider.model.attributes);
@@ -236,7 +346,7 @@ MyApp.module("Slider", function(Slider){
         }
         this.slider_code_view.model=this.model;
         var sliderwidget_code   = this.slider_code_view.render().el.innerHTML;
-        MyApp.sliderwidget_code = sliderwidget_code;        
+        //MyApp.sliderwidget_code = sliderwidget_code;        
         $("#sliderwidget-code").empty().html("<script>"+sliderwidget_code+"</script>");
     };
     //-------------------------Models----------------------------
@@ -307,7 +417,7 @@ MyApp.module("Video", function(Video){
           if ($("#videowidget-content").length==0) {
               this.video_view.model=this.model;         
               $("#allwidget-content").append(this.video_view.render().el.innerHTML);
-              $("#video-control-btn").click(function(){ $("#videoControlModal").foundation('reveal', 'open');})
+              $("#video-control-btn").click(function(){ $("#videoControlModal").foundation('reveal', 'open');});
           }
     };
     this.FillModelVideoProp=function() {
@@ -575,8 +685,3 @@ MyApp.module("Chart", function(Chart){
     });
   
 });
-
-    
-
-   
-
