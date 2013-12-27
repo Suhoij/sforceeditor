@@ -390,12 +390,24 @@
 				<input id="activechart" type="checkbox">				
 			</div>
  			</div>
- 			<fieldset>
- 				<legend>Fields & Objects</legend>
- 				<div id="fieldsObjects-content"></div>
- 			</fieldset>	
- 	<a class="close-reveal-modal">&#215;</a>
  	</fieldset>
+ 	<fieldset>
+ 				<legend>Fields & Objects</legend>
+ 				<div class="row">
+ 					<div id="fieldsObjects-content">
+ 						<div class="large-4 columns">
+							<label for="sobjects_sortable">Object</label>
+							<select id="sobjects_sortable" onchange="MyApp.sobjectsChange(this,'sortable');"></select>				
+						</div>
+						<div class="large-4 columns">
+							<label for="sfields_sortable">Field</label>
+							<select id="sfields_sortable" ></select>				
+						</div>
+ 					</div>
+ 				</div>
+ 	</fieldset>	
+ 	<a class="close-reveal-modal">&#215;</a>
+ 	
 	</div>
 
  	<!-- ----------------------------- Slider Control Modal -------------------- -->
@@ -456,10 +468,21 @@
 			<!-- column-3-->
 	     </div>
  		</fieldset>
- 		<fieldset>
- 			<legend>Fields & Objects</legend>
- 			<div id="fieldsObjects-content"></div>
- 		</fieldset>	
+ 	 	<fieldset>
+ 				<legend>Fields & Objects</legend>
+ 				<div class="row">
+ 					<div id="fieldsObjects-content">
+ 						<div class="large-4 columns">
+							<label for="sobjects_slider">Object</label>
+							<select id="sobjects_slider" onchange="MyApp.sobjectsChange(this,'slider');"></select>				
+						</div>
+						<div class="large-4 columns">
+							<label for="sfields_slider">Field</label>
+							<select id="sfields_slider" ></select>				
+						</div>
+ 					</div>
+ 				</div>
+ 	</fieldset>		
  		<fieldset>
  			<legend>Slider Settings</legend>
  			<div class="row">

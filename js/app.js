@@ -15,7 +15,9 @@ MyApp.addRegions({
     sortableRegion:"#sortablewidget-content"
   }
 );
-
+//---------------Model Fields&Objects--------------
+var FieldsObjectsCollection = Backbone.Collection.extend({       
+});
 
 MyApp.addInitializer(function(options){
   this.state='init';
@@ -49,6 +51,75 @@ MyApp.addInitializer(function(options){
             MyApp.Chart.drawChart();  
           }
       )
+  };
+  this.FillScreenFieldsObjects=function(widget_name){    
+    if ( $('select#sobjects_'+widget_name+' option').length == 0) {
+        var objects_options_str="";
+        var fields_options_str="";
+        var fields_str="";
+        var selected_str="";
+        jQuery.each(this.fields_objects.models,function(i,item) {
+                if (i==0) {
+                      selected_str=" selected ";
+                      related_fields=item.attributes.fields_name;
+                      var selected_field_str="";
+                      jQuery.each(related_fields,function(i,item){
+                              if (i==0) {selected_field_str=" selected ";} else {selected_field_str="";}
+                              fields_options_str=fields_options_str+"<option val='"+item.val+"' "+selected_field_str+" >"+item.name+"</options>";
+                      });
+                      
+                } else {
+                  selected_str="";
+                }
+                objects_options_str=objects_options_str+"<option val='"+item.attributes.object_val+"' "+selected_str+">"+item.attributes.object_name+"</option>";
+        });
+        $("#sobjects_"+widget_name).html(objects_options_str);
+        $("#sfields_"+widget_name).html(fields_options_str);
+    }
+  };
+  this.sobjectsChange=function(el,widget_name){
+        var obj_cur=jQuery(el).val();            
+        var related_fields=MyApp.fields_objects.findWhere({object_name:obj_cur});                
+        selected_str=" selected ";
+        fields_options_str="";
+        jQuery.each(related_fields.attributes.fields_name,function(i,item) {
+                if (i==0) {selected_field_str=" selected ";} else {selected_field_str="";}
+                fields_options_str=fields_options_str+"<option val='"+item.val+"' "+selected_field_str+" >"+item.name+"</options>";
+        });
+        $("#sfields_"+widget_name).html(fields_options_str);
+    };
+  this.initFieldsObjectsCollection=function() {
+    this.fields_objects=new  FieldsObjectsCollection();
+    this.fields_objects.add([
+      {object_name:"Организация",object_val:"Account",fields_name:[
+                                  {name:"Широта отправки",val:"ShippingLatitude"},
+                                  {name:"Долгота для счета",val:"BillingLongitude"},
+                                  {name:"Широта для счета",val:"BillingLatitude"},
+                                  {name:"Годовой доход",val:"AnnualRevenue"},
+                                  {name:"Сотрудники",val:"NumberOfEmployees"},
+                                  {name:"Geolocation (Longitude)",val:"Geolocation__Longitude__s"},
+                                  {name:"Geolocation (Latitude)",val:"Geolocation__Latitude__s"},
+                                  {name:"Number of Locations",val:"NumberofLocations__c"},
+                                  {name:"Долгота отправки",val:"ShippingLongitude"},
+                                  ]},
+      {object_name:"Контакт",object_val:"Contact",fields_name:[
+                                  {name:"Широта в почтовом адресе",val:"MailingLatitude"},
+                                  {name:"Другая долгота",val:"OtherLongitude"},
+                                  {name:"Долгота в почтовом адресе",val:"MailingLongitude"},
+                                  {name:"Другая широта",val:"OtherLatitude"}
+                                  ]},
+      {object_name:"Pharma Activity",object_val:"CTPHARMA__Activity__c",fields_name:[
+                                  {name:"Location (Longitude)",val:"OpenAtLocation__Longitude__s"},
+                                  {name:"Location (Latitude)",val:"OpenAtLocation__Latitude__s"},
+                                  {name:"Visit duration",val:"Duration__c"}
+                                  ]},
+      {object_name:"Pharma Activity Data",object_val:"CTPHARMA__ActivityData__c",fields_name:[
+                                  {name:"Price",val:"CTPHARMA__Price__c"},
+                                  {name:"Answer",val:"CTPHARMA__CurrencyAnswer__c"},
+                                  {name:"Answer Number",val:"CTPHARMA__NumberAnswer__c"},
+                                  {name:"Quantity",val:"CTPHARMA__Quantity__c"}
+      ]}
+    ]);
   }
  
 });
@@ -68,6 +139,9 @@ $(document).on('open', '[data-reveal]', function () {
       MyApp.Slider.FillScreenSliderProp();
   }
   if (modal[0].id=="sortableControlModal") {
+      MyApp.Sortable.FillScreenProp();
+  }
+  if (modal[0].id=="sortableDataModal") {
       MyApp.Sortable.FillScreenData();
   }
 });
@@ -102,7 +176,7 @@ $(document).on('close', '[data-reveal]', function () {
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
-  console.table(MyApp.options);
+  //console.table(MyApp.options);
 });
 MyApp.on("initialize:after", function(options){
   if (Backbone.history){
@@ -110,12 +184,15 @@ MyApp.on("initialize:after", function(options){
       console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
       MyApp.initHeadMenu();
       MyApp.initChartMenu();
+      MyApp.initFieldsObjectsCollection();
       //----------Modules start----
-      var chart_module = MyApp.module("Chart");
-      var slider_module = MyApp.module("Slider");
+      //var chart_module = MyApp.module("Chart");
+      //var slider_module = MyApp.module("Slider");
+      MyApp.module("Chart").start();
+      MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
-      chart_module.start();
-      slider_module.start();
+      //chart_module.start();
+      //slider_module.start();
   }
 });
 // MyApp.addRegions({
@@ -169,8 +246,11 @@ MyApp.module("Sortable", function(Sortable){
     this.showContent=function() {
           //this.sortable_view.model=this.model;
           MyApp.sortableRegion.show(this.sortable_view);
-          $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');})
-          $("#sortable-data-btn").click(function(){ $("#sortableDataModal").foundation('reveal', 'open');})
+          $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');});
+          $("#sortable-data-btn").click(function(){ $("#sortableDataModal").foundation('reveal', 'open');});
+    };
+    this.FillScreenProp=function() {
+          MyApp.FillScreenFieldsObjects("sortable");//--select fill--
     };
     this.FillScreenData=function() {
          //MyApp.Sortable.controller.addCollectionData();
@@ -228,26 +308,26 @@ MyApp.module("Sortable", function(Sortable){
           jQuery("#sortablewidget").disableSelection();
     };
     this.getSortablePosition=function(){//---Sasha code fro SF 
-             var getValString = "";
-             var getPosString = "";
-             var counter = 0;
-             jQuery("#sortablewidget li").each(function(){
-                 counter++;
-                 getValString += jQuery(this).attr("val")+";";
-                 getPosString += counter+";";
-             });
-            getValString = getValString.substring(0, getValString.length-1);
-            getPosString = getPosString.substring(0, getPosString.length-1);
-            return {
-                'values': getValString,
-                'positions': getPosString
-            };  
+           var getValString = "";
+           var getPosString = "";
+           var counter = 0;
+           jQuery("#sortablewidget li").each(function(){
+               counter++;
+               getValString += jQuery(this).attr("val")+";";
+               getPosString += counter+";";
+           });
+          getValString = getValString.substring(0, getValString.length-1);
+          getPosString = getPosString.substring(0, getPosString.length-1);
+          return {
+              'values': getValString,
+              'positions': getPosString
+          };  
     };
     //-------------------------Models----------------------------
     var SortableModel = Backbone.Model.extend({
         defaults: {
-            sobjectName:"sforceObject",
-            sobjectField:"sobjectField",
+            sobjects_sortable:"sforceObject",
+            sfields_sortable:"sobjectField",
             titleText:"Sortable title",
             themeName: "ClearGreen",
             themeList: "ClearGreen",
@@ -295,6 +375,7 @@ MyApp.module("Slider", function(Slider){
               $("#"+f).val(f_val);
               //console.log("FillScreenSliderProp field="+f,MyApp.Slider.model.get(f));
           });
+          MyApp.FillScreenFieldsObjects("slider");
     };
     this.FillModelSliderProp=function(){
           var screen_items=$("#sliderControlModal  :input");
@@ -320,11 +401,11 @@ MyApp.module("Slider", function(Slider){
           this.setSliderCode();
     };
     this.setSliderTheme=function() {
-            var themeList=this.model.get("themeList");
-            console.log("setSliderTheme...themeList=",themeList);
-            var css_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
-            console.log("css_str=",css_str);
-            $("#sliderwidget-theme").html(css_str);
+          var themeList=this.model.get("themeList");
+          console.log("setSliderTheme...themeList=",themeList);
+          var css_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
+          console.log("css_str=",css_str);
+          $("#sliderwidget-theme").html(css_str);
         
             // <script type="text/javascript" src="JSLibrary/js/jquery-ui-1.9.1.min.js"></script>
             //<script type="text/javascript" src="/JSLibrary/js/jquery.ui.touch-punch.min.js"></script>
@@ -355,8 +436,8 @@ MyApp.module("Slider", function(Slider){
         defVal:90,
         minVal:1,
         maxVal:99,
-        sobjectName:"sforceObject",
-        sobjectField:"sobjectField",
+        sobjects_slider:"sforceObject",
+        sfields_slider:"sobjectField",
         titleText:"slider title",
         step:1,
         themeName: "ClearGreen",
@@ -571,15 +652,15 @@ MyApp.module("Chart", function(Chart){
         this.setChartData();
     },
     this.setChartTheme=function() {
-      //---select params
-      //---write css link
-      var themeList=this.model.get("themeList");
-      console.log("Module Chart ->setChartTheme themeList=",themeList);
-      this.model.set("themeName",themeList.split("-")[1]);
-      this.model.set("styleName",themeList.split("-")[0]);
-      var theme_css_file="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
-      jQuery("#chartwidget-theme").html(theme_css_file);
-      //console.log(theme_css_file);
+        //---select params
+        //---write css link
+        var themeList=this.model.get("themeList");
+        console.log("Module Chart ->setChartTheme themeList=",themeList);
+        this.model.set("themeName",themeList.split("-")[1]);
+        this.model.set("styleName",themeList.split("-")[0]);
+        var theme_css_file="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
+        jQuery("#chartwidget-theme").html(theme_css_file);
+        //console.log(theme_css_file);
     },
     this.showContent=function() {
       $("#chartwidget-content").show();
