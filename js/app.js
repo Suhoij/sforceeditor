@@ -191,6 +191,7 @@ MyApp.on("initialize:after", function(options){
       MyApp.module("Chart").start();
       MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
+      MyApp.Chart.drawChart(); 
       //chart_module.start();
       //slider_module.start();
   }
@@ -426,8 +427,7 @@ MyApp.module("Slider", function(Slider){
             //console.log("setSliderCode...")
         }
         this.slider_code_view.model=this.model;
-        var sliderwidget_code   = this.slider_code_view.render().el.innerHTML;
-        //MyApp.sliderwidget_code = sliderwidget_code;        
+        var sliderwidget_code   = this.slider_code_view.render().el.innerHTML;      
         $("#sliderwidget-code").empty().html("<script>"+sliderwidget_code+"</script>");
     };
     //-------------------------Models----------------------------
@@ -567,6 +567,7 @@ MyApp.module("Chart", function(Chart){
       	    themeList:"ClearOrange",
             customStyleInput:"",
       	    type:"pie",
+            type_prop:{"pie":{click_cnt:0},"line":{click_cnt:0},"spline":{click_cnt:0},"area":{click_cnt:0}},
       	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
         }
     });
@@ -577,6 +578,15 @@ MyApp.module("Chart", function(Chart){
           data_i:0
         }
     });
+    // ------------------------ Collection -----------------
+    // -------------------------  Pie ----------------------
+    this.fist_collection_corrected=false;
+    this.data_collection_1=[
+          {data_name:"Product One",data_value:18.9,data_i:0},
+          {data_name:"Product Two",data_value:32.4,data_i:1},
+          {data_name:"Product Three",data_value:27.0,data_i:2},
+          {data_name:"Another Product",data_value:21.6,data_i:3}
+    ];
     var DataChartCollection = Backbone.Collection.extend({});
     // ------------------------  Views ---------------------
     var ChartView = Backbone.Marionette.ItemView.extend({
@@ -646,16 +656,39 @@ MyApp.module("Chart", function(Chart){
     });
 
     // ------------------------- Methods --------------------
+    this.clickLinkShow=function() {
+      var cur_type=this.model.get("type");
+      var cur_type_prop=this.model.get("type_prop");
+      return this.model.get("type_prop")[cur_type].click_cnt++;
+    },
+    //------------ correct data collection for first draw-----
+    this.setFirstCollection=function() {
+      var cur_type=this.model.get("type");
+      //console.log("CLICK DRAW ",this.model.get("type"),this.model.get("type_prop")[cur_type].click_cnt);
+      //if (_.indexOf(["line","spline","area"],cur_type) != -1) {//---yes in array---
+      if (MyApp.Chart.fist_collection_corrected ==false) {//---yes in array---
+             var coll_length=MyApp.Chart.data_chart_collection.length;
+             for (var i=0;i<coll_length;i++) {   
+                  var cur_value=MyApp.Chart.data_chart_collection.at(i).attributes.data_value;
+                  MyApp.Chart.data_chart_collection.at(i).set("data_value",(cur_value*0.01).toFixed(3)) ;                  
+                  MyApp.Chart.fist_collection_corrected=true;
+             }
+      }
+    },
     this.drawChart=function(){
         this.showContent();
         this.show_chart();
+        if (this.clickLinkShow() == 0 ) {
+            //---correct collection for some chart type---
+            this.setFirstCollection();
+        } 
         this.setChartData();
     },
     this.setChartTheme=function() {
         //---select params
         //---write css link
         var themeList=this.model.get("themeList");
-        console.log("Module Chart ->setChartTheme themeList=",themeList);
+        //console.log("Module Chart ->setChartTheme themeList=",themeList);
         this.model.set("themeName",themeList.split("-")[1]);
         this.model.set("styleName",themeList.split("-")[0]);
         var theme_css_file="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
@@ -663,14 +696,8 @@ MyApp.module("Chart", function(Chart){
         //console.log(theme_css_file);
     },
     this.showContent=function() {
-      $("#chartwidget-content").show();
-      $("#videowidget-content").hide();
-      // if ($("#chartwidget-content").length==0) {
-      //       this.chart_view.model=this.model;
-      //       this.chart_view.template="#main-chart-template";
-      //       $("#allwidget-content").html(this.chart_view.render().el.innerHTML);
-      //       this.chart_view.template="#chart-template";
-      // }
+        $("#chartwidget-content").show();
+        $("#videowidget-content").hide();
     },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");
@@ -746,13 +773,12 @@ MyApp.module("Chart", function(Chart){
               var value = fields.eq(1).val();
               console.log(name,value);
               MyApp.Chart.data_chart_collection.add({data_name:name,data_value:value,data_i:i});
-              //--get prop: MyApp.Chart.data_chart_collection.at(0).attributes.data_name
           });
     },
     //------------------------Init ------------------------------
     Chart.addInitializer(function(){
           this.model=new ChartModel();
-          this.data_chart_collection = new DataChartCollection({data_name:"Name..",data_value:0,data_i:0});
+          this.data_chart_collection = new DataChartCollection(this.data_collection_1);//--{data_name:"Name..",data_value:0,data_i:0}
           //this.data_chart_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
           this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
           this.data_chart_model=new DataChartModel();

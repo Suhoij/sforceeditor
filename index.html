@@ -8,7 +8,10 @@
     <title>Sforce editor | Welcome</title>
     <link rel="stylesheet" href="css/app.css" />
     <script src="bower_components/modernizr/modernizr.js"></script>
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">	
+    <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">	 -->
+    <!-- <link rel="stylesheet" href="JSLibrary/css/jquery.jqRangeSlider.css">	 -->
+    <!-- <link rel="stylesheet" href="JSLibrary/css/jquery-ui-1.9.1.min.css">	 -->
+
 
   </head>
   <body>
@@ -87,8 +90,8 @@
              <div class="row">
 			      <figure class="chart-figure">
 					<div id="chartstub">
-					  <figcaption>Simple chart</figcaption>
-					  <img src="img/chart.png" alt=""/>
+					<!-- <figcaption>Simple chart</figcaption> -->
+					<!--   <img src="img/chart.png" alt=""/> -->
 					</div>
 					<div id="chartwidget"  style="width:100; height:100%;">
 					
@@ -143,11 +146,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="large-9 column left ui-island" >
-			 	<div id="sliderwidget"></div>
-		    </div>
-		    <div id="sliderwidget-theme"></div>
+			<div id="sliderwidget-theme"></div>
 	      	<div id="sliderwidget-code"></div>
+			<div class="large-9 column left ui-island" >
+			 	<div id="sliderwidget" class="sliderwidget"></div>
+		    </div>
+		    
 		
     </script>
 	<!--   ---------------------- main Video TPL ------------------------------ -->
@@ -660,6 +664,7 @@
                 var slider = jQuery(this).data().slider;
                 slider.element.find(".ui-slider-handle").text(slider.value());
                 slider.element.find(".ui-slider-handle").text(ui.value);
+                
         };
         //function initSlider(){
        
