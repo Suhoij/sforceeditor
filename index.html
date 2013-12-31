@@ -46,7 +46,9 @@
 
     <div class="row  content">
     <div id="allwidget-content">
-    	
+    	<!-- videowidget-content -->
+	  	<div id="videowidget-content">
+	  	</div>
      	<!-- slidewidget-content -->
 	  	<div id="sliderwidget-content">
 	  	</div>
@@ -55,8 +57,8 @@
 	  	</div>
 	  <!-- chartwidget-content -->
      <div id="chartwidget-content">
-      <!--sidebar-->
-      <aside class="large-4  columns">
+     <!--sidebar-->
+    <!--   <aside class="large-4  columns">
         <div id="left-sidebar"  class="ui-island" contenteditable='true'>
           <div class="rich-text">
 	      <header>
@@ -68,9 +70,9 @@
 	      </footer>
           </div>
         </div>
-      </aside>
+      </aside> -->
       <!--main column-->
-      <div class="large-8  columns  content__main">
+    <!--   <div class="large-8  columns  content__main">
         <div id="title-chart" class="ui-island  hero" contenteditable='true'>
           <div class="rich-text">
 	      <header>
@@ -82,17 +84,17 @@
        </div>
         <div id="body-chart" class="ui-island">
           <div class="chart">
-         <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
-             <div class="row center">
+ -->         <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
+    <!--          <div class="row center">
              		<a class="button lage left" href="#" data-reveal-id="chartControlModal">Chart control</a>
              		<a class="button lage right" href="#" data-reveal-id="chartDataModal">Chart data</a>
              </div>
              <div class="row">
 			      <figure class="chart-figure">
 					<div id="chartstub">
-					<!-- <figcaption>Simple chart</figcaption> -->
+ -->					<!-- <figcaption>Simple chart</figcaption> -->
 					<!--   <img src="img/chart.png" alt=""/> -->
-					</div>
+	<!-- 				</div>
 					<div id="chartwidget"  style="width:100; height:100%;">
 					
 					</div>
@@ -103,8 +105,8 @@
 	      <div id="chartwidget-code"></div>
           </div>
         </div>
-      </div>
-      </div><!-- chartwidget-content -->
+      </div> 
+ -->      </div><!-- chartwidget-content -->
      
 
       </div>
@@ -157,7 +159,7 @@
 	<!--   ---------------------- main Video TPL ------------------------------ -->
 	<script type="text/template" id="main-video-template">
 	<!-- videowidget-content -->
-    <div id="videowidget-content">
+   
 		 <div class="large-9  columns  ui-island content__main">
 			<div class="row">
 
@@ -174,7 +176,7 @@
 		 </div>
 		 <div class="large-9 column left ui-island" id="video-player">
 		 </div>
-    </div><!-- videowidget-content -->
+   <!-- videowidget-content -->
 	</script>
  	<!--   ---------------------- player Video TPL ------------------------------ -->
  	<script type="text/template" id="player-youtube-video-template" >
@@ -193,8 +195,6 @@
 
 	<!--  --------------------- Chart TPL ----------------------------- -->
 	<script type="text/template" id="main-chart-template">
-	<!-- chartwidget-content -->
-    <div id="chartwidget-content">
       <!--sidebar-->
       <aside class="large-4  columns">
         <div id="left-sidebar"  class="ui-island" contenteditable='true'>
@@ -224,14 +224,14 @@
           <div class="chart">
          <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
              <div class="row center">
-             		<a class="button lage left" href="#"  data-reveal-id="chartControlModal">Chart control</a>
-             		<a class="button lage right" href="#" data-reveal-id="chartDataModal">Chart data</a>
+             		<a class="button lage left"  id="chart-control-btn"  data-reveal-id="chartControlModal">Chart control</a>
+             		<a class="button lage right" id="chart-data-btn" data-reveal-id="chartDataModal">Chart data</a>
              </div>
              <div class="row">
 			      <figure class="chart-figure">
 					<div id="chartstub">
-					  <figcaption>Simple chart</figcaption>
-					  <img src="img/chart.png" alt=""/>
+					 <!-- <figcaption>Simple chart</figcaption> -->
+					 <!-- <img src="img/chart.png" alt=""/>     -->
 					</div>
 					<div id="chartwidget"  style="width:100; height:100%;">
 					
@@ -244,7 +244,7 @@
           </div>
         </div>
       </div>
-      </div><!-- chartwidget-content -->
+    
 	</script>
     <!-- -----------------------TPL chart Data ------------------------ -->
     <div id="chartDataModal" class="reveal-modal" data-reveal>

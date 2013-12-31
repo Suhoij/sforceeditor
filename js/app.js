@@ -8,13 +8,20 @@ $(document).ready(function(){
 
 //------------------APP INIT----------------------
 MyApp    = new Backbone.Marionette.Application();
-MyApp.addRegions({
-    chartRegion:"#chartwidget-content",
-    videoRegion:"#chartwidget-content",
+MyApp.rm = new Marionette.RegionManager();
+MyApp.rm.addRegions({  
+    videoRegion:"#videowidget-content",
     sliderRegion:"#sliderwidget-content",
-    sortableRegion:"#sortablewidget-content"
+    sortableRegion:"#sortablewidget-content",
+    chartRegion:"#chartwidget-content"
   }
 );
+MyApp.rm.on("show", function(name, region){
+
+  console.log("REGION SHOW ",name,region);
+
+});
+
 //---------------Model Fields&Objects--------------
 var FieldsObjectsCollection = Backbone.Collection.extend({       
 });
@@ -23,10 +30,23 @@ MyApp.addInitializer(function(options){
   this.state='init';
   this.sf_app_params={};
   this.options=options;
+  //this.rm = new Marionette.RegionManager();
+  this.clearScreen=function(cur_region){ //return;
+       var cur_id_region=MyApp.rm.get(cur_region).el;
+       //console.log("clearScreen cur_id_region=",cur_id_region);
+       MyApp.rm.each(function(region){
+          
+          if (region.el != cur_id_region) {
+              //$(region.el).html("");
+              region.close();
+              //console.log("clearScreen for ",region.el);
+          }           
+        });        
+  };
   this.initHeadMenu=function() {
-      $("#head-menu-video").click(function() {MyApp.Video.showContent();}   );
-      $("#head-menu-slider").click(function() {MyApp.Slider.showContent();}   );
-      $("#head-menu-sortable").click(function() {MyApp.Sortable.showContent();}   );
+      $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();}   );
+      $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();}   );
+      $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();}   );
   };
   this.fieldValidate=function(el,cond){
       if (el.value !=="") {
@@ -44,14 +64,16 @@ MyApp.addInitializer(function(options){
   this.initChartMenu=function() {  
      $(".dropdown >li >a").click(function(){
             var chart_type=$(this).attr("jq-type");
-            console.log(chart_type);
+            //console.log(chart_type);
 
             $("#chart-menu >a").text($(this).text());           
             MyApp.Chart.model.set("type",chart_type);
+            MyApp.clearScreen("chartRegion");
             MyApp.Chart.drawChart();  
           }
       )
   };
+
   this.FillScreenFieldsObjects=function(widget_name){    
     if ( $('select#sobjects_'+widget_name+' option').length == 0) {
         var objects_options_str="";
@@ -196,23 +218,7 @@ MyApp.on("initialize:after", function(options){
       //slider_module.start();
   }
 });
-// MyApp.addRegions({
-//   sidebarRegion: {
-//     selector: "#left-sidebar",
-//     regionType: RichText
-//   },
- 
-//   titlechartRegion: {
-//     selector: "#title-chart",
-//     regionType: RichText
-//   },
-  
-//   bodychartRegion: {
-//     selector: "#body-chart",
-//     regionType: Chart
-//   }
- 
-// });
+
 
 //============================ MODULES ===============================
 
@@ -246,7 +252,8 @@ MyApp.module("Sortable", function(Sortable){
     //-------------------------Methods---------------------------
     this.showContent=function() {
           //this.sortable_view.model=this.model;
-          MyApp.sortableRegion.show(this.sortable_view);
+          //MyApp.rm.sortableRegion.show(this.sortable_view);
+          MyApp.rm.get("sortableRegion").show(this.sortable_view);
           $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');});
           $("#sortable-data-btn").click(function(){ $("#sortableDataModal").foundation('reveal', 'open');});
     };
@@ -358,9 +365,10 @@ MyApp.module("Slider", function(Slider){
     });
     //-------------------------Methods---------------------------
     this.showContent=function() {
-          console.log("showContent");
+          console.log("showContent");          
           this.slider_view.model=this.model;
-          MyApp.sliderRegion.show(this.slider_view);
+          //MyApp.rm.sliderRegion.show(this.slider_view);
+          MyApp.rm.get("sliderRegion").show(this.slider_view);
           $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');});
     };
     this.FillScreenSliderProp=function(){
@@ -493,13 +501,16 @@ MyApp.module("Video", function(Video){
           $("#video-player").html(vp_html);
     };
     this.showContent=function() {
-          $("#chartwidget-content").hide();
-          $("#videowidget-content").show();
-          if ($("#videowidget-content").length==0) {
+          //$("#chartwidget-content").hide();
+          //$("#videowidget-content").show();
+          //if ($("#videowidget-content").length==0) {
+
+             
               this.video_view.model=this.model;         
-              $("#allwidget-content").append(this.video_view.render().el.innerHTML);
+              ///////$("#videowidget-content").html(this.video_view.render().el.innerHTML);
+              MyApp.rm.get("videoRegion").show(this.video_view);
               $("#video-control-btn").click(function(){ $("#videoControlModal").foundation('reveal', 'open');});
-          }
+          //}
     };
     this.FillModelVideoProp=function() {
           var screen_items=$("#videoControlModal  :input");
@@ -589,6 +600,10 @@ MyApp.module("Chart", function(Chart){
     ];
     var DataChartCollection = Backbone.Collection.extend({});
     // ------------------------  Views ---------------------
+    var MainChartView = Backbone.Marionette.ItemView.extend({
+       //template: "#main-chart-template",
+       //model:new ChartModel()
+    });
     var ChartView = Backbone.Marionette.ItemView.extend({
 	     //template: "#chart-template",
 	     //model:new ChartModel()
@@ -696,8 +711,12 @@ MyApp.module("Chart", function(Chart){
         //console.log(theme_css_file);
     },
     this.showContent=function() {
-        $("#chartwidget-content").show();
-        $("#videowidget-content").hide();
+        //$("#chartwidget-content").show();
+        //$("#videowidget-content").hide();
+         MyApp.rm.get("chartRegion").show(this.main_chart_view);
+         $("#chart-control-btn").click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
+         $("#chart-data-btn").click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
+
     },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");
@@ -781,6 +800,7 @@ MyApp.module("Chart", function(Chart){
           this.data_chart_collection = new DataChartCollection(this.data_collection_1);//--{data_name:"Name..",data_value:0,data_i:0}
           //this.data_chart_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
           this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
+          this.main_chart_view=new MainChartView({template: "#main-chart-template",model:this.model});//--new ChartModel()
           this.data_chart_model=new DataChartModel();
           this.data_item_chart_view=new DataItemChartView({template: "#data-chart-item-template",model:this.data_chart_model});
           this.prop_chart_view=new PropChartView({template: "#chartControlModal",model:this.model});
