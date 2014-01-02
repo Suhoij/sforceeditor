@@ -44,9 +44,9 @@ MyApp.addInitializer(function(options){
         });        
   };
   this.initHeadMenu=function() {
-      $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();}   );
-      $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();}   );
-      $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();}   );
+      $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();MyApp.Video.showVideoPlayer();}   );
+      $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();MyApp.Slider.drawSlider();}   );
+      $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();MyApp.Sortable.drawSortable();}   );
   };
   this.fieldValidate=function(el,cond){
       if (el.value !=="") {
@@ -228,7 +228,7 @@ MyApp.module("Sortable", function(Sortable){
     Sortable.addInitializer(function(){
       this.controller      = new Controller();
       this.model           = new SortableModel();
-      this.data_collection = new DataCollection({data_name:"Name..",data_value:0,data_i:0});
+      this.data_collection = new DataCollection([{data_name:"Item Name...1",data_value:1,data_i:0},{data_name:"Item Name...2",data_value:2,data_i:0}]);
       this.sortable_view   = new SortableView();
       $("#data-add-sortable-btn").click(function(){MyApp.Sortable.controller.addData()});
       $("#data-del-btn").click(function(){MyApp.Sortable.controller.delData()});
@@ -698,6 +698,7 @@ MyApp.module("Chart", function(Chart){
             this.setFirstCollection();
         } 
         this.setChartData();
+        CKEDITOR.inlineAll();//---fir rich text editing
     },
     this.setChartTheme=function() {
         //---select params
