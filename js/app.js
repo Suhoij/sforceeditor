@@ -230,6 +230,7 @@ MyApp.module("Sortable", function(Sortable){
       this.model           = new SortableModel();
       this.data_collection = new DataCollection([{data_name:"Item Name...1",data_value:1,data_i:0},{data_name:"Item Name...2",data_value:2,data_i:0}]);
       this.sortable_view   = new SortableView();
+      this.data_item_view  = new DataItemView();
       $("#data-add-sortable-btn").click(function(){MyApp.Sortable.controller.addData()});
       $("#data-del-btn").click(function(){MyApp.Sortable.controller.delData()});
     });
@@ -261,7 +262,17 @@ MyApp.module("Sortable", function(Sortable){
           MyApp.FillScreenFieldsObjects("sortable");//--select fill--
     };
     this.FillScreenData=function() {
-         //MyApp.Sortable.controller.addCollectionData();
+          //MyApp.Sortable.controller.addCollectionData();
+          var data_coll=MyApp.Sortable.data_collection;
+          if ( data_coll.length <=1) {return;}
+          $("#sortableDataModal table tbody").empty();
+          var coll_length=data_coll.length;
+          for (var i=0;i<coll_length;i++) {            
+                var chart_data_cur=data_coll.at(i);
+                MyApp.Sortable.data_item_view.model=chart_data_cur;
+                var row_tpl= MyApp.Sortable.data_item_view.render().el.innerHTML;
+                $("#sortableDataModal table tbody").append(row_tpl);
+          };
     };
     this.FillModelProp=function(){
           var screen_items=$("#sortableControlModal  :input");
@@ -346,6 +357,10 @@ MyApp.module("Sortable", function(Sortable){
     //-------------------------Views-----------------------------
     var SortableView = Backbone.Marionette.ItemView.extend({
        template: "#main-sortable-template",
+       model:this.model
+    });
+    var DataItemView = Backbone.Marionette.ItemView.extend({
+       template: "#data-item-tpl",
        model:this.model
     });
 });

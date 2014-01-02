@@ -305,6 +305,19 @@
 			  </td>
 		</tr>	
  	</script>
+ 	<script type="text/template" id="data-item-tpl">
+ 	  	<tr>
+			  <td>
+			      <input  type="text" placeholder="New Name..." value="<%= data_name %>" />
+			  </td>
+			  <td>
+			      <input  type="text" placeholder="0" value=<%= data_value %> />
+			  </td>
+			  <td>
+			      <a  class="data-del button tiny" onclick="$(this).parent().parent().remove();">Delete item</a>
+			  </td>
+		</tr>	
+ 	</script>
  	<!--  ============================ MODAL WINDOWS ========================== -->
     <!-- ----------------------------- Sortable Data Modal ----------------------- -->
  	<div id="sortableDataModal" class="reveal-modal" data-reveal>
