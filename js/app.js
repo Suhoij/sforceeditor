@@ -49,16 +49,21 @@ MyApp.addInitializer(function(options){
       $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();MyApp.Sortable.drawSortable();}   );
   };
   this.fieldValidate=function(el,cond){
+      var widget_type=el.getAttribute("widgettype");
       if (el.value !=="") {
-         return true;
-      } else { el.focus();$('#customStyleInputError').show();}
+          return true;
+      } else { el.focus();$('#customStyleInputError[widgettype="'+widget_type+'"]').show();}
   };
-  this.customStyleChange=function() {
-    if ( $('#custom-style').prop("checked")){
-          $('#customStyleInput').show().focus();
+  this.customStyleChange=function(el) {
+    var widget_type=el.getAttribute("widgettype");
+    console.log("customStyleChange ",$(el),widget_type);
+    if ( $(el).prop("checked")==true){
+          $('#customStyleInput[widgettype="'+widget_type+'"]').show().focus();
+          $('#themeList[widgettype="'+widget_type+'"]').attr('disabled', 'disabled');
     } else {
-          $('#customStyleInput').hide();
-          $('#customStyleInputError').hide();
+          $('#themeList[widgettype="'+widget_type+'"]').removeAttr('disabled');
+          $('#customStyleInput[widgettype="'+widget_type+'"]').hide();
+          $('#customStyleInputError[widgettype="'+widget_type+'"]').hide();
     }
   };
   this.initChartMenu=function() {  
@@ -259,6 +264,18 @@ MyApp.module("Sortable", function(Sortable){
           $("#sortable-data-btn").click(function(){ $("#sortableDataModal").foundation('reveal', 'open');});
     };
     this.FillScreenProp=function() {
+          var fields = _.keys(MyApp.Sortable.model.attributes);
+          jQuery.each(fields,function(i,f) {
+              var f_val=MyApp.Sortable.model.get(f);
+              //---tags select
+              if (f=="themeList") {
+                  console.log("sortable themeList",f_val);
+              }
+              //---tags checkbox
+              //---tags input
+              $("#"+f).val(f_val);
+  
+          });
           MyApp.FillScreenFieldsObjects("sortable");//--select fill--
     };
     this.FillScreenData=function() {
@@ -345,11 +362,12 @@ MyApp.module("Sortable", function(Sortable){
     //-------------------------Models----------------------------
     var SortableModel = Backbone.Model.extend({
         defaults: {
+            active_sortable:1,
             sobjects_sortable:"sforceObject",
             sfields_sortable:"sobjectField",
             titleText:"Sortable title",
             themeName: "ClearGreen",
-            themeList: "ClearGreen",
+            themeList: "Clear-Green",
             customStyleInput:""
         }
     });
@@ -459,12 +477,13 @@ MyApp.module("Slider", function(Slider){
         defVal:90,
         minVal:1,
         maxVal:99,
+        active_slider:1,
         sobjects_slider:"sforceObject",
         sfields_slider:"sobjectField",
         titleText:"slider title",
         step:1,
         themeName: "ClearGreen",
-        themeList: "ClearGreen",
+        themeList: "Clear-Green",
         customStyleInput:""
       }
     });
