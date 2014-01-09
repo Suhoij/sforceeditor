@@ -16,11 +16,18 @@ MyApp.rm.addRegions({
     chartRegion:"#chartwidget-content"
   }
 );
+
 MyApp.rm.on("show", function(name, region){
 
   console.log("REGION SHOW ",name,region);
 
 });
+
+MyApp.rm.showBlockType=function(block_name) {
+  $(".block-type").html($('#block-type-tpl').html());
+  $(document).foundation();
+};
+
 
 //---------------Model Fields&Objects--------------
 var FieldsObjectsCollection = Backbone.Collection.extend({       
@@ -42,6 +49,16 @@ MyApp.addInitializer(function(options){
               //console.log("clearScreen for ",region.el);
           }           
         });        
+  };
+  this.getUrlParams=function(){
+    //---use like this MyApp.getUrlParams()['org_id']
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+    function(m,key,value) {
+      vars[key] = value;
+    });
+    return vars;
+  
   };
   this.initHeadMenu=function() {
       $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();MyApp.Video.showVideoPlayer();}   );
@@ -204,6 +221,10 @@ $(document).on('close', '[data-reveal]', function () {
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
   //console.table(MyApp.options);
+  MyApp.org_id=MyApp.getUrlParams()['org_id'];
+  MyApp.app_id=MyApp.getUrlParams()['app_id'];
+  MyApp.slider_id=MyApp.getUrlParams()['slider_id'];
+  MyApp.session_id=MyApp.getUrlParams()['session_id'];
 });
 MyApp.on("initialize:after", function(options){
   if (Backbone.history){
@@ -751,7 +772,7 @@ MyApp.module("Chart", function(Chart){
          MyApp.rm.get("chartRegion").show(this.main_chart_view);
          $("#chart-control-btn").click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
          $("#chart-data-btn").click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
-
+         MyApp.rm.showBlockType("Chart");
     },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");

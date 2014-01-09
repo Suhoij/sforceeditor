@@ -44,72 +44,37 @@
       </nav>
     </header>
 
-    <div class="row  content">
-    <div id="allwidget-content">
-    	<!-- videowidget-content -->
-	  	<div id="videowidget-content">
-	  	</div>
-     	<!-- slidewidget-content -->
-	  	<div id="sliderwidget-content">
-	  	</div>
-	   	<!-- sortablewidget-content -->
-	  	<div id="sortablewidget-content">
-	  	</div>
-	  <!-- chartwidget-content -->
-     <div id="chartwidget-content">
-     <!--sidebar-->
-    <!--   <aside class="large-4  columns">
-        <div id="left-sidebar"  class="ui-island" contenteditable='true'>
-          <div class="rich-text">
-	      <header>
-		<h2>Lorem ipsum</h2>
-	      </header>
-	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque eligendi esse harum maxime perferendis? Asperiores commodi exercitationem facere laudantium perspiciatis praesentium soluta? Ad asperiores at consectetur ipsa laudantium odit quod.</p>
-	      <footer>
-		<button class="custom-button">Lorem ipsum dolor</button>
-	      </footer>
-          </div>
-        </div>
-      </aside> -->
-      <!--main column-->
-    <!--   <div class="large-8  columns  content__main">
-        <div id="title-chart" class="ui-island  hero" contenteditable='true'>
-          <div class="rich-text">
-	      <header>
-		<h1>Lorem ipsum</h1>
-		
-	      </header>
-	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorem inventore nemo nesciunt optio quis sapiente sunt! Adipisci consectetur culpa ducimus id in, nam odit rem similique totam voluptas voluptatem?</p>
-	  </div>
-       </div>
-        <div id="body-chart" class="ui-island">
-          <div class="chart">
- -->         <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
-    <!--          <div class="row center">
-             		<a class="button lage left" href="#" data-reveal-id="chartControlModal">Chart control</a>
-             		<a class="button lage right" href="#" data-reveal-id="chartDataModal">Chart data</a>
-             </div>
-             <div class="row">
-			      <figure class="chart-figure">
-					<div id="chartstub">
- -->					<!-- <figcaption>Simple chart</figcaption> -->
-					<!--   <img src="img/chart.png" alt=""/> -->
-	<!-- 				</div>
-					<div id="chartwidget"  style="width:100; height:100%;">
-					
-					</div>
-
-			      </figure>
-	      </div>
-	      <div id="chartwidget-theme"></div>
-	      <div id="chartwidget-code"></div>
-          </div>
-        </div>
-      </div> 
- -->      </div><!-- chartwidget-content -->
+   <div class="row  content">
+  	<div class="row">
+   		<div id="allwidget-content">
+	    	<!-- videowidget-content -->
+		  	<div id="videowidget-content">
+		  	</div>
+	     	<!-- slidewidget-content -->
+		  	<div id="sliderwidget-content">
+		  	</div>
+		   	<!-- sortablewidget-content -->
+		  	<div id="sortablewidget-content">
+		  	</div>
+		  	<!-- chartwidget-content -->
+	     	<div id="chartwidget-content">
+	       	</div><!-- chartwidget-content -->
      
+		</div>
+     </div>
 
-      </div>
+     <div class="row">
+     
+  			<div class="small-6 small-centered columns">
+  				<a href="#" class="button large radius round">Save page</a>
+  			</div>
+  			<div class="row">
+	        	<div class="progress small-12 success radius">
+		         	<span class="meter" style="width:0%"></span>
+	        	</div>
+        </div>
+	 </div>
+	
     </div>
     <!-- ========================= TEMPLATES =============================== -->
  	<!--   ---------------------- main Sortable TPL ------------------------------ -->
@@ -197,9 +162,13 @@
 	<script type="text/template" id="main-chart-template">
       <!--sidebar-->
       <aside class="large-4  columns">
+        <!-- <div class="row center block-type bt-1"></div> -->
         <div id="left-sidebar"  class="ui-island" contenteditable='true'>
+
           <div class="rich-text">
+          
 	      <header>
+
 		<h2>Lorem ipsum</h2>
 	      </header>
 	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque eligendi esse harum maxime perferendis? Asperiores commodi exercitationem facere laudantium perspiciatis praesentium soluta? Ad asperiores at consectetur ipsa laudantium odit quod.</p>
@@ -212,20 +181,36 @@
       <!--main column-->
       <div class="large-8  columns  content__main">
         <div id="title-chart" class="ui-island  hero" contenteditable='true'>
+          
           <div class="rich-text">
+          
 	      <header>
-		<h1>Lorem ipsum</h1>
+	      
+	     
+			<h1>Main header</h1>
 		
 	      </header>
 	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorem inventore nemo nesciunt optio quis sapiente sunt! Adipisci consectetur culpa ducimus id in, nam odit rem similique totam voluptas voluptatem?</p>
 	  </div>
        </div>
         <div id="body-chart" class="ui-island">
+         
+         <!-- <div class="row center block-type bt-3"></div> -->
           <div class="chart">
          <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
+         	 
              <div class="row center">
-             		<a class="button lage left"  id="chart-control-btn"  data-reveal-id="chartControlModal">Chart control</a>
-             		<a class="button lage right" id="chart-data-btn" data-reveal-id="chartDataModal">Chart data</a>
+             		<div class="columns large-4">
+						<a class="button lage left"  id="chart-control-btn"  data-reveal-id="chartControlModal">Chart control</a>
+             		</div>
+             		<div class="columns large-4">
+						<a class="button lage right" id="chart-data-btn" data-reveal-id="chartDataModal">Chart data</a>
+             		</div>
+             		<div class="columns large-4">
+						<div class="block-type bt-2 row text-center">Type</div>
+             		</div>
+             		             		             		
+
              </div>
              <div class="row">
 			      <figure class="chart-figure">
@@ -251,29 +236,36 @@
     	<fieldset>
 	      <legend>Chart Data</legend>
 	       <div class="row">
-		<table id="chartDataTable" width="100%">
-		  <thead>
-		    <th width="50%">Name</th>
-		    <th width="30%">Data</th>
-		    <th width="20%">Control</th>
-		    <tbody>
-		      <!-- b:chart data item -->
-			  <tr>
-			  <td>
-			    <input id="chart-data-name-0" type="text" placeholder="New Name..." />
-			  </td>
-			  <td>
-			    <input id="chart-data-value-0" type="text" placeholder="0" value=0 />
-			  </td>
-			  <td>
-			    <a class="button tiny" href="#">Delete item</a>
-			  </td>		       
-		      </tr>
-		      <!-- e:chart data item -->
-		    </tbody>
-		  </thead>
-		</table>
-		<a  id="data-add-btn" class="button">Add new item</a>
+			<table id="chartDataTable" width="100%">
+			  <thead>
+			    <th width="50%">Name</th>
+			    <th width="30%">Data</th>
+			    <th width="20%">Control</th>
+			    <tbody>
+			      <!-- b:chart data item -->
+				  <tr>
+				  <td>
+				    <input id="chart-data-name-0" type="text" placeholder="New Name..." />
+				  </td>
+				  <td>
+				    <input id="chart-data-value-0" type="text" placeholder="0" value=0 />
+				  </td>
+				  <td>
+				    <a class="button tiny" href="#">Delete item</a>
+				  </td>		       
+			      </tr>
+			      <!-- e:chart data item -->
+			    </tbody>
+			  </thead>
+			</table>
+			<div class="row">		
+				<div class="columns large-3">
+					<a  id="data-add-btn" class="button">Add new item</a>
+				</div>
+				<div class="columns large-9">
+					<a  id="ok-chart-btn" class="button" onclick="$('#chartDataModal').foundation('reveal', 'close')">Ok</a>
+				</div>
+			</div>
 	       </div>
 	   </fieldset>
     	<a class="close-reveal-modal">&#215;</a> 
@@ -318,35 +310,55 @@
 			  </td>
 		</tr>	
  	</script>
+ 	<script type="text/template" id="block-type-tpl">
+	 	<style>
+	 	 .bt-img-option {float:right;margin-right:15px}
+	 	</style>
+ 		<a  class="button" data-dropdown="cur_block_type"><b>Type:</b> Chart</a>
+		<ul id="cur_block_type" class="tiny f-dropdown" data-dropdown-content>
+		  <li><img src="img/sm-chart.png" class="bt-img-option"/><a href="#">Chart</a></li>
+		  <li><img src="img/sm-sortable.png" class="bt-img-option"/><a href="#">Sortable</a></li>
+		  <li><img src="img/sm-slider.png" class="bt-img-option"/><a href="#">Slider</a></li>
+		  <li><img src="img/sm-video.png" class="bt-img-option"/><a href="#">Video</a></li>
+		</ul>
+ 	</script>
  	<!--  ============================ MODAL WINDOWS ========================== -->
     <!-- ----------------------------- Sortable Data Modal ----------------------- -->
  	<div id="sortableDataModal" class="reveal-modal" data-reveal>
     	<fieldset>
 	      <legend>Sortable Data</legend>
 	       <div class="row">
-		<table id="sortableDataTable" width="100%">
-		  <thead>
-		    <th width="50%">Name</th>
-		    <th width="30%">Data</th>
-		    <th width="20%">Control</th>
-		    <tbody>
-		      <!-- b:sortable data item -->
-			  <tr>
-			  <td>
-			    <input id="sortable-data-name-0" type="text" placeholder="New Name..." />
-			  </td>
-			  <td>
-			    <input id="sortable-data-value-0" type="text" placeholder="0" value=0 />
-			  </td>
-			  <td>
-			    <a class="button tiny" onclick="$(this).parent().parent().remove();">Delete item</a>
-			  </td>		       
-		      </tr>
-		      <!-- e:sortable data item -->
-		    </tbody>
-		  </thead>
-		</table>
-		<a  id="data-add-sortable-btn" class="button">Add new item</a>
+				<table id="sortableDataTable" width="100%">
+				  <thead>
+				    <th width="50%">Name</th>
+				    <th width="30%">Data</th>
+				    <th width="20%">Control</th>
+				    <tbody>
+				      <!-- b:sortable data item -->
+					  <tr>
+					  <td>
+					    <input id="sortable-data-name-0" type="text" placeholder="New Name..." />
+					  </td>
+					  <td>
+					    <input id="sortable-data-value-0" type="text" placeholder="0" value=0 />
+					  </td>
+					  <td>
+					    <a class="button tiny" onclick="$(this).parent().parent().remove();">Delete item</a>
+					  </td>		       
+				      </tr>
+				      <!-- e:sortable data item -->
+				    </tbody>
+				  </thead>
+				</table>
+			
+			<div class="row">
+				<div class="columns large-3">
+					<a  id="data-add-sortable-btn" class="button">Add new item</a>
+				</div>
+				<div class="columns large-9">
+					<a  id="ok-sortable-btn" class="button" onclick="$('#sortableDataModal').foundation('reveal', 'close')">Ok</a>		
+				</div>
+	       </div>
 	       </div>
 	   </fieldset>
     	<a class="close-reveal-modal">&#215;</a> 
@@ -840,6 +852,7 @@
     <script src="bower_components/jquery/jquery.min.js"></script>
     <script src="bower_components/foundation/js/foundation.min.js"></script>
     <script src="bower_components/foundation/js/foundation.abide.js"></script>
+    <script src="bower_components/foundation/js/foundation/foundation.dropdown.js"></script>
     <script src="js/foundation/foundation.reveal.js"></script>
     <script src="backbone.marionette/underscore.js"></script>
     <script src="backbone.marionette/backbone.js"></script> 

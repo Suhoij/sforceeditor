@@ -1,0 +1,2 @@
+Slider class for "#sliderwidget"
+sliderwidget ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all
