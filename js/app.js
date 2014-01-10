@@ -3,6 +3,7 @@ $(document).ready(function(){
   $(document).foundation();
   MyApp.start({'sf_app_params':{org_id:1,app_id:11,slide_id:111,session_id:1111}});
   MyApp.vent.trigger("getSfparams"); 
+  MyApp.CManager.showBlockType();
 });
 //----------------------MAIN------------------------
 
@@ -22,12 +23,6 @@ MyApp.rm.on("show", function(name, region){
   console.log("REGION SHOW ",name,region);
 
 });
-
-MyApp.rm.showBlockType=function(block_name) {
-  $(".block-type").html($('#block-type-tpl').html());
-  $(document).foundation();
-};
-
 
 //---------------Model Fields&Objects--------------
 var FieldsObjectsCollection = Backbone.Collection.extend({       
@@ -239,6 +234,7 @@ MyApp.on("initialize:after", function(options){
       MyApp.module("Chart").start();
       MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
+      MyApp.module("CManager").start();
       MyApp.Chart.drawChart(); 
       //chart_module.start();
       //slider_module.start();
@@ -247,6 +243,62 @@ MyApp.on("initialize:after", function(options){
 
 
 //============================ MODULES ===============================
+MyApp.module("CManager", function(CManager){
+  //----Content Manager--------------
+  //---get page content from server
+  //---buildPage
+  //---setBlockType's for blocks in page
+  CManager.addInitializer(function(){
+        this.block_type_arr   = new Array("Text","Chart","Sortable","Slider","Video");
+        this.block_model      = new BlockModel();
+        this.block_collection = new BlockCollection();
+        this.block_type_view  = new BlockTypeView();
+  });
+  //----------------Models-------------------
+  var BlockModel=Backbone.Model.extend({
+        defaults: {
+          nomer:0,
+          type_name:"Text",
+          cur_name:"<b>Type:</b> Text"
+        }
+  });
+  //----------------Collections--------------
+  var BlockCollection=Backbone.Collection.extend({
+        model:this.block_model
+  });
+  //-----------------View----------------------
+  var BlockTypeView = Backbone.Marionette.ItemView.extend({
+       template: "#block-type-tpl",
+       model:MyApp.rm.block_model
+  });
+  //----------------Methods------------------
+  this.getPage=function() { //--from server--
+
+  };
+  this.buildPage=function() {
+       MyApp.CManager.showBlockType();
+  };
+  this.selectBlockType=function(n,name) {
+        $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
+        $("#cur_block_type_"+n).removeClass("open");
+        $('#cur_block_type_'+n).css({left:'-99999px'});
+        //$(document).foundation();
+  };
+  this.showBlockType=function(block_name) {
+        //---get html from render
+        this.block_cnt=3;
+        MyApp.CManager.block_type_view.model=this.block_model;
+        for (var i=1;i<=this.block_cnt;i++) {            
+            MyApp.CManager.block_type_view.model.set("nomer",i);
+            var block_html=MyApp.CManager.block_type_view.render().el.innerHTML;
+            $(".block-type.bt-"+i).html(block_html);
+
+        };
+        $(document).foundation();
+       
+  }
+});
+
 
 //--------------------------- Module Sortable-------------------------
 MyApp.module("Sortable", function(Sortable){
@@ -753,6 +805,7 @@ MyApp.module("Chart", function(Chart){
             this.setFirstCollection();
         } 
         this.setChartData();
+        MyApp.CManager.showBlockType();//--- if they exist on page--
         CKEDITOR.inlineAll();//---fir rich text editing
     },
     this.setChartTheme=function() {
@@ -772,7 +825,7 @@ MyApp.module("Chart", function(Chart){
          MyApp.rm.get("chartRegion").show(this.main_chart_view);
          $("#chart-control-btn").click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
          $("#chart-data-btn").click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
-         MyApp.rm.showBlockType("Chart");
+         MyApp.CManager.showBlockType("Chart");
     },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");

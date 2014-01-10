@@ -162,10 +162,14 @@
 	<script type="text/template" id="main-chart-template">
       <!--sidebar-->
       <aside class="large-4  columns">
-        <!-- <div class="row center block-type bt-1"></div> -->
-        <div id="left-sidebar"  class="ui-island" contenteditable='true'>
 
-          <div class="rich-text">
+        <div id="left-sidebar"  class="ui-island" >
+		   <div class="row">
+     	   	<div class="columns large-12">
+				<div class="block-type bt-1 row">Type</div>
+            </div>
+     	  </div>
+          <div class="rich-text" contenteditable='true'>
           
 	      <header>
 
@@ -180,15 +184,16 @@
       </aside>
       <!--main column-->
       <div class="large-8  columns  content__main">
-        <div id="title-chart" class="ui-island  hero" contenteditable='true'>
+        <div id="title-chart" class="ui-island  hero" >
+           <div class="row">
+     	   	<div class="columns large-12">
+				<div class="block-type bt-2 row">Type</div>
+            </div>
+     	  </div>
+          <div class="rich-text" contenteditable='true'>
           
-          <div class="rich-text">
-          
-	      <header>
-	      
-	     
-			<h1>Main header</h1>
-		
+	      <header>	       
+			<h1>Main header</h1>		
 	      </header>
 	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorem inventore nemo nesciunt optio quis sapiente sunt! Adipisci consectetur culpa ducimus id in, nam odit rem similique totam voluptas voluptatem?</p>
 	  </div>
@@ -201,16 +206,14 @@
          	 
              <div class="row center">
              		<div class="columns large-4">
+						<div class="block-type bt-3 row ">Type</div>
+             		</div>
+             		<div class="columns large-4">
 						<a class="button lage left"  id="chart-control-btn"  data-reveal-id="chartControlModal">Chart control</a>
              		</div>
              		<div class="columns large-4">
 						<a class="button lage right" id="chart-data-btn" data-reveal-id="chartDataModal">Chart data</a>
              		</div>
-             		<div class="columns large-4">
-						<div class="block-type bt-2 row text-center">Type</div>
-             		</div>
-             		             		             		
-
              </div>
              <div class="row">
 			      <figure class="chart-figure">
@@ -314,12 +317,13 @@
 	 	<style>
 	 	 .bt-img-option {float:right;margin-right:15px}
 	 	</style>
- 		<a  class="button" data-dropdown="cur_block_type"><b>Type:</b> Chart</a>
-		<ul id="cur_block_type" class="tiny f-dropdown" data-dropdown-content>
-		  <li><img src="img/sm-chart.png" class="bt-img-option"/><a href="#">Chart</a></li>
-		  <li><img src="img/sm-sortable.png" class="bt-img-option"/><a href="#">Sortable</a></li>
-		  <li><img src="img/sm-slider.png" class="bt-img-option"/><a href="#">Slider</a></li>
-		  <li><img src="img/sm-video.png" class="bt-img-option"/><a href="#">Video</a></li>
+ 		<a  class="button" data-dropdown="cur_block_type_<%= nomer %>"><%= cur_name %></a>
+		<ul id="cur_block_type_<%= nomer %>" class="tiny f-dropdown text-left" data-dropdown-content>
+		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Text');"><img src="img/sm-text.png" class="bt-img-option"/><a >Text</a></li>
+		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Chart');"><img src="img/sm-chart.png" class="bt-img-option"/><a >Chart</a></li>
+		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Sortable');"><img src="img/sm-sortable.png" class="bt-img-option"/><a >Sortable</a></li>
+		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Slider');"><img src="img/sm-slider.png" class="bt-img-option"/><a >Slider</a></li>
+		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Video');"><img src="img/sm-video.png" class="bt-img-option"/><a >Video</a></li>
 		</ul>
  	</script>
  	<!--  ============================ MODAL WINDOWS ========================== -->
@@ -355,7 +359,7 @@
 				<div class="columns large-3">
 					<a  id="data-add-sortable-btn" class="button">Add new item</a>
 				</div>
-				<div class="columns large-9">
+				<div class="columns large-7">
 					<a  id="ok-sortable-btn" class="button" onclick="$('#sortableDataModal').foundation('reveal', 'close')">Ok</a>		
 				</div>
 	       </div>
@@ -434,7 +438,12 @@
 						</div>
  					</div>
  				</div>
- 	</fieldset>	
+ 	</fieldset>
+	<div class="row">				
+		<div class="columns large text-center">
+			<a  id="ok-sortable-btn" class="button" onclick="$('#sortableControlModal').foundation('reveal', 'close')">Ok</a>		
+		</div>
+	</div>	
  	<a class="close-reveal-modal">&#215;</a>
  	
 	</div>
@@ -542,7 +551,12 @@
  					<input id="step" type="text" value="0" />
  				</div>
  			</div>
- 		</fieldset>	
+ 		</fieldset>
+ 		<div class="row">				
+		<div class="columns large text-center">
+			<a  id="ok-sortable-btn" class="button" onclick="$('#sliderControlModal').foundation('reveal', 'close')">Ok</a>		
+		</div>
+	</div>		
  	  <a class="close-reveal-modal">&#215;</a>
 	</div>
  	<!-- ----------------------------- Video Control Modal -------------------- -->
@@ -578,6 +592,11 @@
  				<!-- </form> -->
  			</div>
  		</fieldset>
+ 		<div class="row">				
+			<div class="columns large text-center">
+				<a  id="ok-sortable-btn" class="button" onclick="$('#videoControlModal').foundation('reveal', 'close')">Ok</a>		
+			</div>
+		</div>	
  		<a class="close-reveal-modal">&#215;</a> 
  	</div>
 	<!--  ------------------------- Chart Control Modal window ---------------------- -->
@@ -672,7 +691,11 @@
 	      </div>
 	   </fieldset>
 	   </form>
-
+		<div class="row">				
+			<div class="columns large text-center">
+				<a  id="ok-sortable-btn" class="button" onclick="$('#chartControlModal').foundation('reveal', 'close')">Ok</a>		
+			</div>
+		</div>
 	
        <a class="close-reveal-modal">&#215;</a>
      </div>
