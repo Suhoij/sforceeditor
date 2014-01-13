@@ -11,6 +11,7 @@ $(document).ready(function(){
 MyApp    = new Backbone.Marionette.Application();
 MyApp.rm = new Marionette.RegionManager();
 MyApp.rm.addRegions({  
+    homeRegion:"#homewidget-content",
     videoRegion:"#videowidget-content",
     sliderRegion:"#sliderwidget-content",
     sortableRegion:"#sortablewidget-content",
@@ -56,6 +57,7 @@ MyApp.addInitializer(function(options){
   
   };
   this.initHeadMenu=function() {
+      $("#head-menu-home").click(function()     {MyApp.clearScreen("homeRegion");MyApp.CManager.showHomePage();}   );
       $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();MyApp.Video.showVideoPlayer();}   );
       $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();MyApp.Slider.drawSlider();}   );
       $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();MyApp.Sortable.drawSortable();}   );
@@ -250,11 +252,19 @@ MyApp.module("CManager", function(CManager){
   //---setBlockType's for blocks in page
   CManager.addInitializer(function(){
         this.block_type_arr   = new Array("Text","Chart","Sortable","Slider","Video");
+        this.home_page_model  = new HomePageModel();
         this.block_model      = new BlockModel();
         this.block_collection = new BlockCollection();
         this.block_type_view  = new BlockTypeView();
+        this.home_page_view   = new HomePageView();
   });
   //----------------Models-------------------
+  var HomePageModel=Backbone.Model.extend({
+        defaults: {
+          blocks_cnt:3,
+          blocks_prop:{"bk-1":{"top":1,"left":1,"type":"text"},"bk-2":{"top":1,"left":100,"type":"text"},"bk-3":{"top":100,"left":100,"type":"chart"}}         
+        }
+  });
   var BlockModel=Backbone.Model.extend({
         defaults: {
           nomer:0,
@@ -267,11 +277,21 @@ MyApp.module("CManager", function(CManager){
         model:this.block_model
   });
   //-----------------View----------------------
+  var HomePageView = Backbone.Marionette.ItemView.extend({
+       template: "#home-page-template",
+       model:this.home_page_model
+  });
   var BlockTypeView = Backbone.Marionette.ItemView.extend({
        template: "#block-type-tpl",
        model:MyApp.rm.block_model
   });
   //----------------Methods------------------
+  this.showHomePage=function() {
+    //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
+    MyApp.rm.get("homeRegion").show(this.home_page_view);   
+    MyApp.CManager.showBlockType();
+    CKEDITOR.inlineAll();//---fire rich text editing
+  };
   this.getPage=function() { //--from server--
 
   };

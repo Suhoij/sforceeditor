@@ -26,7 +26,7 @@
         </ul>
         <section class="top-bar-section">
           <ul>
-            <li><a href="#">Home</a></li>
+            <li><a href="#" id="head-menu-home">Home</a></li>
             <li><a href="#" id="head-menu-video">Widget video</a></li>
             <li><a href="#" id="head-menu-slider" >Widget slider</a></li>
             <li><a href="#" id="head-menu-sortable">Widget sortable</a></li>
@@ -47,7 +47,10 @@
    <div class="row  content">
   	<div class="row">
    		<div id="allwidget-content">
-	    	<!-- videowidget-content -->
+	    	<!-- homewidget-content -->
+		  	<div id="homewidget-content">
+		  	</div>
+		  	<!-- videowidget-content -->
 		  	<div id="videowidget-content">
 		  	</div>
 	     	<!-- slidewidget-content -->
@@ -173,7 +176,7 @@
           
 	      <header>
 
-		<h2>Lorem ipsum</h2>
+		  <h2>Lorem ipsum</h2>
 	      </header>
 	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque eligendi esse harum maxime perferendis? Asperiores commodi exercitationem facere laudantium perspiciatis praesentium soluta? Ad asperiores at consectetur ipsa laudantium odit quod.</p>
 	      <footer>
@@ -870,6 +873,59 @@
                            data.value + ' (' + percentage + ')';
                 });
             }
+    </script>
+    <!-- ------------------------- Home Page Template ------------------- -->
+    <script type="text/template" id="home-page-template">
+ 	<!--sidebar-->
+      <aside class="large-4  columns">
+        <div id="left-sidebar"  class="ui-island" >
+		   <div class="row">
+     	   	<div class="columns large-12">
+				<div class="block-type bt-1 row">Type</div>
+            </div>
+     	  </div>
+          <div class="widget-block-content-1" contenteditable='true'>          	    
+				  <h2>Lorem ipsum</h2>
+			      <p>Widget content number 1</p>
+			      <footer>
+						<button class="custom-button">Lorem ipsum dolor</button>
+			      </footer>
+          </div>
+        </div>
+      </aside>
+      <!--main column-->
+      <div class="large-8  columns  content__main">
+        <div id="title-chart" class="ui-island  hero" >
+           <div class="row">
+     	   	<div class="columns large-12">
+				<div class="block-type bt-2 row">Type</div>
+            </div>
+     	  </div>
+          <div class="widget-block-content-2" contenteditable='true'>
+          	     
+				<h1>Main header</h1>		
+	   
+		      <p>Widget content number 2
+		      </p>
+	  	</div>
+       </div>
+        <div id="body-chart" class="ui-island">
+                     	 
+             <div class="row center">
+             		<div class="columns large-4">
+						<div class="block-type bt-3 row ">Type</div>
+             		</div>
+             	
+             </div>
+             <div class="widget-block-content-3">
+             	<div class="row center">
+			   		<p> Widget content </p>
+			   	</div>	
+	        </div>
+	
+          
+        </div>
+      </div>
     </script>
     <!-- =========================Scripts=================================  -->
     <script src="bower_components/jquery/jquery.min.js"></script>
