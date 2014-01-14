@@ -10,19 +10,8 @@ $(document).ready(function(){
 //------------------APP INIT----------------------
 MyApp    = new Backbone.Marionette.Application();
 MyApp.rm = new Marionette.RegionManager();
-MyApp.rm.addRegions({  
-    homeRegion:"#homewidget-content",
-    videoRegion:"#videowidget-content",
-    sliderRegion:"#sliderwidget-content",
-    sortableRegion:"#sortablewidget-content",
-    chartRegion:"#chartwidget-content"
-  }
-);
-
 MyApp.rm.on("show", function(name, region){
-
   console.log("REGION SHOW ",name,region);
-
 });
 
 //---------------Model Fields&Objects--------------
@@ -32,6 +21,14 @@ var FieldsObjectsCollection = Backbone.Collection.extend({
 MyApp.addInitializer(function(options){
   this.state='init';
   this.sf_app_params={};
+  this.widget_regions={};
+  this.zero_regions={
+        homeRegion:"#homewidget-content",
+        videoRegion:"#videowidget-content",
+        sliderRegion:"#sliderwidget-content",
+        sortableRegion:"#sortablewidget-content",
+        chartRegion:"#chartwidget-content"
+  };
   this.options=options;
   //this.rm = new Marionette.RegionManager();
   this.clearScreen=function(cur_region){ //return;
@@ -58,9 +55,9 @@ MyApp.addInitializer(function(options){
   };
   this.initHeadMenu=function() {
       $("#head-menu-home").click(function()     {MyApp.clearScreen("homeRegion");MyApp.CManager.showHomePage();}   );
-      $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();MyApp.Video.showVideoPlayer();}   );
-      $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();MyApp.Slider.drawSlider();}   );
-      $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();MyApp.Sortable.drawSortable();}   );
+      $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();MyApp.Video.draw();}   );
+      $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();MyApp.Slider.draw();}   );
+      $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();MyApp.Sortable.draw();}   );
   };
   this.fieldValidate=function(el,cond){
       var widget_type=el.getAttribute("widgettype");
@@ -88,7 +85,7 @@ MyApp.addInitializer(function(options){
             $("#chart-menu >a").text($(this).text());           
             MyApp.Chart.model.set("type",chart_type);
             MyApp.clearScreen("chartRegion");
-            MyApp.Chart.drawChart();  
+            MyApp.Chart.draw();  
           }
       )
   };
@@ -191,11 +188,11 @@ $(document).on('close', '[data-reveal]', function () {
   console.log("modal close ",modal[0].id);
   if (modal[0].id=="chartControlModal") {        
         MyApp.Chart.FillModelChartProp();
-        MyApp.Chart.drawChart(); 
+        MyApp.Chart.draw(); 
   }
   if (modal[0].id=="chartDataModal") {
         MyApp.Chart.FillCollectionChartData();
-        MyApp.Chart.drawChart(); 
+        MyApp.Chart.draw(); 
   }
   if (modal[0].id=="videoControlModal") {
         MyApp.Video.FillModelVideoProp();
@@ -203,15 +200,15 @@ $(document).on('close', '[data-reveal]', function () {
   }
   if (modal[0].id=="sliderControlModal") {
         MyApp.Slider.FillModelSliderProp();
-        MyApp.Slider.drawSlider();
+        MyApp.Slider.draw();
   }
   if (modal[0].id=="sortableControlModal") {
         MyApp.Sortable.FillModelProp();
-        MyApp.Sortable.drawSortable();
+        MyApp.Sortable.draw();
   }
   if (modal[0].id=="sortableDataModal") {
         MyApp.Sortable.FillCollectionData();
-        MyApp.Sortable.drawSortable();
+        MyApp.Sortable.draw();
   }
   
 });
@@ -224,6 +221,7 @@ MyApp.vent.on("getSfparams", function(){
   MyApp.session_id=MyApp.getUrlParams()['session_id'];
 });
 MyApp.on("initialize:after", function(options){
+  MyApp.rm.addRegions(MyApp.zero_regions);
   if (Backbone.history){
       Backbone.history.start();
       console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
@@ -231,15 +229,14 @@ MyApp.on("initialize:after", function(options){
       MyApp.initChartMenu();
       MyApp.initFieldsObjectsCollection();
       //----------Modules start----
-      //var chart_module = MyApp.module("Chart");
-      //var slider_module = MyApp.module("Slider");
+ 
+      MyApp.module("Text").start();
       MyApp.module("Chart").start();
       MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
       MyApp.module("CManager").start();
-      MyApp.Chart.drawChart(); 
-      //chart_module.start();
-      //slider_module.start();
+      MyApp.Chart.draw(); 
+
   }
 });
 
@@ -262,7 +259,7 @@ MyApp.module("CManager", function(CManager){
   var HomePageModel=Backbone.Model.extend({
         defaults: {
           blocks_cnt:3,
-          blocks_prop:{"bk-1":{"top":1,"left":1,"type":"text"},"bk-2":{"top":1,"left":100,"type":"text"},"bk-3":{"top":100,"left":100,"type":"chart"}}         
+          blocks_list:{"b-1":{"top":1,"left":1,"type":"text"},"b-2":{"top":1,"left":100,"type":"text"},"b-3":{"top":100,"left":100,"type":"chart"}}         
         }
   });
   var BlockModel=Backbone.Model.extend({
@@ -290,10 +287,13 @@ MyApp.module("CManager", function(CManager){
     //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
     MyApp.rm.get("homeRegion").show(this.home_page_view);   
     MyApp.CManager.showBlockType();
-    CKEDITOR.inlineAll();//---fire rich text editing
+    //CKEDITOR.inlineAll();//---fire rich text editing
   };
   this.getPage=function() { //--from server--
-
+    //--- fill blocks_list
+    //---- set cnt: home_model.set('blocks_cnt', keys(MyApp.CManager.home_page_model.attributes.blocks_list).length);
+    //--- set block prop (for text set prop contenteditable='true')
+    //--- show home page
   };
   this.buildPage=function() {
        MyApp.CManager.showBlockType();
@@ -302,13 +302,30 @@ MyApp.module("CManager", function(CManager){
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
         $('#cur_block_type_'+n).css({left:'-99999px'});
+        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        console.log("set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //$(document).foundation();
+        this.showWidgetContent(n);
+  };
+  this.showWidgetContent=function(n) {
+      var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
+      //try {
+        console.log("w_type="+w_type+" n="+n);
+        if (w_type != "Text") {
+            //MyApp.Text.clearContent(n);
+        }
+        MyApp[w_type].showContent(n);
+        MyApp[w_type].draw();
+      
+     // } catch (e) {
+         //alert("Can't create widget: "+w_type+"->"+e.name);
+     // }
   };
   this.showBlockType=function(block_name) {
         //---get html from render
-        this.block_cnt=3;
+        var blocks_cnt=MyApp.CManager.home_page_model.get("blocks_cnt");
         MyApp.CManager.block_type_view.model=this.block_model;
-        for (var i=1;i<=this.block_cnt;i++) {            
+        for (var i=1;i<=blocks_cnt;i++) {            
             MyApp.CManager.block_type_view.model.set("nomer",i);
             var block_html=MyApp.CManager.block_type_view.render().el.innerHTML;
             $(".block-type.bt-"+i).html(block_html);
@@ -318,8 +335,53 @@ MyApp.module("CManager", function(CManager){
        
   }
 });
-
-
+//-------------------------- Module Text ----------------------------
+MyApp.module("Text", function(Text){
+   //-------------------------Init-----------------------------------
+   Text.addInitializer(function(){
+        this.model = new TextModel();
+   });
+   //--------------------------Models---------------------------------
+   var TextModel = Backbone.Model.extend({
+        defaults: {
+            text_html:"",
+            text_default:"<p>You can write and modify any text here...</p>",
+            lng:"en",//---lang
+            //------------- tpl params ---1,-2,-3----------
+            n_str:""
+        }
+    });
+   //--------------------------Methods--------------------------------
+   this.showContent=function(n) {
+      if (n != undefined) {
+        
+          var n_str="-"+n;
+          var rich_text_node="<div id='rich-text'"+n_str+" contenteditable='true'>"+MyApp.Text.model.get("text_default")+"</div>";
+          MyApp.Text.model.set("n_str",n_str);
+          //console.log("Text.showContent  n=",n);
+          $(".widget-block-content"+n_str).html("").append(rich_text_node);
+          console.log("Text attr  n_str=",n_str);              
+          try {
+            CKEDITOR.inlineAll();//---fire rich text editing
+          } catch (ee) {
+            console.log("Error CKEDITOR ee=",ee.name);          
+          }
+        }
+   };
+   this.clearContent=function(n) {
+        var n_str="-"+n;
+        $(".widget-block-content"+n_str).empty();
+        CKEDITOR.remove(CKEDITOR.instances['editor'+n]);
+        console.log("hideContent AFTER prop=");
+   };
+   this.draw=function() {
+         //var n_str= MyApp.Text.model.get("n_str");
+         //console.log("draw Text n_str="+n_str);  
+         //$(".widget-block-content"+n_str+".rich-text").html( MyApp.Text.model.get("text_default"));
+        //  CKEDITOR.inlineAll();
+   };
+}
+);
 //--------------------------- Module Sortable-------------------------
 MyApp.module("Sortable", function(Sortable){
    //------------------------Init ------------------------------
@@ -349,12 +411,18 @@ MyApp.module("Sortable", function(Sortable){
         }
     });
     //-------------------------Methods---------------------------
-    this.showContent=function() {
-          //this.sortable_view.model=this.model;
-          //MyApp.rm.sortableRegion.show(this.sortable_view);
-          MyApp.rm.get("sortableRegion").show(this.sortable_view);
-          $("#sortable-control-btn").click(function(){ $("#sortableControlModal").foundation('reveal', 'open');});
-          $("#sortable-data-btn").click(function(){ $("#sortableDataModal").foundation('reveal', 'open');});
+    this.showContent=function(n) {
+          var n_str="";//-- widget number str for tpl --
+          MyApp.Sortable.sortable_view.model=MyApp.Sortable.model;
+          if (n==undefined) {              
+              MyApp.rm.get("sortableRegion").show(this.sortable_view);             
+          } else {
+              n_str="-"+n;
+              MyApp.Sortable.sortable_view.model.set("n_str","-"+n);//-----SET n_str ------ !!!!
+              $(".widget-block-content"+n_str).empty().html(MyApp.Sortable.sortable_view.render().el.innerHTML);
+          }    
+          $("#sortable-control-btn"+n_str).click(function(){ $("#sortableControlModal").foundation('reveal', 'open');});
+          $("#sortable-data-btn"+n_str).click(function(){ $("#sortableDataModal").foundation('reveal', 'open');});
     };
     this.FillScreenProp=function() {
           var fields = _.keys(MyApp.Sortable.model.attributes);
@@ -414,27 +482,29 @@ MyApp.module("Sortable", function(Sortable){
               MyApp.Sortable.data_collection.add({data_name:name,data_value:value,data_i:i});              
           });
     };
-    this.drawSortable=function() {
+    this.draw=function() {
           this.setTheme();
           this.setCode();
     };
     this.setTheme=function(){
+          var n_str=this.model.get("n_str");
           var themeList=this.model.get("themeList");
           var theme_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
-          $("#sortablewidget-theme").html(theme_str);
+          $("#sortablewidget-theme"+n_str).html(theme_str);
     };
     this.setCode=function() {
           //---fill li lists from collection----------------
           var li_str="";
+          var n_str=this.model.get("n_str");
           jQuery.each(this.data_collection.models,function(i,f) {
               data_value = f.attributes.data_value;
               data_name  = f.attributes.data_name;
               //console.log("setCode...",data_value,data_name);
               li_str=li_str+"<li val='"+data_value+"' class='ui-state-default'><span class='ui-icon ui-icon-arrowthick-2-n-s'></span>"+data_name+"</li>";
           });
-          jQuery("#sortablewidget").html(li_str);
-          jQuery("#sortablewidget").sortable();
-          jQuery("#sortablewidget").disableSelection();
+          jQuery("#sortablewidget"+n_str).html(li_str);
+          jQuery("#sortablewidget"+n_str).sortable();
+          jQuery("#sortablewidget"+n_str).disableSelection();
     };
     this.getSortablePosition=function(){//---Sasha code fro SF 
            var getValString = "";
@@ -461,7 +531,9 @@ MyApp.module("Sortable", function(Sortable){
             titleText:"Sortable title",
             themeName: "ClearGreen",
             themeList: "Clear-Green",
-            customStyleInput:""
+            customStyleInput:"",
+            //------------- tpl params ---1,-2,-3----------
+            n_str:""
         }
     });
     var DataCollection = Backbone.Collection.extend({});
@@ -531,7 +603,7 @@ MyApp.module("Slider", function(Slider){
               MyApp.Slider.model.set(prop.id,prop.value);          
           });
     };
-    this.drawSlider=function() {
+    this.draw=function() {
           this.setSliderTheme();
           this.setSliderCode();
     };
@@ -607,6 +679,9 @@ MyApp.module("Video", function(Video){
           this.video_player_view = new VideoPlayerView();
     });
     //-------------------------Methods---------------------------
+    this.draw=function(){
+          this.showVideoPlayer()
+    };
     this.showVideoPlayer=function(){
           this.video_player_view.model=this.model;
           if (this.video_player_view.model.get("video_source")=="Youtube"){
@@ -817,7 +892,7 @@ MyApp.module("Chart", function(Chart){
              }
       }
     },
-    this.drawChart=function(){
+    this.draw=function(){
         this.showContent();
         this.show_chart();
         if (this.clickLinkShow() == 0 ) {
