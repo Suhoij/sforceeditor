@@ -82,25 +82,25 @@
     <!-- ========================= TEMPLATES =============================== -->
  	<!--   ---------------------- main Sortable TPL ------------------------------ -->
  	 <script type="text/template" id="main-sortable-template">
- 	 	<div class="large-9  columns  ui-island content__main">
+ 	 	<div class="large-12  columns  ui-island content__main">
 				<div class="row">
 					<div class="large-4 columns">
-						<a  id="sortable-control-btn" class="button" data-reveal-id="sortableControlModal">Sortable controls</a>
-						<a  id="sortable-data-btn" class="button" data-reveal-id="sortableDataModal">Sortable   data</a>
+						<a  id="sortable-control-btn<%= n_str %>" class="button" data-reveal-id="sortableControlModal">Sortable controls</a>
+						<a  id="sortable-data-btn<%= n_str %>" class="button" data-reveal-id="sortableDataModal">Sortable   data</a>
 					</div>
 					<div class="large-4 columns" id="slider-logo">
 						<img src="img/sortable.png" />
 					</div>
 				</div>
 		</div>
-		<div class="large-9 column left ui-island" >
+		<div class="large-12 column left ui-island" >
 			  <div id="sortcontainer">	
-			 	<ul id="sortablewidget" class="sortablewidget ui-sortable">
+			 	<ul id="sortablewidget<%= n_str %>" class="sortablewidget ui-sortable">
 			 	</ul>
 			 </div>	
 		</div>
-		<div id="sortablewidget-theme"></div>
-	    <div id="sortablewidget-code"></div>
+		<div id="sortablewidget-theme<%= n_str %>"></div>
+	    <div id="sortablewidget-code<%= n_str %>"></div>
  	 </script>
 
     <!--   ---------------------- main Slider TPL ------------------------------ -->
@@ -884,7 +884,7 @@
 				<div class="block-type bt-1 row">Type</div>
             </div>
      	  </div>
-          <div class="widget-block-content-1" contenteditable='true'>          	    
+          <div class="widget-block-content-1 row center" >          	    
 				  <h2>Lorem ipsum</h2>
 			      <p>Widget content number 1</p>
 			      <footer>
@@ -901,10 +901,8 @@
 				<div class="block-type bt-2 row">Type</div>
             </div>
      	  </div>
-          <div class="widget-block-content-2" contenteditable='true'>
-          	     
-				<h1>Main header</h1>		
-	   
+          <div class="widget-block-content-2 row center" >          	     
+				<h1>Main header</h1>			   
 		      <p>Widget content number 2
 		      </p>
 	  	</div>
@@ -917,9 +915,9 @@
              		</div>
              	
              </div>
-             <div class="widget-block-content-3">
+             <div class="widget-block-content-3 row center">
              	<div class="row center">
-			   		<p> Widget content </p>
+			   		
 			   	</div>	
 	        </div>
 	
