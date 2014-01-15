@@ -235,7 +235,8 @@ MyApp.on("initialize:after", function(options){
       MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
       MyApp.module("CManager").start();
-      MyApp.Chart.draw(); 
+      //MyApp.Chart.draw();
+      MyApp.CManager.showHomePage(); 
 
   }
 });
@@ -298,14 +299,26 @@ MyApp.module("CManager", function(CManager){
   this.buildPage=function() {
        MyApp.CManager.showBlockType();
   };
-  this.selectBlockType=function(n,name) {
+  this.selectBlockType=function(n,name,sub_menu="") {
+    if (name == "Chart") {
+        if ($("#chart_sub_block_"+n).hasClass("show")) {
+              $("#chart_sub_block_"+n).removeClass("show").addClass("hide");
+        } else {
+              $("#chart_sub_block_"+n).removeClass("hide").addClass("show");
+        }
+    } else {
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
         $('#cur_block_type_'+n).css({left:'-99999px'});
+        $("#chart_sub_block_"+n).removeClass("show").addClass("hide");
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
         console.log("set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //$(document).foundation();
         this.showWidgetContent(n);
+    }
+  };
+  this.selectSubBlockType=function(n,name,sub_menu="") {
+        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
   };
   this.showWidgetContent=function(n) {
       var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
@@ -356,22 +369,24 @@ MyApp.module("Text", function(Text){
       if (n != undefined) {
         
           var n_str="-"+n;
-          var rich_text_node="<div id='rich-text'"+n_str+" contenteditable='true'>"+MyApp.Text.model.get("text_default")+"</div>";
+          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+MyApp.Text.model.get("text_default")+"</div>";
           MyApp.Text.model.set("n_str",n_str);
-          //console.log("Text.showContent  n=",n);
+          console.log("Text.showContent  n=",rich_text_node);
           $(".widget-block-content"+n_str).html("").append(rich_text_node);
           console.log("Text attr  n_str=",n_str);              
+          //CKEDITOR.replace("rich-text"+n_str);          
           try {
-            CKEDITOR.inlineAll();//---fire rich text editing
+              CKEDITOR.inline("rich-text"+n_str);
+          //  CKEDITOR.inlineAll();//---fire rich text editing
           } catch (ee) {
-            console.log("Error CKEDITOR ee=",ee.name);          
+              console.log("Error CKEDITOR ee=",ee.name);          
           }
         }
    };
    this.clearContent=function(n) {
         var n_str="-"+n;
         $(".widget-block-content"+n_str).empty();
-        CKEDITOR.remove(CKEDITOR.instances['editor'+n]);
+        CKEDITOR.remove(CKEDITOR.instances['rich-text'+n_str]);
         console.log("hideContent AFTER prop=");
    };
    this.draw=function() {
@@ -413,12 +428,13 @@ MyApp.module("Sortable", function(Sortable){
     //-------------------------Methods---------------------------
     this.showContent=function(n) {
           var n_str="";//-- widget number str for tpl --
-          MyApp.Sortable.sortable_view.model=MyApp.Sortable.model;
-          if (n==undefined) {              
+          this.sortable_view.model=this.model;
+          if (n==undefined) {
+              this.sortable_view.model.set("n_str",n_str);              
               MyApp.rm.get("sortableRegion").show(this.sortable_view);             
           } else {
               n_str="-"+n;
-              MyApp.Sortable.sortable_view.model.set("n_str","-"+n);//-----SET n_str ------ !!!!
+              this.sortable_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!
               $(".widget-block-content"+n_str).empty().html(MyApp.Sortable.sortable_view.render().el.innerHTML);
           }    
           $("#sortable-control-btn"+n_str).click(function(){ $("#sortableControlModal").foundation('reveal', 'open');});
@@ -562,12 +578,21 @@ MyApp.module("Slider", function(Slider){
           this.slider_code_view = new SliderCodeView({model:this.model});
     });
     //-------------------------Methods---------------------------
-    this.showContent=function() {
-          console.log("showContent");          
+    this.showContent=function(n) {
+          var n_str="";//-- widget number str for tpl --
           this.slider_view.model=this.model;
+          if (n==undefined) {
+          this.slider_view.model.set("n_str",n_str);              
+              MyApp.rm.get("sliderRegion").show(this.slider_view);             
+          } else {
+              n_str="-"+n;
+              this.slider_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!
+              $(".widget-block-content"+n_str).empty().html(this.slider_view.render().el.innerHTML);
+          }          
+          //this.slider_view.model=this.model;
           //MyApp.rm.sliderRegion.show(this.slider_view);
-          MyApp.rm.get("sliderRegion").show(this.slider_view);
-          $("#slider-control-btn").click(function(){ $("#sliderControlModal").foundation('reveal', 'open');});
+          //MyApp.rm.get("sliderRegion").show(this.slider_view);
+          $("#slider-control-btn"+n_str).click(function(){ $("#sliderControlModal").foundation('reveal', 'open');});
     };
     this.FillScreenSliderProp=function(){
           var fields = _.keys(MyApp.Slider.model.attributes);
@@ -608,17 +633,19 @@ MyApp.module("Slider", function(Slider){
           this.setSliderCode();
     };
     this.setSliderTheme=function() {
+          var n_str=this.model.get("n_str");
           var themeList=this.model.get("themeList");
           console.log("setSliderTheme...themeList=",themeList);
           var css_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
           console.log("css_str=",css_str);
-          $("#sliderwidget-theme").html(css_str);
+          $("#sliderwidget-theme"+n_str).html(css_str);
         
             // <script type="text/javascript" src="JSLibrary/js/jquery-ui-1.9.1.min.js"></script>
             //<script type="text/javascript" src="/JSLibrary/js/jquery.ui.touch-punch.min.js"></script>
             //<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.JSLibrary, '/JSLibrary/css/themes/' + themeName + '.css')}"/>
     };
     this.setSliderCode=function() {
+        var n_str=this.model.get("n_str");
         if (this.control_scripts ==false) {           
             //$('head').append('<script type="text/javascript" src="JSLibrary/js/jquery-ui-1.9.1.min.js"></script>');
             //$('head').append('<link rel="stylesheet" type="text/css" href="JSLibrary/css/jquery-ui-1.9.1.min.css"></link>');
@@ -634,7 +661,7 @@ MyApp.module("Slider", function(Slider){
         }
         this.slider_code_view.model=this.model;
         var sliderwidget_code   = this.slider_code_view.render().el.innerHTML;      
-        $("#sliderwidget-code").empty().html("<script>"+sliderwidget_code+"</script>");
+        $("#sliderwidget-code"+n_str).empty().html("<script>"+sliderwidget_code+"</script>");
     };
     //-------------------------Models----------------------------
     var SliderModel = Backbone.Model.extend({
@@ -649,7 +676,8 @@ MyApp.module("Slider", function(Slider){
         step:1,
         themeName: "ClearGreen",
         themeList: "Clear-Green",
-        customStyleInput:""
+        customStyleInput:"",
+        n_str:""
       }
     });
     //-------------------------Views-----------------------------
@@ -683,10 +711,11 @@ MyApp.module("Video", function(Video){
           this.showVideoPlayer()
     };
     this.showVideoPlayer=function(){
+          var n_str=this.model.get("n_str");
           this.video_player_view.model=this.model;
           if (this.video_player_view.model.get("video_source")=="Youtube"){
               this.video_player_view.template="#player-youtube-video-template";
-              $("#video-logo").html("<img src='img/youtube.png' />");
+              $("#video-logo"+n_str).html("<img src='img/youtube.png' />");
           } else {
               if (this.ext_player == false) {
                   $('head').append('<link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet"/>');
@@ -695,23 +724,32 @@ MyApp.module("Video", function(Video){
                   this.video_player_view.model.set("video_id","http://video-js.zencoder.com/oceans-clip.mp4");
               }
               this.video_player_view.template="#player-other-video-template";
-              $("#video-logo").html("<img src='img/video.jpeg'  />");
+              $("#video-logo"+n_str).html("<img src='img/video.jpeg'  />");
           }
           var vp_html=this.video_player_view.render().el.innerHTML;
-          // console.log("-------------------------vp html-------------------");
+          console.log("----------showVideoPlayer--n_str ="+n_str);
           // console.log(vp_html);
-          $("#video-player").html(vp_html);
+          $("#video-player"+n_str).html(vp_html);
     };
-    this.showContent=function() {
+    this.showContent=function(n) {
           //$("#chartwidget-content").hide();
           //$("#videowidget-content").show();
           //if ($("#videowidget-content").length==0) {
-
-             
-              this.video_view.model=this.model;         
-              ///////$("#videowidget-content").html(this.video_view.render().el.innerHTML);
+          var n_str="";//-- widget number str for tpl --
+          this.video_view.model=this.model;
+          if (n==undefined) {
+              this.video_view.model.set("n_str",n_str);
               MyApp.rm.get("videoRegion").show(this.video_view);
-              $("#video-control-btn").click(function(){ $("#videoControlModal").foundation('reveal', 'open');});
+          } else {
+              n_str="-"+n;
+              this.video_view.model.set("n_str",n_str);
+              $(".widget-block-content"+n_str).empty().html(this.video_view.render().el.innerHTML);
+ 
+          }
+              //this.video_view.model=this.model;         
+              ///////$("#videowidget-content").html(this.video_view.render().el.innerHTML);
+             
+              $("#video-control-btn"+n_str).click(function(){ $("#videoControlModal").foundation('reveal', 'open');});
           //}
     };
     this.FillModelVideoProp=function() {
@@ -742,7 +780,8 @@ MyApp.module("Video", function(Video){
          video_id:"nJQW-rbHMS0",//--salesforce--
          video_width:"100%",
          video_height:"100%",
-         autoplay:0
+         autoplay:0,
+         n_str:""
        }
     });
     //-------------------------Views-----------------------------
@@ -780,7 +819,7 @@ MyApp.module("Chart", function(Chart){
       	    themeList:"ClearOrange",
             customStyleInput:"",
       	    type:"pie",
-            type_prop:{"pie":{click_cnt:0},"line":{click_cnt:0},"spline":{click_cnt:0},"area":{click_cnt:0}},
+            type_prop:{"pie":{name:"Pie",click_cnt:0},"line":{name:"Line",click_cnt:0},"spline":{name:"Spline",click_cnt:0},"area":{name:"Area",click_cnt:0}},
       	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
         }
     });
@@ -880,8 +919,7 @@ MyApp.module("Chart", function(Chart){
     },
     //------------ correct data collection for first draw-----
     this.setFirstCollection=function() {
-      var cur_type=this.model.get("type");
-      //console.log("CLICK DRAW ",this.model.get("type"),this.model.get("type_prop")[cur_type].click_cnt);
+      var cur_type=this.model.get("type");   
       //if (_.indexOf(["line","spline","area"],cur_type) != -1) {//---yes in array---
       if (MyApp.Chart.fist_collection_corrected ==false) {//---yes in array---
              var coll_length=MyApp.Chart.data_chart_collection.length;
@@ -914,9 +952,7 @@ MyApp.module("Chart", function(Chart){
         jQuery("#chartwidget-theme").html(theme_css_file);
         //console.log(theme_css_file);
     },
-    this.showContent=function() {
-        //$("#chartwidget-content").show();
-        //$("#videowidget-content").hide();
+    this.showContent=function() { 
          MyApp.rm.get("chartRegion").show(this.main_chart_view);
          $("#chart-control-btn").click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
          $("#chart-data-btn").click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
@@ -924,9 +960,6 @@ MyApp.module("Chart", function(Chart){
     },
     this.show_chart=function() {
       	  console.log("Module Chart ->show_chart");
-      	 // new ChartView().render();
-      	  //this.view.model=this.model;
-      	  //this.view.render();
           this.setChartTheme();
           this.chart_view.model=this.model;
           var chartwidget_code=this.chart_view.render().el.innerHTML;

@@ -14,6 +14,9 @@
 
 
   </head>
+  <style>
+	.bt-img-option {float:right;margin-right:15px}
+  </style>
   <body>
     
     <header class="header">
@@ -43,8 +46,19 @@
         </section>
       </nav>
     </header>
-
+        <div class="row">
+        <br><br>
+  			<div class="small-5 small-centered columns">
+  				<a href="#" class="button large radius round">Save page</a>
+  			</div>
+  			<div class="row">
+	        	<div class="progress small-12 success radius hide">
+		         	<span class="meter" style="width:0%"></span>
+	        	</div>
+       		</div>
+	 	</div>
    <div class="row  content">
+
   	<div class="row">
    		<div id="allwidget-content">
 	    	<!-- homewidget-content -->
@@ -66,17 +80,7 @@
 		</div>
      </div>
 
-     <div class="row">
-     
-  			<div class="small-6 small-centered columns">
-  				<a href="#" class="button large radius round">Save page</a>
-  			</div>
-  			<div class="row">
-	        	<div class="progress small-12 success radius">
-		         	<span class="meter" style="width:0%"></span>
-	        	</div>
-        </div>
-	 </div>
+
 	
     </div>
     <!-- ========================= TEMPLATES =============================== -->
@@ -106,20 +110,20 @@
     <!--   ---------------------- main Slider TPL ------------------------------ -->
     <script type="text/template" id="main-slider-template">
 
-			<div class="large-9  columns  ui-island content__main">
+			<div class="large-12  columns  ui-island content__main">
 				<div class="row">
-					<div class="large-4 columns">
-						<a  id="slider-control-btn" class="button" data-reveal-id="sliderControlModal">Slider controls</a>
+					<div class="large-6 columns">
+						<a  id="slider-control-btn<%= n_str %>" class="button" data-reveal-id="sliderControlModal">Slider controls</a>
 					</div>
-					<div class="large-4 columns" id="slider-logo">
+					<div class="large-6 columns" id="slider-logo">
 						<img src="img/slider.png" />
 					</div>
 				</div>
 			</div>
-			<div id="sliderwidget-theme"></div>
-	      	<div id="sliderwidget-code"></div>
-			<div class="large-9 column left ui-island" >
-			 	<div id="sliderwidget" class="sliderwidget"></div>
+			<div id="sliderwidget-theme<%= n_str %>"></div>
+	      	<div id="sliderwidget-code<%= n_str %>"></div>
+			<div class="large-12 column left ui-island" >
+			 	<div id="sliderwidget<%= n_str %>" class="sliderwidget"></div>
 		    </div>
 		    
 		
@@ -128,21 +132,21 @@
 	<script type="text/template" id="main-video-template">
 	<!-- videowidget-content -->
    
-		 <div class="large-9  columns  ui-island content__main">
+		 <div class="large-12  columns  ui-island content__main">
 			<div class="row">
 
 				<div class="large-4 columns">
 					<br><br>
-					<a  id="video-control-btn" class="button" data-reveal-id="videoControlModal">Video controls</a>
+					<a  id="video-control-btn<%= n_str %>" class="button" data-reveal-id="videoControlModal">Video controls</a>
 				</div>
-				<div class="large-4 columns" id="video-logo">
+				<div class="large-4 columns" id="video-logo<%= n_str %>">
 					<img src="img/youtube.png" />
 				</div>
 
 			</div>
 			
 		 </div>
-		 <div class="large-9 column left ui-island" id="video-player">
+		 <div class="large-12 column left ui-island" id="video-player<%= n_str %>">
 		 </div>
    <!-- videowidget-content -->
 	</script>
@@ -317,13 +321,17 @@
 		</tr>	
  	</script>
  	<script type="text/template" id="block-type-tpl">
-	 	<style>
-	 	 .bt-img-option {float:right;margin-right:15px}
-	 	</style>
+	 	
  		<a  class="button" data-dropdown="cur_block_type_<%= nomer %>"><%= cur_name %></a>
 		<ul id="cur_block_type_<%= nomer %>" class="tiny f-dropdown text-left" data-dropdown-content>
 		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Text');"><img src="img/sm-text.png" class="bt-img-option"/><a >Text</a></li>
 		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Chart');"><img src="img/sm-chart.png" class="bt-img-option"/><a >Chart</a></li>
+		  <ul id="chart_sub_block_<%= nomer %>" class="hide">		  	
+	  	    <% _.each(_.values(MyApp.Chart.model.get('type_prop')), function(item){ %>
+				<li  onclick="MyApp.CManager.selectSubBlockType(<%= nomer %>,'Chart','<%= item.name %>');" ><img src="img/sm-<%= item.name.toLowerCase() %>.png" class="bt-img-option" /> <a><%= item.name %></a> </li>
+			<% }); %>
+		  </ul>
+
 		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Sortable');"><img src="img/sm-sortable.png" class="bt-img-option"/><a >Sortable</a></li>
 		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Slider');"><img src="img/sm-slider.png" class="bt-img-option"/><a >Slider</a></li>
 		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Video');"><img src="img/sm-video.png" class="bt-img-option"/><a >Video</a></li>
@@ -721,7 +729,7 @@
        
 			//jQuery("#sliderwidget").slider();
 
-            jQuery("#sliderwidget").slider({
+            jQuery("#sliderwidget<%= n_str %>").slider({
                 value: defValue,
                 min: minValue,
                 max: maxValue,
@@ -943,6 +951,6 @@
 	<!-- <script src="http://code.jquery.com/jquery-1.8.3.js"></script> -->
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-    <script src="js/app.ob.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
