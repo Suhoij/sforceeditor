@@ -167,75 +167,40 @@
 
 	<!--  --------------------- Chart TPL ----------------------------- -->
 	<script type="text/template" id="main-chart-template">
-      <!--sidebar-->
-      <aside class="large-4  columns">
-
-        <div id="left-sidebar"  class="ui-island" >
-		   <div class="row">
-     	   	<div class="columns large-12">
-				<div class="block-type bt-1 row">Type</div>
-            </div>
-     	  </div>
-          <div class="rich-text" contenteditable='true'>
-          
-	      <header>
-
-		  <h2>Lorem ipsum</h2>
-	      </header>
-	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque eligendi esse harum maxime perferendis? Asperiores commodi exercitationem facere laudantium perspiciatis praesentium soluta? Ad asperiores at consectetur ipsa laudantium odit quod.</p>
-	      <footer>
-		<button class="custom-button">Lorem ipsum dolor</button>
-	      </footer>
-          </div>
-        </div>
-      </aside>
-      <!--main column-->
-      <div class="large-8  columns  content__main">
-        <div id="title-chart" class="ui-island  hero" >
-           <div class="row">
-     	   	<div class="columns large-12">
-				<div class="block-type bt-2 row">Type</div>
-            </div>
-     	  </div>
-          <div class="rich-text" contenteditable='true'>
-          
-	      <header>	       
-			<h1>Main header</h1>		
-	      </header>
-	      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorem inventore nemo nesciunt optio quis sapiente sunt! Adipisci consectetur culpa ducimus id in, nam odit rem similique totam voluptas voluptatem?</p>
-	  </div>
-       </div>
+     
         <div id="body-chart" class="ui-island">
          
          <!-- <div class="row center block-type bt-3"></div> -->
-          <div class="chart">
+          <div class="chart<%= n_str %>">
          <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
          	 
              <div class="row center">
+             		<!-- 
              		<div class="columns large-4">
 						<div class="block-type bt-3 row ">Type</div>
              		</div>
+             		-->
              		<div class="columns large-4">
-						<a class="button lage left"  id="chart-control-btn"  data-reveal-id="chartControlModal">Chart control</a>
+						<a class="button lage left"  id="chart-control-btn<%= n_str %>"  data-reveal-id="chartControlModal">Chart control</a>
              		</div>
              		<div class="columns large-4">
-						<a class="button lage right" id="chart-data-btn" data-reveal-id="chartDataModal">Chart data</a>
+						<a class="button lage right" id="chart-data-btn<%= n_str %>" data-reveal-id="chartDataModal">Chart data</a>
              		</div>
              </div>
              <div class="row">
 			      <figure class="chart-figure">
-					<div id="chartstub">
+					<div id="chartstub<%= n_str %>">
 					 <!-- <figcaption>Simple chart</figcaption> -->
 					 <!-- <img src="img/chart.png" alt=""/>     -->
 					</div>
-					<div id="chartwidget"  style="width:100; height:100%;">
+					<div id="chartwidget<%= n_str %>"  style="width:100; height:100%;">
 					
 					</div>
 
 			      </figure>
 	      </div>
-	      <div id="chartwidget-theme"></div>
-	      <div id="chartwidget-code"></div>
+	      <div id="chartwidget-theme<%= n_str %>"></div>
+	      <div id="chartwidget-code<%= n_str %>"></div>
           </div>
         </div>
       </div>
@@ -270,7 +235,7 @@
 			</table>
 			<div class="row">		
 				<div class="columns large-3">
-					<a  id="data-add-btn" class="button">Add new item</a>
+					<a  id="chart-data-add-btn" class="button">Add new item</a>
 				</div>
 				<div class="columns large-9">
 					<a  id="ok-chart-btn" class="button" onclick="$('#chartDataModal').foundation('reveal', 'close')">Ok</a>
@@ -290,7 +255,7 @@
 			      <input id="data-chart-value-0" type="text" placeholder="0" value=<%= data_value %> />
 			  </td>
 			  <td>
-			      <a id="data-del-btn-<%= data_i %>" class="data-del button tiny">Delete item</a>
+			      <a id="data-chart-del-btn-<%= data_i %>" class="data-del button tiny">Delete item</a>
 			  </td>
 		</tr>	
  	</script>
@@ -828,8 +793,8 @@
 	      }; 
 
 	    //jQuery.noConflict();
-	 	jQuery('#chartstub').empty();
-	    jQuery('#chartwidget').jqChart({
+	 	jQuery('#chartstub<%= n_str %>').empty();
+	    jQuery('#chartwidget<%= n_str %>').jqChart({
                 title: { text: '<%= title %>' },
                 legend: { 
 					title: { text: '<%= title %>', fillStyle: legend[3], font: '17px sans-serif', }, 
@@ -873,7 +838,7 @@
             });
 
             if (chartType == 'pie'){
-                jQuery('#chart').bind('tooltipFormat', function (e, data) {
+                jQuery('#chart<%= n_str %>').bind('tooltipFormat', function (e, data) {
                     var percentage = data.series.getPercentage(data.value);
                     percentage = data.chart.stringFormat(percentage, '%.2f%%');
     

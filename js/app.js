@@ -186,6 +186,7 @@ $(document).on('open', '[data-reveal]', function () {
 $(document).on('close', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
+  try {
   if (modal[0].id=="chartControlModal") {        
         MyApp.Chart.FillModelChartProp();
         MyApp.Chart.draw(); 
@@ -210,7 +211,10 @@ $(document).on('close', '[data-reveal]', function () {
         MyApp.Sortable.FillCollectionData();
         MyApp.Sortable.draw();
   }
-  
+  } catch (e) {
+      console.info("Error close ",e.lineNumber,e.name);
+      $(".reveal-modal-bg").hide();//--bug fix--
+  }
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -299,40 +303,53 @@ MyApp.module("CManager", function(CManager){
   this.buildPage=function() {
        MyApp.CManager.showBlockType();
   };
+  this.closeBlockType=function(n,name){
+        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
+        $("#cur_block_type_"+n).removeClass("open");
+        $('#cur_block_type_'+n).css({left:'-99999px'});
+        $("#chart_sub_block_"+n).removeClass("show").addClass("hide");       
+  };
   this.selectBlockType=function(n,name,sub_menu="") {
-    if (name == "Chart") {
+    
+     if (name == "Chart") {
         if ($("#chart_sub_block_"+n).hasClass("show")) {
               $("#chart_sub_block_"+n).removeClass("show").addClass("hide");
         } else {
               $("#chart_sub_block_"+n).removeClass("hide").addClass("show");
         }
-    } else {
-        $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
-        $("#cur_block_type_"+n).removeClass("open");
-        $('#cur_block_type_'+n).css({left:'-99999px'});
-        $("#chart_sub_block_"+n).removeClass("show").addClass("hide");
-        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+      } else {            
         console.log("set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //$(document).foundation();
+        this.closeBlockType(n,name);
         this.showWidgetContent(n);
-    }
+      }
   };
-  this.selectSubBlockType=function(n,name,sub_menu="") {
-        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+  this.selectSubBlockType=function(n,name,sub_type="") {
+        //MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        this.closeBlockType(n,name);
+        if (name =="Chart") {
+            MyApp.Chart.model.set("type",sub_type.toLowerCase() );
+            this.showWidgetContent(n);
+        }
   };
   this.showWidgetContent=function(n) {
-      var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
-      //try {
+        var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
+        try {
         console.log("w_type="+w_type+" n="+n);
         if (w_type != "Text") {
             //MyApp.Text.clearContent(n);
         }
-        MyApp[w_type].showContent(n);
-        MyApp[w_type].draw();
+        if (w_type == "Chart") {
+            MyApp.Chart.draw(n);
+        } else {
+            MyApp[w_type].showContent(n);
+            MyApp[w_type].draw();
+        }
       
-     // } catch (e) {
-         //alert("Can't create widget: "+w_type+"->"+e.name);
-     // }
+      } catch (e) {
+         alert("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
+      }
   };
   this.showBlockType=function(block_name) {
         //---get html from render
@@ -407,7 +424,7 @@ MyApp.module("Sortable", function(Sortable){
       this.sortable_view   = new SortableView();
       this.data_item_view  = new DataItemView();
       $("#data-add-sortable-btn").click(function(){MyApp.Sortable.controller.addData()});
-      $("#data-del-btn").click(function(){MyApp.Sortable.controller.delData()});
+      //$("#data-del-btn").click(function(){MyApp.Sortable.controller.delData()});
     });
     // ------------------------- Controllers ----------------
     var Controller = Marionette.Controller.extend({
@@ -740,7 +757,7 @@ MyApp.module("Video", function(Video){
           if (n==undefined) {
               this.video_view.model.set("n_str",n_str);
               MyApp.rm.get("videoRegion").show(this.video_view);
-          } else {
+          } else {             
               n_str="-"+n;
               this.video_view.model.set("n_str",n_str);
               $(".widget-block-content"+n_str).empty().html(this.video_view.render().el.innerHTML);
@@ -820,7 +837,8 @@ MyApp.module("Chart", function(Chart){
             customStyleInput:"",
       	    type:"pie",
             type_prop:{"pie":{name:"Pie",click_cnt:0},"line":{name:"Line",click_cnt:0},"spline":{name:"Spline",click_cnt:0},"area":{name:"Area",click_cnt:0}},
-      	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']]
+      	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']],
+            n_str:""
         }
     });
     var DataChartModel = Backbone.Model.extend({
@@ -862,8 +880,8 @@ MyApp.module("Chart", function(Chart){
     });
     var DataItemChartView = Backbone.Marionette.ItemView.extend({
        events: {
-        'click #data-add-btn': 'addItem',
-        'click #data-del-btn': 'delItem'    
+        'click #chart-data-add-btn': 'addItem',
+        'click #data-chart-del-btn': 'delItem'    
         },
         addItem:function() {alert("Add from dataView")},
         delItem:function() {alert("Del from dataView")}
@@ -913,9 +931,16 @@ MyApp.module("Chart", function(Chart){
 
     // ------------------------- Methods --------------------
     this.clickLinkShow=function() {
-      var cur_type=this.model.get("type");
-      var cur_type_prop=this.model.get("type_prop");
-      return this.model.get("type_prop")[cur_type].click_cnt++;
+      try {
+        var cur_type=this.model.get("type");
+        var cur_type_prop=this.model.get("type_prop");
+        var click_cnt = this.model.get("type_prop")[cur_type].click_cnt++;
+      } catch(e) {
+          click_cnt =1;
+          console.info("Error chart.clickLinkShow...");
+      }
+      return click_cnt;
+    
     },
     //------------ correct data collection for first draw-----
     this.setFirstCollection=function() {
@@ -930,18 +955,27 @@ MyApp.module("Chart", function(Chart){
              }
       }
     },
-    this.draw=function(){
-        this.showContent();
+    this.draw=function(n){
+       try {
+        if (n != undefined){
+            this.model.set("n_str","-"+n);
+        }
+        this.showContent(n);
         this.show_chart();
         if (this.clickLinkShow() == 0 ) {
             //---correct collection for some chart type---
             this.setFirstCollection();
         } 
         this.setChartData();
-        MyApp.CManager.showBlockType();//--- if they exist on page--
-        CKEDITOR.inlineAll();//---fir rich text editing
+        //MyApp.CManager.showBlockType();//--- if they exist on page--
+        //CKEDITOR.inlineAll();//---fir rich text editing
+      } catch (e) {
+          console.info("Error chart draw ",e.name);
+          $(".reveal-modal-bg").hide();//--- fix black screen bag--
+      }
     },
     this.setChartTheme=function() {
+        var n_str=this.model.get("n_str");
         //---select params
         //---write css link
         var themeList=this.model.get("themeList");
@@ -949,33 +983,192 @@ MyApp.module("Chart", function(Chart){
         this.model.set("themeName",themeList.split("-")[1]);
         this.model.set("styleName",themeList.split("-")[0]);
         var theme_css_file="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
-        jQuery("#chartwidget-theme").html(theme_css_file);
-        //console.log(theme_css_file);
+        jQuery("#chartwidget-theme"+n_str).html(theme_css_file);
+        console.log("setChartTheme done");
     },
-    this.showContent=function() { 
-         MyApp.rm.get("chartRegion").show(this.main_chart_view);
-         $("#chart-control-btn").click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
-         $("#chart-data-btn").click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
-         MyApp.CManager.showBlockType("Chart");
+    this.runChartCode=function() {
+         var  n_str      =this.model.get("n_str");
+         var  block_n    =this.model.get("n_str").split("-")[1];
+         var  block_model=this.model;//---MyApp.CManager.getBlockModel(block_n,"Chart")
+         var  chartType  = block_model.get("type");
+      
+          var strFormat = "";
+          var valType = "";
+          var maxScale = block_model.get("max");
+          var minScale = block_model.get("min");
+          var theme    = block_model.get("themeName");
+          var style    = block_model.get("styleName");
+         
+
+
+          var shadowChart = true;
+          var axesSet = [{maximum: maxScale, minimum: minScale}];
+          if (chartType == 'pie'){
+              strFormat = "%.1f%%";
+              var valType = "percentage";
+              axesSet = [];
+          }
+          if (chartType == 'bar'){
+              axesSet = [];
+              axesSet.push({maximum: 100, type: 'category'});
+          }
+          switch (theme) { 
+            case 'Grey': 
+              var paletteColors = ['#c9c8c9', '#3d3d3d', '#a3a2a3', '#696769', '#888688']; 
+              var strokeSeries = '#ffffff'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['13px sans-serif', '#333333']; 
+              var legend = ['15px sans-serif', '#000000', '#a3a2a3', '#333333']; 
+              break; 
+            case 'Green': 
+              var paletteColors = ['#eae0bf', '#96704f', '#769f3f', '#af9960', '#acd662']; 
+              var strokeSeries = '#331e11'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#331e11'] : ['13px sans-serif', '#331e11']; 
+              var legend = ['15px sans-serif', '#331e11', '#af9960', '#5f3b21']; 
+              break; 
+            case 'Orange': 
+              var paletteColors = ['#fbcb93', '#fb8f49', '#a93603', '#d85d03', '#fbad18']; 
+              var strokeSeries = '#ffffff'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#331e11'] : ['13px sans-serif', '#333333']; 
+              var legend = ['15px sans-serif', '#262726', '#a93603', '#a93603']; 
+              break; 
+            case 'Red': 
+              var paletteColors = ['#eeb2ac', '#ff5543', '#771211', '#d4d7db', '#d72008']; 
+              var strokeSeries = '#ffffff'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['13px sans-serif', '#333333']; 
+              var legend = ['15px sans-serif', '#262726', '#70767e', '#181818']; 
+              break; 
+            case 'Blue': 
+              var paletteColors = ['#59abe4', '#0c476d', '#96d0fc', '#3472a7', '#dae5f4']; 
+              var strokeSeries = '#111111'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#0a0a0a'] : ['13px sans-serif', '#333333']; 
+              var legend = ['15px sans-serif', '#0a0a0a', '#7d8088', '#7d8088']; 
+              break; 
+            case 'Mozaic': 
+              var paletteColors = ['#ec4435', '#1f88cc', '#52b344', '#fbc51f', '#303130']; 
+              var strokeSeries = '#ffffff'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#ffffff'] : ['12px sans-serif', '#303130']; 
+              var legend = ['15px sans-serif', '#0a0a0a', '#aaaaaa', '#303130']; 
+              break; 
+            default : //--Green
+            var paletteColors = ['#eae0bf', '#96704f', '#769f3f', '#af9960', '#acd662']; 
+              var strokeSeries = '#331e11'; 
+              var labelFont = (chartType == "pie") ? ['18px sans-serif', '#331e11'] : ['13px sans-serif', '#331e11']; 
+              var legend = ['15px sans-serif', '#331e11', '#af9960', '#5f3b21']; 
+            break; 
+        }; 
+        switch (style) { 
+            case 'Square': 
+                  var lineSeries = 1; 
+                  var legendLine = 2, legendCorner = 0; 
+                  break; 
+            case 'Dotted': 
+            case 'Rounded': 
+                  var lineSeries = 0; 
+                  var legendLine = 2, legendCorner = 6; 
+                  break; 
+            case 'Clear': 
+                  var lineSeries = 1; 
+                  var legendLine = 1, legendCorner = 0; 
+                  break; 
+            default : break; 
+        };
+        jQuery('#chartstub'+n_str).empty();
+        jQuery('#chartwidget'+n_str).jqChart({
+                  title: { text: block_model.get("title") },
+                  legend: { 
+                  title: { text: block_model.get("title"), fillStyle: legend[3], font: '17px sans-serif', }, 
+                  location : block_model.get("legendlocation"), // legend location 
+                  border: { // legend border 
+                    padding: 8, 
+                    strokeStyle: legend[2], 
+                    lineWidth : legendLine, 
+                    cornerRadius: legendCorner 
+                  }, 
+                  font: legend[0], // item text font 
+                  textFillStyle: legend[1], // item text color 
+                  background: block_model.get("legendbackground"), // legend background 
+                  margin: 5, // legend margings 
+                  visible : true,//<%= showlegend %> 
+                }, 
+                border: { strokeStyle: block_model.get("bordercolor"), lineWidth: 0},
+                paletteColors: { 
+                  type: 'customColors', 
+                  customColors: paletteColors // backgroung pie segments 
+                }, 
+                tooltips: { borderColor: 'auto' }, // tooltip border 
+                animation: 3, 
+                shadows: { enabled: shadowChart }, 
+                    animation: 3,
+                    axes: axesSet,
+                    series: [
+                            {
+                                type:  block_model.get("type"),
+                                strokeStyle : strokeSeries, // border pie segments color 
+                                lineWidth : lineSeries, // border pie segments 
+                                labels: {
+                                    stringFormat: strFormat,
+                                    valueType: valType,
+                                    font: labelFont[0], // pie text 
+                                    fillStyle: labelFont[1] // pie text color
+                                },
+                                data: [['New Name' , 10], ['New Name1' , 15], ['New Name2' , 20]]
+                            }
+                        ]
+            });
+
+            if (chartType == 'pie'){
+                jQuery('#chart'+n_str).bind('tooltipFormat', function (e, data) {
+                    var percentage = data.series.getPercentage(data.value);
+                    percentage = data.chart.stringFormat(percentage, '%.2f%%');
+    
+                    return '<b>' + data.dataItem[0] + '</b></br>' +
+                           data.value + ' (' + percentage + ')';
+                });
+            }
+            console.log("Chart runChartCode done!") ;
+    },
+    this.showContent=function(n) { 
+          var n_str=this.model.get("n_str");//-- widget number str for tpl --
+          this.chart_view.model=this.model;
+          //$("#chartwidget-content").empty();//--yf dczrbq ckexfq
+          if (n==undefined) {
+              this.chart_view.model.set("n_str",n_str);              
+              MyApp.rm.get("chartRegion").show(this.main_chart_view);            
+          } else {
+              n_str="-"+n;
+              this.chart_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!
+              
+              $(".widget-block-content"+n_str).empty().html(this.main_chart_view.render().el.innerHTML);
+          }  
+
+         $(document).foundation();
+         $("#chart-control-btn"+n_str).unbind().click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
+         $("#chart-data-btn"+n_str).unbind().click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
+         //MyApp.CManager.showBlockType("Chart");
+         console.log("Chart showContent done!") ;
+         //$(".reveal-modal-bg").hide();//--bug fix--
     },
     this.show_chart=function() {
+          var n_str=this.model.get("n_str");
       	  console.log("Module Chart ->show_chart");
           this.setChartTheme();
-          this.chart_view.model=this.model;
-          var chartwidget_code=this.chart_view.render().el.innerHTML;
-      	  MyApp.chartwidget_code=this.chart_view.render().el.innerHTML;
-      	  $("#chartwidget-code").empty().html("<script>"+chartwidget_code+"</script>");
-      	  
+          //this.chart_view.model=this.model;
+          //var chartwidget_code=this.chart_view.render().el.innerHTML;
+      	  //$("#chartwidget-code"+n_str).empty().html("<script>"+chartwidget_code+"</script>");
+      	  this.runChartCode();
+           console.log("Chart show_chart done!") ;
     },
     this.setChartData=function(){
+           var n_str=this.model.get("n_str");
            var collection_data=[];
            var coll_length=MyApp.Chart.data_chart_collection.length;
            for (var i=0;i<coll_length;i++) {   
               var m=MyApp.Chart.data_chart_collection.at(i);
               collection_data.push([m.get("data_name"),m.get("data_value")]);
            };
-           $('#chartwidget').jqChart('option', 'series')[0].data=collection_data;
-           $('#chartwidget').jqChart('update');
+           $('#chartwidget'+n_str).jqChart('option', 'series')[0].data=collection_data;
+           $('#chartwidget'+n_str).jqChart('update');
+           console.log("Chart setChartData done!") ;
     },
     this.FillScreenChartProp=function() {
       console.log("FillScreenChartProp");
@@ -1044,8 +1237,8 @@ MyApp.module("Chart", function(Chart){
          
           this.controller = new Controller();
           //this.controller.initEvents();
-           $("#data-add-btn").click(function(){MyApp.Chart.controller.addData()});
-           $("#data-del-btn").click(function(){MyApp.Chart.controller.delData()});
+           $("#chart-data-add-btn").click(function(){MyApp.Chart.controller.addData()});
+           $("#data-chart-del-btn").click(function(){MyApp.Chart.controller.delData()});
     });
   
 });
