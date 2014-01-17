@@ -264,7 +264,9 @@ MyApp.module("CManager", function(CManager){
   var HomePageModel=Backbone.Model.extend({
         defaults: {
           blocks_cnt:3,
-          blocks_list:{"b-1":{"top":1,"left":1,"type":"text"},"b-2":{"top":1,"left":100,"type":"text"},"b-3":{"top":100,"left":100,"type":"chart"}}         
+          blocks_list:{"b-1":{"top":1,"left":1,"type":"text",model:null,data_collection:null},
+                       "b-2":{"top":1,"left":100,"type":"chart",model:null,data_collection:null},
+                       "b-3":{"top":100,"left":100,"type":"chart",model:null,data_collection:null}}         
         }
   });
   var BlockModel=Backbone.Model.extend({
@@ -288,11 +290,66 @@ MyApp.module("CManager", function(CManager){
        model:MyApp.rm.block_model
   });
   //----------------Methods------------------
+  this.getBlockModel=function(n){
+      return this.home_page_model.get("blocks_list")["b-"+n].model;
+  },
+  this.getBlockCollection=function(n){
+      console.log("getBlockCollection  n=",n);
+      console.log("getBlockCollection  home_model=",this.home_page_model);
+      return this.home_page_model.get("blocks_list")["b-"+n].data_collection;
+  },
+  this.setBlockModel=function(n,m){
+    try {
+      block_model = this.home_page_model.get("blocks_list")["b-"+n].model;
+      delete block_model["b-"+n].model;
+      block_model["b-"+n].model=m;
+    } catch (e) {
+       console.info("ERROR setBlockModel ",e.name,e.lineNumber);
+    }
+  },
+  this.setBlockCollection=function(n,col){
+    try {
+      console.log("!!!setBlockCollection n="+n);
+      console.log("!!!setBlockCollection col=",col);
+      block_model = this.home_page_model.get("blocks_list");
+      console.log("!!!setBlockCollection block_model=",block_model);
+      //delete block_model["b-"+n].data_collection;
+      block_model["b-"+n].data_collection=col.clone();
+    } catch (e) {
+      console.info("ERROR setBlockCollection ",e.name,e.lineNumber);
+    }
+  },
+  this.fillModelsCollections=function(n) {//--fill form widget Classes---
+      var blocks = this.home_page_model.get("blocks_list");
+      var w_with_data_col=["Chart","Sortable"];
+      if (n != undefined) {//---exectly for block-----
+             var w_model = blocks["b-"+n].model;
+             var w_name = blocks[prop].type;
+             var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
+             console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,prop);
+             blocks["b-"+n].model = MyApp[widget_class_name].model;
+             if (MyApp[widget_class_name].data_collection !=undefined) {
+                 blocks["b-"+n].data_collection =  MyApp[widget_class_name].data_collection;
+             }
+      } else { //---all blocks-------------------------
+          for (prop in blocks){
+            //console.log(prop);
+            var w_name = blocks[prop].type;
+            var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
+            console.log("fillModelsCollections widget_class_name=",widget_class_name,prop);
+            blocks[prop].model = MyApp[widget_class_name].model;
+            if ( _.include(w_with_data_col,widget_class_name)) {
+                blocks[prop].data_collection = MyApp[widget_class_name].data_collection;
+            }
+          }
+      }
+  },
   this.showHomePage=function() {
-    //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
-    MyApp.rm.get("homeRegion").show(this.home_page_view);   
-    MyApp.CManager.showBlockType();
-    //CKEDITOR.inlineAll();//---fire rich text editing
+        //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
+        MyApp.rm.get("homeRegion").show(this.home_page_view);   
+        MyApp.CManager.showBlockType();
+        //CKEDITOR.inlineAll();//---fire rich text editing
+        this.fillModelsCollections();
   };
   this.getPage=function() { //--from server--
     //--- fill blocks_list
@@ -305,6 +362,7 @@ MyApp.module("CManager", function(CManager){
   };
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        MyApp.CManager.fillModelsCollections(n);
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
         $('#cur_block_type_'+n).css({left:'-99999px'});
@@ -894,11 +952,11 @@ MyApp.module("Chart", function(Chart){
           //this.stuff = options.stuff;
         },
         addCollectionData:function() {
-            if ( MyApp.Chart.data_chart_collection.length <=1) {return;}
+            if ( MyApp.Chart.data_collection.length <=1) {return;}
             $("#chartDataModal table tbody").empty();
-            var coll_length=MyApp.Chart.data_chart_collection.length;
+            var coll_length=MyApp.Chart.data_collection.length;
             for (var i=0;i<coll_length;i++) {            
-                var chart_data_cur=MyApp.Chart.data_chart_collection.at(i);
+                var chart_data_cur=MyApp.Chart.data_collection.at(i);
                 MyApp.Chart.data_item_chart_view.model=chart_data_cur;
                 var row_tpl= MyApp.Chart.data_item_chart_view.render().el.innerHTML;
                 $("#chartDataModal table tbody").append(row_tpl);
@@ -947,10 +1005,10 @@ MyApp.module("Chart", function(Chart){
       var cur_type=this.model.get("type");   
       //if (_.indexOf(["line","spline","area"],cur_type) != -1) {//---yes in array---
       if (MyApp.Chart.fist_collection_corrected ==false) {//---yes in array---
-             var coll_length=MyApp.Chart.data_chart_collection.length;
+             var coll_length=MyApp.Chart.data_collection.length;
              for (var i=0;i<coll_length;i++) {   
-                  var cur_value=MyApp.Chart.data_chart_collection.at(i).attributes.data_value;
-                  MyApp.Chart.data_chart_collection.at(i).set("data_value",(cur_value*0.01).toFixed(3)) ;                  
+                  var cur_value=MyApp.Chart.data_collection.at(i).attributes.data_value;
+                  MyApp.Chart.data_collection.at(i).set("data_value",(cur_value*0.01).toFixed(3)) ;                  
                   MyApp.Chart.fist_collection_corrected=true;
              }
       }
@@ -970,7 +1028,7 @@ MyApp.module("Chart", function(Chart){
         //MyApp.CManager.showBlockType();//--- if they exist on page--
         //CKEDITOR.inlineAll();//---fir rich text editing
       } catch (e) {
-          console.info("Error chart draw ",e.name);
+          console.info("Error chart draw ",e.name,e.lineNumber);
           $(".reveal-modal-bg").hide();//--- fix black screen bag--
       }
     },
@@ -1142,8 +1200,19 @@ MyApp.module("Chart", function(Chart){
           }  
 
          $(document).foundation();
-         $("#chart-control-btn"+n_str).unbind().click(function(){ $("#chartControlModal").foundation('reveal', 'open');});
-         $("#chart-data-btn"+n_str).unbind().click(function(){ $("#chartDataModal").foundation('reveal', 'open');});
+         $("#chart-control-btn"+n_str).unbind().click(function(){
+                                                       var n=$(this).prop("id").match(/\d$/)[0];
+                                                       var n_str='-'+n;
+                                                       MyApp.Chart.model.set("n_str",n_str);
+                                                       MyApp.Chart.model=MyApp.CManager.getBlockModel(n);                                                      
+                                                       //console.log("chart-control-btn click ",$(this).prop("id"));
+                                                       $("#chartControlModal").foundation('reveal', 'open');});
+         $("#chart-data-btn"+n_str).unbind().click(function(){                                                       
+                                                       var n=$(this).prop("id").match(/\d$/)[0];
+                                                       var n_str='-'+n;
+                                                       MyApp.Chart.model.set("n_str",n_str);
+                                                       MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
+                                                       $("#chartDataModal").foundation('reveal', 'open');});
          //MyApp.CManager.showBlockType("Chart");
          console.log("Chart showContent done!") ;
          //$(".reveal-modal-bg").hide();//--bug fix--
@@ -1161,9 +1230,9 @@ MyApp.module("Chart", function(Chart){
     this.setChartData=function(){
            var n_str=this.model.get("n_str");
            var collection_data=[];
-           var coll_length=MyApp.Chart.data_chart_collection.length;
+           var coll_length=MyApp.Chart.data_collection.length;
            for (var i=0;i<coll_length;i++) {   
-              var m=MyApp.Chart.data_chart_collection.at(i);
+              var m=MyApp.Chart.data_collection.at(i);
               collection_data.push([m.get("data_name"),m.get("data_value")]);
            };
            $('#chartwidget'+n_str).jqChart('option', 'series')[0].data=collection_data;
@@ -1211,24 +1280,31 @@ MyApp.module("Chart", function(Chart){
           jQuery.each(prop_arr,function(i,prop){
               MyApp.Chart.model.set(prop.id,prop.value);
           });
+          //--------  fill CManager Model ----------
+          var n_str=this.model.get("n_str");
+          MyApp.CManager.setBlockModel(n_str.split("-")[1],MyApp.Chart.model);
 
     },
     this.FillCollectionChartData=function() {
-          console.log("FillCollectionChartData");
-          MyApp.Chart.data_chart_collection.reset();
+          var n_str=this.model.get("n_str");
+          console.log("FillCollectionChartData n_str="+n_str);
+          MyApp.Chart.data_collection.reset();
           $("#chartDataModal  table tbody tr").each(function(i) {
               var fields = $(this).find("input");
               var name = fields.eq(0).val();
               var value = fields.eq(1).val();
               console.log(name,value);
-              MyApp.Chart.data_chart_collection.add({data_name:name,data_value:value,data_i:i});
+              MyApp.Chart.data_collection.add({data_name:name,data_value:value,data_i:i});
           });
+          //--------  fill CManager Collection ----------
+          var n_str=this.model.get("n_str");
+          MyApp.CManager.setBlockCollection(n_str.split("-")[1],MyApp.Chart.data_collection);
     },
     //------------------------Init ------------------------------
     Chart.addInitializer(function(){
           this.model=new ChartModel();
-          this.data_chart_collection = new DataChartCollection(this.data_collection_1);//--{data_name:"Name..",data_value:0,data_i:0}
-          //this.data_chart_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
+          this.data_collection = new DataChartCollection(this.data_collection_1);//--{data_name:"Name..",data_value:0,data_i:0}
+          //this.data_collection.add({data_name:"Name..",data_value:0,data_i:0});//--first init
           this.chart_view=new ChartView({template: "#chart-template",model:this.model});//--new ChartModel()
           this.main_chart_view=new MainChartView({template: "#main-chart-template",model:this.model});//--new ChartModel()
           this.data_chart_model=new DataChartModel();
