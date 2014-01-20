@@ -300,9 +300,10 @@ MyApp.module("CManager", function(CManager){
   },
   this.setBlockModel=function(n,m){
     try {
-      block_model = this.home_page_model.get("blocks_list")["b-"+n].model;
-      delete block_model["b-"+n].model;
-      block_model["b-"+n].model=m;
+      block_model = this.home_page_model.get("blocks_list");
+      block_model["b-"+n].model=m.clone();
+      //block_model.model=m;
+      console.log("!!!setBlockModel n="+n);
     } catch (e) {
        console.info("ERROR setBlockModel ",e.name,e.lineNumber);
     }
@@ -512,8 +513,28 @@ MyApp.module("Sortable", function(Sortable){
               this.sortable_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!
               $(".widget-block-content"+n_str).empty().html(MyApp.Sortable.sortable_view.render().el.innerHTML);
           }    
-          $("#sortable-control-btn"+n_str).click(function(){ $("#sortableControlModal").foundation('reveal', 'open');});
-          $("#sortable-data-btn"+n_str).click(function(){ $("#sortableDataModal").foundation('reveal', 'open');});
+          $("#sortable-control-btn"+n_str).unbind().click(function(){
+                                                   if (MyApp.Sortable.model.get("n_str") !="") {
+                                                               var n=$(this).prop("id").match(/\d$/)[0];
+                                                               var n_str='-'+n;
+                                                               console.log("$(this).prop('id')=",$(this).prop("id"));
+                                                               MyApp.Sortable.model.set("n_str",n_str);
+                                                               MyApp.Sortable.model=MyApp.CManager.getBlockModel(n);                                                      
+                                                               console.log("chart-control-btn click n=",n);
+                                                      }
+                                                    $("#sortableControlModal").foundation('reveal', 'open');
+
+                                                  });
+          $("#sortable-data-btn"+n_str).unbind().click(function(){ 
+                                                    if (MyApp.Sortable.model.get("n_str") !="") {                                                       
+                                                            var n=$(this).prop("id").match(/\d$/)[0];
+                                                            var n_str='-'+n;
+                                                            MyApp.Sortable.model.set("n_str",n_str);
+                                                            MyApp.Sortable.data_collection=MyApp.CManager.getBlockCollection(n);
+                                                            console.log("chart-control-btn click n=",n);
+                                                    }
+                                                    $("#sortableDataModal").foundation('reveal', 'open');
+                                                  });
     };
     this.FillScreenProp=function() {
           var fields = _.keys(MyApp.Sortable.model.attributes);
@@ -532,13 +553,19 @@ MyApp.module("Sortable", function(Sortable){
     };
     this.FillScreenData=function() {
           //MyApp.Sortable.controller.addCollectionData();
-          var data_coll=MyApp.Sortable.data_collection;
+          var n_str = this.model.get("n_str");
+          var n=n_str.split("-")[1];
+          if (n_str !="") {                                                      
+                this.data_collection=MyApp.CManager.getBlockCollection(n);
+          }
+          //var data_coll=MyApp.Sortable.data_collection;
+          var data_coll=this.data_collection;
           if ( data_coll.length <=1) {return;}
           $("#sortableDataModal table tbody").empty();
           var coll_length=data_coll.length;
           for (var i=0;i<coll_length;i++) {            
-                var chart_data_cur=data_coll.at(i);
-                MyApp.Sortable.data_item_view.model=chart_data_cur;
+                var data_cur=data_coll.at(i);
+                MyApp.Sortable.data_item_view.model=data_cur;
                 var row_tpl= MyApp.Sortable.data_item_view.render().el.innerHTML;
                 $("#sortableDataModal table tbody").append(row_tpl);
           };
@@ -569,9 +596,12 @@ MyApp.module("Sortable", function(Sortable){
               var fields = $(this).find("input");
               var name = fields.eq(0).val();
               var value = fields.eq(1).val();
-              //console.log(name,value);
+              console.log("Sortable FillCollectionData ",name,value);
               MyApp.Sortable.data_collection.add({data_name:name,data_value:value,data_i:i});              
           });
+          //--------  fill CManager Collection ----------
+          var n_str=this.model.get("n_str");
+          MyApp.CManager.setBlockCollection(n_str.split("-")[1],MyApp.Sortable.data_collection);
     };
     this.draw=function() {
           this.setTheme();
@@ -952,6 +982,11 @@ MyApp.module("Chart", function(Chart){
           //this.stuff = options.stuff;
         },
         addCollectionData:function() {
+            var n_str = MyApp.Chart.model.get("n_str");
+            var n=n_str.split("-")[1];
+            if (n_str !="") {                                                      
+                MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
+            }
             if ( MyApp.Chart.data_collection.length <=1) {return;}
             $("#chartDataModal table tbody").empty();
             var coll_length=MyApp.Chart.data_collection.length;
@@ -968,8 +1003,6 @@ MyApp.module("Chart", function(Chart){
            
         },
         addData: function(){
-          //this.trigger("data:done", this.stuff);
-          //alert("addData from chart controller");
           var dt_tpl= MyApp.Chart.data_item_chart_view.render().el.innerHTML;
           $("#chartDataModal table tbody").append(dt_tpl);
           //---for delete row-------------
@@ -1014,6 +1047,7 @@ MyApp.module("Chart", function(Chart){
       }
     },
     this.draw=function(n){
+       //var n=this.model.get("n_str").split("-")[1];
        try {
         if (n != undefined){
             this.model.set("n_str","-"+n);
@@ -1025,8 +1059,10 @@ MyApp.module("Chart", function(Chart){
             this.setFirstCollection();
         } 
         this.setChartData();
-        //MyApp.CManager.showBlockType();//--- if they exist on page--
-        //CKEDITOR.inlineAll();//---fir rich text editing
+        //--fix bug! Hard code!
+        if (n != undefined){
+            $("#chartwidget-content").empty();
+        }
       } catch (e) {
           console.info("Error chart draw ",e.name,e.lineNumber);
           $(".reveal-modal-bg").hide();//--- fix black screen bag--
@@ -1047,7 +1083,11 @@ MyApp.module("Chart", function(Chart){
     this.runChartCode=function() {
          var  n_str      =this.model.get("n_str");
          var  block_n    =this.model.get("n_str").split("-")[1];
-         var  block_model=this.model;//---MyApp.CManager.getBlockModel(block_n,"Chart")
+         var  block_model=this.model;
+         if (block_n != undefined) {
+               block_model = MyApp.CManager.getBlockModel(block_n);
+         }
+       
          var  chartType  = block_model.get("type");
       
           var strFormat = "";
@@ -1187,39 +1227,49 @@ MyApp.module("Chart", function(Chart){
     },
     this.showContent=function(n) { 
           var n_str=this.model.get("n_str");//-- widget number str for tpl --
-          this.chart_view.model=this.model;
+          
           //$("#chartwidget-content").empty();//--yf dczrbq ckexfq
           if (n==undefined) {
+              this.chart_view.model=this.model;
               this.chart_view.model.set("n_str",n_str);              
               MyApp.rm.get("chartRegion").show(this.main_chart_view);            
           } else {
               n_str="-"+n;
-              this.chart_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!
-              
+              this.model=MyApp.CManager.getBlockModel(n);
+              this.chart_view.model=this.model;
+              this.chart_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!            
               $(".widget-block-content"+n_str).empty().html(this.main_chart_view.render().el.innerHTML);
           }  
 
          $(document).foundation();
          $("#chart-control-btn"+n_str).unbind().click(function(){
-                                                       var n=$(this).prop("id").match(/\d$/)[0];
-                                                       var n_str='-'+n;
-                                                       MyApp.Chart.model.set("n_str",n_str);
-                                                       MyApp.Chart.model=MyApp.CManager.getBlockModel(n);                                                      
-                                                       //console.log("chart-control-btn click ",$(this).prop("id"));
-                                                       $("#chartControlModal").foundation('reveal', 'open');});
-         $("#chart-data-btn"+n_str).unbind().click(function(){                                                       
-                                                       var n=$(this).prop("id").match(/\d$/)[0];
-                                                       var n_str='-'+n;
-                                                       MyApp.Chart.model.set("n_str",n_str);
-                                                       MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
-                                                       $("#chartDataModal").foundation('reveal', 'open');});
+                                                        if (MyApp.Chart.model.get("n_str") !="") {
+                                                               var n=$(this).prop("id").match(/\d$/)[0];
+                                                               var n_str='-'+n;
+                                                               console.log("$(this).prop('id')=",$(this).prop("id"));
+                                                               MyApp.Chart.model.set("n_str",n_str);
+                                                               MyApp.Chart.model=MyApp.CManager.getBlockModel(n);                                                      
+                                                               console.log("chart-control-btn click n=",n);
+                                                        }
+                                                        $("#chartControlModal").foundation('reveal', 'open');
+                                                     });
+         $("#chart-data-btn"+n_str).unbind().click(function(){
+                                                      if (MyApp.Chart.model.get("n_str") !="") {                                                       
+                                                            var n=$(this).prop("id").match(/\d$/)[0];
+                                                            var n_str='-'+n;
+                                                            MyApp.Chart.model.set("n_str",n_str);
+                                                            MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
+                                                            console.log("chart-control-btn click n=",n);
+                                                      }
+                                                       $("#chartDataModal").foundation('reveal', 'open');
+                                                     });
          //MyApp.CManager.showBlockType("Chart");
-         console.log("Chart showContent done!") ;
+         console.log("Chart showContent done! n_str=",n_str) ;
          //$(".reveal-modal-bg").hide();//--bug fix--
     },
     this.show_chart=function() {
           var n_str=this.model.get("n_str");
-      	  console.log("Module Chart ->show_chart");
+      	  console.log("Module Chart ->show_chart n_str",n_str);
           this.setChartTheme();
           //this.chart_view.model=this.model;
           //var chartwidget_code=this.chart_view.render().el.innerHTML;
@@ -1235,23 +1285,28 @@ MyApp.module("Chart", function(Chart){
               var m=MyApp.Chart.data_collection.at(i);
               collection_data.push([m.get("data_name"),m.get("data_value")]);
            };
-           $('#chartwidget'+n_str).jqChart('option', 'series')[0].data=collection_data;
-           $('#chartwidget'+n_str).jqChart('update');
+           $('#chartwidget'+n_str).unbind().jqChart('option', 'series')[0].data=collection_data;
+           $('#chartwidget'+n_str).unbind().jqChart('update');
            console.log("Chart setChartData done!") ;
     },
-    this.FillScreenChartProp=function() {
-      console.log("FillScreenChartProp");
+    this.FillScreenChartProp=function() {    
+      var n_str=this.model.get("n_str");
+      console.log("FillScreenChartProp n_str=",n_str);
+      var n = n_str.split("-")[1];
+      if (n != undefined) {
+          MyApp.Chart.model=MyApp.CManager.getBlockModel(n);        
+      }
       var fields = _.keys(MyApp.Chart.model.attributes);
       jQuery.each(fields,function(f) {
-              var f_val=MyApp.Chart.model.get(f);
+              var f_val=MyApp.Chart.model.get(fields[f]);
               //---tags select
               if (f=="themeList") {
 
               }
               //---tags checkbox
               //---tags input
-              $("#"+f).val(f_val);
-              //console.log("field="+f,MyApp.Chart.model.get(f));
+              $("#"+fields[f]).val(f_val);
+              console.log("field="+fields[f],MyApp.Chart.model.get(f));
       });
     },
     this.FillScreenChartData=function() {
