@@ -238,7 +238,7 @@
 					<a  id="chart-data-add-btn" class="button">Add new item</a>
 				</div>
 				<div class="columns large-9">
-					<a  id="ok-chart-btn" class="button" onclick="$('#chartDataModal').foundation('reveal', 'close')">Ok</a>
+					<a  id="ok-chart-btn" class="button" onclick="MyApp.SaveScreenProp('chartDataModal');">Ok</a>
 				</div>
 			</div>
 	       </div>
@@ -336,7 +336,7 @@
 					<a  id="data-add-sortable-btn" class="button">Add new item</a>
 				</div>
 				<div class="columns large-7">
-					<a  id="ok-sortable-btn" class="button" onclick="$('#sortableDataModal').foundation('reveal', 'close')">Ok</a>		
+					<a  id="ok-sortable-btn" class="button" onclick="MyApp.SaveScreenProp('sortableDataModal');">Ok</a>		
 				</div>
 	       </div>
 	       </div>
@@ -417,7 +417,7 @@
  	</fieldset>
 	<div class="row">				
 		<div class="columns large text-center">
-			<a  id="ok-sortable-btn" class="button" onclick="$('#sortableControlModal').foundation('reveal', 'close')">Ok</a>		
+			<a  id="ok-sortable-btn" class="button" onclick="MyApp.SaveScreenProp('sortableControlModal');">Ok</a>		
 		</div>
 	</div>	
  	<a class="close-reveal-modal">&#215;</a>
@@ -425,7 +425,7 @@
 	</div>
 
  	<!-- ----------------------------- Slider Control Modal -------------------- -->
-	<div id="sliderControlModal" class="reveal-modal" data-reveal>
+	<div id="sliderControlModal" class="reveal-modal" data-reveal  >
 		<fieldset>
  			<legend>Slider setting</legend>
  			<div class="row">
@@ -530,7 +530,7 @@
  		</fieldset>
  		<div class="row">				
 		<div class="columns large text-center">
-			<a  id="ok-sortable-btn" class="button" onclick="$('#sliderControlModal').foundation('reveal', 'close')">Ok</a>		
+			<a  id="ok-slider-btn" class="button" onclick="MyApp.SaveScreenProp('sliderControlModal');">Ok</a>		
 		</div>
 	</div>		
  	  <a class="close-reveal-modal">&#215;</a>
@@ -570,7 +570,7 @@
  		</fieldset>
  		<div class="row">				
 			<div class="columns large text-center">
-				<a  id="ok-sortable-btn" class="button" onclick="$('#videoControlModal').foundation('reveal', 'close')">Ok</a>		
+				<a  id="ok-sortable-btn" class="button" onclick="MyApp.SaveScreenProp('videoControlModal');">Ok</a>		
 			</div>
 		</div>	
  		<a class="close-reveal-modal">&#215;</a> 
@@ -669,7 +669,7 @@
 	   </form>
 		<div class="row">				
 			<div class="columns large text-center">
-				<a  id="ok-sortable-btn" class="button" onclick="$('#chartControlModal').foundation('reveal', 'close')">Ok</a>		
+				<a  id="ok-sortable-btn" class="button" onclick="MyApp.SaveScreenProp('chartControlModal');">Ok</a>		
 			</div>
 		</div>
 	

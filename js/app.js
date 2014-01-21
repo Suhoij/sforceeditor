@@ -89,7 +89,40 @@ MyApp.addInitializer(function(options){
           }
       )
   };
-
+this.SaveScreenProp=function(id) {
+try {
+  if (id=="chartControlModal") {        
+         console.log("!!!!!!!!!!!!!!SAVE!!!!!!!!!!!!!!!!!!!!!!!!!!") ;//MyApp.SaveScreenProp('chartControlModal');
+        MyApp.Chart.FillModelProp();
+        MyApp.Chart.draw();
+       
+  }
+  if (id=="chartDataModal") {
+        MyApp.Chart.FillCollectionData();
+        MyApp.Chart.draw(); 
+  }
+  if (id=="videoControlModal") {
+        MyApp.Video.FillModelProp();
+        MyApp.Video.draw();
+  }
+  if (id=="sliderControlModal") {
+        MyApp.Slider.FillModelProp();
+        MyApp.Slider.draw();
+  }
+  if (id=="sortableControlModal") {
+        MyApp.Sortable.FillModelProp();
+        MyApp.Sortable.draw();       
+  }
+  if (id=="sortableDataModal"){
+        MyApp.Sortable.FillCollectionData();
+        MyApp.Sortable.draw();
+  }
+  $('#'+id).foundation('reveal', 'close');
+  } catch (e) {
+      console.info("Error close ",e.lineNumber,e.name);
+      $(".reveal-modal-bg").hide();//--bug fix--
+  }
+};
   this.FillScreenFieldsObjects=function(widget_name){    
     if ( $('select#sobjects_'+widget_name+' option').length == 0) {
         var objects_options_str="";
@@ -166,15 +199,15 @@ $(document).on('open', '[data-reveal]', function () {
   var modal = $(this);
   console.log("modal open ",modal[0].id);
   if (modal[0].id=="chartControlModal") {
-      MyApp.Chart.FillScreenChartProp();
+      MyApp.Chart.FillScreenProp();
   }
   if (modal[0].id=="chartDataModal") {
-      MyApp.Chart.FillScreenChartData();
+      MyApp.Chart.FillScreenData();
   }
   if (modal[0].id=="videoDataModal") {
   }
   if (modal[0].id=="sliderControlModal") {
-      MyApp.Slider.FillScreenSliderProp();
+      MyApp.Slider.FillScreenProp();
   }
   if (modal[0].id=="sortableControlModal") {
       MyApp.Sortable.FillScreenProp();
@@ -183,38 +216,38 @@ $(document).on('open', '[data-reveal]', function () {
       MyApp.Sortable.FillScreenData();
   }
 });
-$(document).on('close', '[data-reveal]', function () {
+$(document).on('close', '[data-reveal]', function (params) {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
-  try {
-  if (modal[0].id=="chartControlModal") {        
-        MyApp.Chart.FillModelChartProp();
-        MyApp.Chart.draw(); 
-  }
-  if (modal[0].id=="chartDataModal") {
-        MyApp.Chart.FillCollectionChartData();
-        MyApp.Chart.draw(); 
-  }
-  if (modal[0].id=="videoControlModal") {
-        MyApp.Video.FillModelVideoProp();
-        MyApp.Video.showVideoPlayer();
-  }
-  if (modal[0].id=="sliderControlModal") {
-        MyApp.Slider.FillModelSliderProp();
-        MyApp.Slider.draw();
-  }
-  if (modal[0].id=="sortableControlModal") {
-        MyApp.Sortable.FillModelProp();
-        MyApp.Sortable.draw();
-  }
-  if (modal[0].id=="sortableDataModal") {
-        MyApp.Sortable.FillCollectionData();
-        MyApp.Sortable.draw();
-  }
-  } catch (e) {
-      console.info("Error close ",e.lineNumber,e.name);
-      $(".reveal-modal-bg").hide();//--bug fix--
-  }
+  // try {
+  // if (modal[0].id=="chartControlModal") {        
+  //       MyApp.Chart.FillModelChartProp();
+  //       MyApp.Chart.draw(); 
+  // }
+  // if (modal[0].id=="chartDataModal") {
+  //       MyApp.Chart.FillCollectionData();
+  //       MyApp.Chart.draw(); 
+  // }
+  // if (modal[0].id=="videoControlModal") {
+  //       MyApp.Video.FillModelProp();
+  //       MyApp.Video.draw();
+  // }
+  // if (modal[0].id=="sliderControlModal") {
+  //       MyApp.Slider.FillModelProp();
+  //       MyApp.Slider.draw();
+  // }
+  // if ((modal[0].id=="sortableControlModal")  ){
+  //       MyApp.Sortable.FillModelProp();
+  //       MyApp.Sortable.draw();       
+  // }
+  // if ((modal[0].id=="sortableDataModal") ){
+  //       MyApp.Sortable.FillCollectionData();
+  //       MyApp.Sortable.draw();
+  // }
+  // } catch (e) {
+  //     console.info("Error close ",e.lineNumber,e.name);
+  //     $(".reveal-modal-bg").hide();//--bug fix--
+  // }
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -241,6 +274,7 @@ MyApp.on("initialize:after", function(options){
       MyApp.module("CManager").start();
       //MyApp.Chart.draw();
       MyApp.CManager.showHomePage(); 
+      //MyApp.CManager.buildPage(); 
 
   }
 });
@@ -264,9 +298,9 @@ MyApp.module("CManager", function(CManager){
   var HomePageModel=Backbone.Model.extend({
         defaults: {
           blocks_cnt:3,
-          blocks_list:{"b-1":{"top":1,"left":1,"type":"text",model:null,data_collection:null},
-                       "b-2":{"top":1,"left":100,"type":"chart",model:null,data_collection:null},
-                       "b-3":{"top":100,"left":100,"type":"chart",model:null,data_collection:null}}         
+          blocks_list:{"b-1":{"top":1,"left":1,"type":"Text",model:null,data_collection:null},
+                       "b-2":{"top":1,"left":100,"type":"Chart",model:null,data_collection:null},
+                       "b-3":{"top":100,"left":100,"type":"Sortable",model:null,data_collection:null}}         
         }
   });
   var BlockModel=Backbone.Model.extend({
@@ -327,10 +361,11 @@ MyApp.module("CManager", function(CManager){
              var w_model = blocks["b-"+n].model;
              var w_name = blocks[prop].type;
              var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
-             console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,prop);
-             blocks["b-"+n].model = MyApp[widget_class_name].model;
+            
+             this.setBlockModel(n,MyApp[widget_class_name].model);
+             console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
              if (MyApp[widget_class_name].data_collection !=undefined) {
-                 blocks["b-"+n].data_collection =  MyApp[widget_class_name].data_collection;
+                this.setBlockCollection(n,MyApp[widget_class_name].data_collection);
              }
       } else { //---all blocks-------------------------
           for (prop in blocks){
@@ -345,12 +380,40 @@ MyApp.module("CManager", function(CManager){
           }
       }
   },
+  this.setWidgetCurBlock=function(click_el,widget_name,what) {
+        if (this.home_page_model.get("blocks_cnt") >=1) {
+               try {  
+                 var n=click_el.prop("id").match(/\d$/)[0];
+                 var n_str='-'+n;
+                 var cur_type = this.home_page_model.get("blocks_list")["b-"+n].type;
+                 MyApp[widget_name].model.set("n_str",n_str);
+                 if (what == "model") {
+                      //---Тип блока в CManager должен совпадать с типом класса вызова!
+                      if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
+                         MyApp[widget_name].model=this.getBlockModel(n);
+                      }
+                 }
+                 if (what == "data_collection") {
+                      if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
+                          MyApp[widget_name].data_collection=this.getBlockModel(n);
+                      }
+                 }  
+                } catch (e) {
+                   console.error("CManager setcurblock ERROR "+e.name+e.lineNumber);
+                }                                                      
+        }
+  },
   this.showHomePage=function() {
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
         MyApp.rm.get("homeRegion").show(this.home_page_view);   
         MyApp.CManager.showBlockType();
         //CKEDITOR.inlineAll();//---fire rich text editing
         this.fillModelsCollections();
+        var blocks_cnt=this.home_page_model.get("blocks_cnt");
+        for (var i=1;i<=blocks_cnt;i++) {      
+            this.showWidgetContent(i);
+        }
+       
   };
   this.getPage=function() { //--from server--
     //--- fill blocks_list
@@ -363,6 +426,7 @@ MyApp.module("CManager", function(CManager){
   };
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        console.log("set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         MyApp.CManager.fillModelsCollections(n);
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
@@ -378,7 +442,7 @@ MyApp.module("CManager", function(CManager){
               $("#chart_sub_block_"+n).removeClass("hide").addClass("show");
         }
       } else {            
-        console.log("set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
+        
         //$(document).foundation();
         this.closeBlockType(n,name);
         this.showWidgetContent(n);
@@ -395,19 +459,20 @@ MyApp.module("CManager", function(CManager){
   this.showWidgetContent=function(n) {
         var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
         try {
-        console.log("w_type="+w_type+" n="+n);
+        console.log("showWidgetContent w_type="+w_type+" n="+n);
         if (w_type != "Text") {
             //MyApp.Text.clearContent(n);
         }
         if (w_type == "Chart") {
             MyApp.Chart.draw(n);
         } else {
+            MyApp[w_type].model.set("n_str","-"+n);
             MyApp[w_type].showContent(n);
             MyApp[w_type].draw();
         }
       
       } catch (e) {
-         alert("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
+         console.error("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
       }
   };
   this.showBlockType=function(block_name) {
@@ -449,7 +514,7 @@ MyApp.module("Text", function(Text){
           MyApp.Text.model.set("n_str",n_str);
           console.log("Text.showContent  n=",rich_text_node);
           $(".widget-block-content"+n_str).html("").append(rich_text_node);
-          console.log("Text attr  n_str=",n_str);              
+          console.log("Text showContent attr  n_str=",n_str);              
           //CKEDITOR.replace("rich-text"+n_str);          
           try {
               CKEDITOR.inline("rich-text"+n_str);
@@ -485,6 +550,20 @@ MyApp.module("Sortable", function(Sortable){
       $("#data-add-sortable-btn").click(function(){MyApp.Sortable.controller.addData()});
       //$("#data-del-btn").click(function(){MyApp.Sortable.controller.delData()});
     });
+    //-------------------------Models----------------------------
+    var SortableModel = Backbone.Model.extend({
+        defaults: {
+            active_sortable:1,
+            sobjects_sortable:"sforceObject",
+            sfields_sortable:"sobjectField",
+            titleText:"Sortable title",
+            themeName: "ClearGreen",
+            themeList: "Clear-Green",
+            customStyleInput:"",
+            n_str:""
+        }
+    });
+    var DataCollection = Backbone.Collection.extend({});
     // ------------------------- Controllers ----------------
     var Controller = Marionette.Controller.extend({
         addData: function(){
@@ -514,39 +593,34 @@ MyApp.module("Sortable", function(Sortable){
               $(".widget-block-content"+n_str).empty().html(MyApp.Sortable.sortable_view.render().el.innerHTML);
           }    
           $("#sortable-control-btn"+n_str).unbind().click(function(){
-                                                   if (MyApp.Sortable.model.get("n_str") !="") {
-                                                               var n=$(this).prop("id").match(/\d$/)[0];
-                                                               var n_str='-'+n;
-                                                               console.log("$(this).prop('id')=",$(this).prop("id"));
-                                                               MyApp.Sortable.model.set("n_str",n_str);
-                                                               MyApp.Sortable.model=MyApp.CManager.getBlockModel(n);                                                      
-                                                               console.log("chart-control-btn click n=",n);
-                                                      }
+                                                 
+                                                    MyApp.CManager.setWidgetCurBlock($(this),"Sortable","model") ;
                                                     $("#sortableControlModal").foundation('reveal', 'open');
 
                                                   });
           $("#sortable-data-btn"+n_str).unbind().click(function(){ 
-                                                    if (MyApp.Sortable.model.get("n_str") !="") {                                                       
-                                                            var n=$(this).prop("id").match(/\d$/)[0];
-                                                            var n_str='-'+n;
-                                                            MyApp.Sortable.model.set("n_str",n_str);
-                                                            MyApp.Sortable.data_collection=MyApp.CManager.getBlockCollection(n);
-                                                            console.log("chart-control-btn click n=",n);
-                                                    }
+                                                  
+                                                    MyApp.CManager.setWidgetCurBlock($(this),"Sortable","data_collection") ;
                                                     $("#sortableDataModal").foundation('reveal', 'open');
                                                   });
     };
     this.FillScreenProp=function() {
+          var n_str=this.model.get("n_str");          
+          var n = n_str.split("-")[1];
+          if (n != undefined) {
+              this.model=MyApp.CManager.getBlockModel(n);        
+          }
           var fields = _.keys(MyApp.Sortable.model.attributes);
           jQuery.each(fields,function(i,f) {
-              var f_val=MyApp.Sortable.model.get(f);
+              var f_val=MyApp.Sortable.model.get(fields[f]);
               //---tags select
               if (f=="themeList") {
                   console.log("sortable themeList",f_val);
               }
               //---tags checkbox
               //---tags input
-              $("#"+f).val(f_val);
+              $("#"+fields[f]).val(f_val);
+              console.log("Sortable fields[f]="+fields[f]+" f_val="+f_val);
   
           });
           MyApp.FillScreenFieldsObjects("sortable");//--select fill--
@@ -588,6 +662,10 @@ MyApp.module("Sortable", function(Sortable){
           jQuery.each(prop_arr,function(i,prop){
               MyApp.Sortable.model.set(prop.id,prop.value);          
           });
+          //--------  fill CManager Model ----------
+          var n_str=this.model.get("n_str");
+          MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
+          console.log("SORTABLE FillModelProp n_str="+n_str,this.model);
     };
     this.FillCollectionData=function() {
           console.log("FillCollectionData");
@@ -620,7 +698,7 @@ MyApp.module("Sortable", function(Sortable){
           jQuery.each(this.data_collection.models,function(i,f) {
               data_value = f.attributes.data_value;
               data_name  = f.attributes.data_name;
-              //console.log("setCode...",data_value,data_name);
+             
               li_str=li_str+"<li val='"+data_value+"' class='ui-state-default'><span class='ui-icon ui-icon-arrowthick-2-n-s'></span>"+data_name+"</li>";
           });
           jQuery("#sortablewidget"+n_str).html(li_str);
@@ -643,21 +721,7 @@ MyApp.module("Sortable", function(Sortable){
               'positions': getPosString
           };  
     };
-    //-------------------------Models----------------------------
-    var SortableModel = Backbone.Model.extend({
-        defaults: {
-            active_sortable:1,
-            sobjects_sortable:"sforceObject",
-            sfields_sortable:"sobjectField",
-            titleText:"Sortable title",
-            themeName: "ClearGreen",
-            themeList: "Clear-Green",
-            customStyleInput:"",
-            //------------- tpl params ---1,-2,-3----------
-            n_str:""
-        }
-    });
-    var DataCollection = Backbone.Collection.extend({});
+  
     //-------------------------Views-----------------------------
     var SortableView = Backbone.Marionette.ItemView.extend({
        template: "#main-sortable-template",
@@ -697,9 +761,12 @@ MyApp.module("Slider", function(Slider){
           //this.slider_view.model=this.model;
           //MyApp.rm.sliderRegion.show(this.slider_view);
           //MyApp.rm.get("sliderRegion").show(this.slider_view);
-          $("#slider-control-btn"+n_str).click(function(){ $("#sliderControlModal").foundation('reveal', 'open');});
+          $("#slider-control-btn"+n_str).unbind().click(function(){
+                        MyApp.CManager.setWidgetCurBlock($(this),"Slider","model") ;
+                        $("#sliderControlModal").foundation('reveal', 'open');
+          });
     };
-    this.FillScreenSliderProp=function(){
+    this.FillScreenProp=function(){
           var fields = _.keys(MyApp.Slider.model.attributes);
           jQuery.each(fields,function(i,f) {
               var f_val=MyApp.Slider.model.get(f);
@@ -714,7 +781,7 @@ MyApp.module("Slider", function(Slider){
           });
           MyApp.FillScreenFieldsObjects("slider");
     };
-    this.FillModelSliderProp=function(){
+    this.FillModelProp=function(){
           var screen_items=$("#sliderControlModal  :input");
           var prop_arr=[];
           //--select id,name from screen_items
@@ -732,6 +799,9 @@ MyApp.module("Slider", function(Slider){
           jQuery.each(prop_arr,function(i,prop){
               MyApp.Slider.model.set(prop.id,prop.value);          
           });
+          //--------  fill CManager Model ----------
+          var n_str=this.model.get("n_str");
+          MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
     };
     this.draw=function() {
           this.setSliderTheme();
@@ -854,10 +924,13 @@ MyApp.module("Video", function(Video){
               //this.video_view.model=this.model;         
               ///////$("#videowidget-content").html(this.video_view.render().el.innerHTML);
              
-              $("#video-control-btn"+n_str).click(function(){ $("#videoControlModal").foundation('reveal', 'open');});
+              $("#video-control-btn"+n_str).click(function(){ 
+                        MyApp.CManager.setWidgetCurBlock($(this),"Video","model") ;
+                        $("#videoControlModal").foundation('reveal', 'open');
+              });
           //}
     };
-    this.FillModelVideoProp=function() {
+    this.FillModelProp=function() {
           var screen_items=$("#videoControlModal  :input");
           var prop_arr=[];
           //--select id,name from screen_items
@@ -876,6 +949,9 @@ MyApp.module("Video", function(Video){
               MyApp.Video.model.set(prop.id,prop.value);
               //console.log("FillModelVideoProp prop.id=",prop.id,prop.value);
           });
+          //--------  fill CManager Model ----------
+          var n_str=this.model.get("n_str");
+          MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
     };
     //-------------------------Models----------------------------
     var VideoModel = Backbone.Model.extend({
@@ -1028,7 +1104,7 @@ MyApp.module("Chart", function(Chart){
         var click_cnt = this.model.get("type_prop")[cur_type].click_cnt++;
       } catch(e) {
           click_cnt =1;
-          console.info("Error chart.clickLinkShow...");
+          console.info("Error chart.clickLinkShow..."+e.name+"line:"+e.lineNumber);
       }
       return click_cnt;
     
@@ -1082,7 +1158,7 @@ MyApp.module("Chart", function(Chart){
     },
     this.runChartCode=function() {
          var  n_str      =this.model.get("n_str");
-         var  block_n    =this.model.get("n_str").split("-")[1];
+         var  block_n    =n_str.split("-")[1];
          var  block_model=this.model;
          if (block_n != undefined) {
                block_model = MyApp.CManager.getBlockModel(block_n);
@@ -1243,24 +1319,13 @@ MyApp.module("Chart", function(Chart){
 
          $(document).foundation();
          $("#chart-control-btn"+n_str).unbind().click(function(){
-                                                        if (MyApp.Chart.model.get("n_str") !="") {
-                                                               var n=$(this).prop("id").match(/\d$/)[0];
-                                                               var n_str='-'+n;
-                                                               console.log("$(this).prop('id')=",$(this).prop("id"));
-                                                               MyApp.Chart.model.set("n_str",n_str);
-                                                               MyApp.Chart.model=MyApp.CManager.getBlockModel(n);                                                      
-                                                               console.log("chart-control-btn click n=",n);
-                                                        }
+                                                    
+                                                        MyApp.CManager.setWidgetCurBlock($(this),"Chart","model");
                                                         $("#chartControlModal").foundation('reveal', 'open');
                                                      });
          $("#chart-data-btn"+n_str).unbind().click(function(){
-                                                      if (MyApp.Chart.model.get("n_str") !="") {                                                       
-                                                            var n=$(this).prop("id").match(/\d$/)[0];
-                                                            var n_str='-'+n;
-                                                            MyApp.Chart.model.set("n_str",n_str);
-                                                            MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
-                                                            console.log("chart-control-btn click n=",n);
-                                                      }
+                                                
+                                                      MyApp.CManager.setWidgetCurBlock($(this),"Chart","data_collection");
                                                        $("#chartDataModal").foundation('reveal', 'open');
                                                      });
          //MyApp.CManager.showBlockType("Chart");
@@ -1275,7 +1340,7 @@ MyApp.module("Chart", function(Chart){
           //var chartwidget_code=this.chart_view.render().el.innerHTML;
       	  //$("#chartwidget-code"+n_str).empty().html("<script>"+chartwidget_code+"</script>");
       	  this.runChartCode();
-           console.log("Chart show_chart done!") ;
+          console.log("Chart show_chart done! n_str="+n_str) ;
     },
     this.setChartData=function(){
            var n_str=this.model.get("n_str");
@@ -1287,9 +1352,9 @@ MyApp.module("Chart", function(Chart){
            };
            $('#chartwidget'+n_str).unbind().jqChart('option', 'series')[0].data=collection_data;
            $('#chartwidget'+n_str).unbind().jqChart('update');
-           console.log("Chart setChartData done!") ;
+           console.log("Chart setChartData done!  n_str="+n_str) ;
     },
-    this.FillScreenChartProp=function() {    
+    this.FillScreenProp=function() {    
       var n_str=this.model.get("n_str");
       console.log("FillScreenChartProp n_str=",n_str);
       var n = n_str.split("-")[1];
@@ -1309,11 +1374,11 @@ MyApp.module("Chart", function(Chart){
               console.log("field="+fields[f],MyApp.Chart.model.get(f));
       });
     },
-    this.FillScreenChartData=function() {
+    this.FillScreenData=function() {
           console.log("FillScreenChartData");        
           MyApp.Chart.controller.addCollectionData();
     },
-    this.FillModelChartProp=function() {
+    this.FillModelProp=function() {
           console.log("FillModelChartProp");
           var screen_items=$("form[name='chart-prop'] select,input");//---check on ??
           var prop_arr=[];
@@ -1340,7 +1405,7 @@ MyApp.module("Chart", function(Chart){
           MyApp.CManager.setBlockModel(n_str.split("-")[1],MyApp.Chart.model);
 
     },
-    this.FillCollectionChartData=function() {
+    this.FillCollectionData=function() {
           var n_str=this.model.get("n_str");
           console.log("FillCollectionChartData n_str="+n_str);
           MyApp.Chart.data_collection.reset();
