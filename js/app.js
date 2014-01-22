@@ -30,6 +30,9 @@ MyApp.addInitializer(function(options){
         chartRegion:"#chartwidget-content"
   };
   this.options=options;
+  String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  };
   //this.rm = new Marionette.RegionManager();
   this.clearScreen=function(cur_region){ //return;
        var cur_id_region=MyApp.rm.get(cur_region).el;
@@ -92,7 +95,7 @@ MyApp.addInitializer(function(options){
 this.SaveScreenProp=function(id) {
 try {
   if (id=="chartControlModal") {        
-         console.log("!!!!!!!!!!!!!!SAVE!!!!!!!!!!!!!!!!!!!!!!!!!!") ;//MyApp.SaveScreenProp('chartControlModal');
+        //console.log("!!!!!!!!!!!!!!SAVE!!!!!!!!!!!!!!!!!!!!!!!!!!") ;//MyApp.SaveScreenProp('chartControlModal');
         MyApp.Chart.FillModelProp();
         MyApp.Chart.draw();
        
@@ -219,35 +222,7 @@ $(document).on('open', '[data-reveal]', function () {
 $(document).on('close', '[data-reveal]', function (params) {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
-  // try {
-  // if (modal[0].id=="chartControlModal") {        
-  //       MyApp.Chart.FillModelChartProp();
-  //       MyApp.Chart.draw(); 
-  // }
-  // if (modal[0].id=="chartDataModal") {
-  //       MyApp.Chart.FillCollectionData();
-  //       MyApp.Chart.draw(); 
-  // }
-  // if (modal[0].id=="videoControlModal") {
-  //       MyApp.Video.FillModelProp();
-  //       MyApp.Video.draw();
-  // }
-  // if (modal[0].id=="sliderControlModal") {
-  //       MyApp.Slider.FillModelProp();
-  //       MyApp.Slider.draw();
-  // }
-  // if ((modal[0].id=="sortableControlModal")  ){
-  //       MyApp.Sortable.FillModelProp();
-  //       MyApp.Sortable.draw();       
-  // }
-  // if ((modal[0].id=="sortableDataModal") ){
-  //       MyApp.Sortable.FillCollectionData();
-  //       MyApp.Sortable.draw();
-  // }
-  // } catch (e) {
-  //     console.info("Error close ",e.lineNumber,e.name);
-  //     $(".reveal-modal-bg").hide();//--bug fix--
-  // }
+
 });
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
@@ -298,9 +273,9 @@ MyApp.module("CManager", function(CManager){
   var HomePageModel=Backbone.Model.extend({
         defaults: {
           blocks_cnt:3,
-          blocks_list:{"b-1":{"top":1,"left":1,"type":"Text",model:null,data_collection:null},
-                       "b-2":{"top":1,"left":100,"type":"Chart",model:null,data_collection:null},
-                       "b-3":{"top":100,"left":100,"type":"Sortable",model:null,data_collection:null}}         
+          blocks_list:{"b-1":{"top":1,"left":1,"type":"Sortable",model:null,data_collection:null},
+                       "b-2":{"top":1,"left":100,"type":"Slider",model:null,data_collection:null},
+                       "b-3":{"top":100,"left":100,"type":"Chart",model:null,data_collection:null}}         
         }
   });
   var BlockModel=Backbone.Model.extend({
@@ -334,10 +309,12 @@ MyApp.module("CManager", function(CManager){
   },
   this.setBlockModel=function(n,m){
     try {
+      console.log("!!!Try set setBlockModel n="+n);
+      console.log("!!!Try set setBlockModel model=",m);
       block_model = this.home_page_model.get("blocks_list");
       block_model["b-"+n].model=m.clone();
       //block_model.model=m;
-      console.log("!!!setBlockModel n="+n);
+      
     } catch (e) {
        console.info("ERROR setBlockModel ",e.name,e.lineNumber);
     }
@@ -360,7 +337,7 @@ MyApp.module("CManager", function(CManager){
       if (n != undefined) {//---exectly for block-----
              var w_model = blocks["b-"+n].model;
              var w_name = blocks[prop].type;
-             var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
+             var widget_class_name = w_name.capitalize();//w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
             
              this.setBlockModel(n,MyApp[widget_class_name].model);
              console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
@@ -386,20 +363,23 @@ MyApp.module("CManager", function(CManager){
                  var n=click_el.prop("id").match(/\d$/)[0];
                  var n_str='-'+n;
                  var cur_type = this.home_page_model.get("blocks_list")["b-"+n].type;
-                 MyApp[widget_name].model.set("n_str",n_str);
+                 console.log("!setWidgetCurBlock n="+n+" cur_type="+cur_type);
+                 
                  if (what == "model") {
                       //---Тип блока в CManager должен совпадать с типом класса вызова!
                       if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
-                         MyApp[widget_name].model=this.getBlockModel(n);
+                         MyApp[widget_name].model=this.getBlockModel(n);                      
+                         console.log("!!setWidgetCurBlock model from CManager is ",this.getBlockModel(n));
                       }
                  }
                  if (what == "data_collection") {
                       if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
-                          MyApp[widget_name].data_collection=this.getBlockModel(n);
+                          MyApp[widget_name].data_collection=this.getBlockModel(n);                        
                       }
-                 }  
+                 }
+                 MyApp[widget_name].model.set("n_str",n_str);  
                 } catch (e) {
-                   console.error("CManager setcurblock ERROR "+e.name+e.lineNumber);
+                   console.error("CManager setWidgetCurblock ERROR "+e.name+e.lineNumber);
                 }                                                      
         }
   },
@@ -426,7 +406,13 @@ MyApp.module("CManager", function(CManager){
   };
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
-        console.log("set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
+        //---set first model, collection--
+        var cur_widget   = MyApp.CManager.home_page_model.get("blocks_list")["b-"+n];
+        cur_widget.model = MyApp[name.capitalize()].model;
+        if (cur_widget.data_collection != undefined ) {
+            cur_widget.data_collection = MyApp[name.capitalize()].data_collection;
+        }
+        console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         MyApp.CManager.fillModelsCollections(n);
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
@@ -453,13 +439,16 @@ MyApp.module("CManager", function(CManager){
         this.closeBlockType(n,name);
         if (name =="Chart") {
             MyApp.Chart.model.set("type",sub_type.toLowerCase() );
+            this.fillModelsCollections(n);
             this.showWidgetContent(n);
         }
   };
   this.showWidgetContent=function(n) {
         var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
         try {
-        console.log("showWidgetContent w_type="+w_type+" n="+n);
+        w_type=w_type.capitalize(); 
+         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+w_type); 
+        console.log("BEGIN)showWidgetContent w_type="+w_type+" n="+n);
         if (w_type != "Text") {
             //MyApp.Text.clearContent(n);
         }
@@ -469,8 +458,9 @@ MyApp.module("CManager", function(CManager){
             MyApp[w_type].model.set("n_str","-"+n);
             MyApp[w_type].showContent(n);
             MyApp[w_type].draw();
-        }
-      
+        }       
+        console.log("END)showWidgetContent w_type="+w_type+" n="+n);
+        //if (w_type != "Text") {  
       } catch (e) {
          console.error("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
       }
@@ -478,9 +468,11 @@ MyApp.module("CManager", function(CManager){
   this.showBlockType=function(block_name) {
         //---get html from render
         var blocks_cnt=MyApp.CManager.home_page_model.get("blocks_cnt");
+        var type_before_str="<b>Type:</b>";
         MyApp.CManager.block_type_view.model=this.block_model;
         for (var i=1;i<=blocks_cnt;i++) {            
             MyApp.CManager.block_type_view.model.set("nomer",i);
+            MyApp.CManager.block_type_view.model.set("cur_name",type_before_str+MyApp.CManager.home_page_model.get("blocks_list")["b-"+i].type);
             var block_html=MyApp.CManager.block_type_view.render().el.innerHTML;
             $(".block-type.bt-"+i).html(block_html);
 
@@ -502,7 +494,8 @@ MyApp.module("Text", function(Text){
             text_default:"<p>You can write and modify any text here...</p>",
             lng:"en",//---lang
             //------------- tpl params ---1,-2,-3----------
-            n_str:""
+            n_str:"",
+            model_name:"Text"
         }
     });
    //--------------------------Methods--------------------------------
@@ -560,7 +553,8 @@ MyApp.module("Sortable", function(Sortable){
             themeName: "ClearGreen",
             themeList: "Clear-Green",
             customStyleInput:"",
-            n_str:""
+            n_str:"",
+            model_name:"Sortable"
         }
     });
     var DataCollection = Backbone.Collection.extend({});
@@ -758,9 +752,6 @@ MyApp.module("Slider", function(Slider){
               this.slider_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!
               $(".widget-block-content"+n_str).empty().html(this.slider_view.render().el.innerHTML);
           }          
-          //this.slider_view.model=this.model;
-          //MyApp.rm.sliderRegion.show(this.slider_view);
-          //MyApp.rm.get("sliderRegion").show(this.slider_view);
           $("#slider-control-btn"+n_str).unbind().click(function(){
                         MyApp.CManager.setWidgetCurBlock($(this),"Slider","model") ;
                         $("#sliderControlModal").foundation('reveal', 'open');
@@ -852,7 +843,8 @@ MyApp.module("Slider", function(Slider){
         themeName: "ClearGreen",
         themeList: "Clear-Green",
         customStyleInput:"",
-        n_str:""
+        n_str:"",
+        model_name:"Slider"
       }
     });
     //-------------------------Views-----------------------------
@@ -907,9 +899,6 @@ MyApp.module("Video", function(Video){
           $("#video-player"+n_str).html(vp_html);
     };
     this.showContent=function(n) {
-          //$("#chartwidget-content").hide();
-          //$("#videowidget-content").show();
-          //if ($("#videowidget-content").length==0) {
           var n_str="";//-- widget number str for tpl --
           this.video_view.model=this.model;
           if (n==undefined) {
@@ -924,10 +913,10 @@ MyApp.module("Video", function(Video){
               //this.video_view.model=this.model;         
               ///////$("#videowidget-content").html(this.video_view.render().el.innerHTML);
              
-              $("#video-control-btn"+n_str).click(function(){ 
+          $("#video-control-btn"+n_str).click(function(){ 
                         MyApp.CManager.setWidgetCurBlock($(this),"Video","model") ;
                         $("#videoControlModal").foundation('reveal', 'open');
-              });
+          });
           //}
     };
     this.FillModelProp=function() {
@@ -962,7 +951,8 @@ MyApp.module("Video", function(Video){
          video_width:"100%",
          video_height:"100%",
          autoplay:0,
-         n_str:""
+         n_str:"",
+         model_name:"Video"
        }
     });
     //-------------------------Views-----------------------------
@@ -994,7 +984,7 @@ MyApp.module("Chart", function(Chart){
       	    bordercolor:"black",
             legendbackground:"#eeeeee",
       	    min:0,
-      	    max:1,
+      	    max:100,
       	    themeName: "Green",
             styleName:"ClearBlue",
       	    themeList:"ClearOrange",
@@ -1002,6 +992,7 @@ MyApp.module("Chart", function(Chart){
       	    type:"pie",
             type_prop:{"pie":{name:"Pie",click_cnt:0},"line":{name:"Line",click_cnt:0},"spline":{name:"Spline",click_cnt:0},"area":{name:"Area",click_cnt:0}},
       	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']],
+            model_name:"Chart",
             n_str:""
         }
     });
@@ -1099,9 +1090,10 @@ MyApp.module("Chart", function(Chart){
     // ------------------------- Methods --------------------
     this.clickLinkShow=function() {
       try {
-        var cur_type=this.model.get("type");
-        var cur_type_prop=this.model.get("type_prop");
-        var click_cnt = this.model.get("type_prop")[cur_type].click_cnt++;
+        var click_cnt = 1;
+        // var cur_type=this.model.get("type");
+        // var cur_type_prop=this.model.get("type_prop");
+        // var click_cnt = this.model.get("type_prop")[cur_type].click_cnt++;
       } catch(e) {
           click_cnt =1;
           console.info("Error chart.clickLinkShow..."+e.name+"line:"+e.lineNumber);
@@ -1276,7 +1268,7 @@ MyApp.module("Chart", function(Chart){
                     axes: axesSet,
                     series: [
                             {
-                                type:  block_model.get("type"),
+                                type:  chartType,
                                 strokeStyle : strokeSeries, // border pie segments color 
                                 lineWidth : lineSeries, // border pie segments 
                                 labels: {
@@ -1336,9 +1328,6 @@ MyApp.module("Chart", function(Chart){
           var n_str=this.model.get("n_str");
       	  console.log("Module Chart ->show_chart n_str",n_str);
           this.setChartTheme();
-          //this.chart_view.model=this.model;
-          //var chartwidget_code=this.chart_view.render().el.innerHTML;
-      	  //$("#chartwidget-code"+n_str).empty().html("<script>"+chartwidget_code+"</script>");
       	  this.runChartCode();
           console.log("Chart show_chart done! n_str="+n_str) ;
     },
@@ -1350,6 +1339,8 @@ MyApp.module("Chart", function(Chart){
               var m=MyApp.Chart.data_collection.at(i);
               collection_data.push([m.get("data_name"),m.get("data_value")]);
            };
+           console.log("Chart setChartData  n_str="+n_str) ;
+           console.log("Chart setChartData  collection_data=",collection_data) ;
            $('#chartwidget'+n_str).unbind().jqChart('option', 'series')[0].data=collection_data;
            $('#chartwidget'+n_str).unbind().jqChart('update');
            console.log("Chart setChartData done!  n_str="+n_str) ;
@@ -1371,7 +1362,7 @@ MyApp.module("Chart", function(Chart){
               //---tags checkbox
               //---tags input
               $("#"+fields[f]).val(f_val);
-              console.log("field="+fields[f],MyApp.Chart.model.get(f));
+              console.log("field="+fields[f],MyApp.Chart.model.get(fields[f]));
       });
     },
     this.FillScreenData=function() {
