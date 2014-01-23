@@ -153,13 +153,13 @@
  	<!--   ---------------------- player Video TPL ------------------------------ -->
  	<script type="text/template" id="player-youtube-video-template" >
  		<!-- <div class="flex-video">	-->
-			<iframe class="youtube-player" type="text/html" width="<%= video_width %>" height="<%= video_height %>" src="http://www.youtube.com/embed/<%= video_id %>?autohide=1&autoplay=<%= autoplay %>" frameborder="0"></iframe>
+			<iframe class="youtube-player" type="text/html" width="<%= Width %>" height="<%= Height %>" src="http://www.youtube.com/embed/<%= video_id %>?autohide=1&autoplay=<%= Autoplay %>" frameborder="0"></iframe>
 		<!-- </div> -->
  	</script>
 
  	<script type="text/template" id="player-other-video-template" >
- 		<video class="video-js vjs-default-skin" width="<%= video_width %>" height="<%= video_height %>"
-			poster="http://video-js.zencoder.com/oceans-clip.png"	data-setup='{ "controls": true, "autoplay": <%= autoplay %>, "preload": "auto" }' >
+ 		<video class="video-js vjs-default-skin" width="<%= Width %>" height="<%= Height %>"
+			poster="http://video-js.zencoder.com/oceans-clip.png"	data-setup='{ "controls": true, "autoplay": <%= Autoplay %>, "preload": "auto" }' >
 
 			<source src="<%= video_id %>" type='video/mp4' />
 		</video>
@@ -289,7 +289,7 @@
 	 	
  		<a  class="button" data-dropdown="cur_block_type_<%= nomer %>"><%= cur_name %></a>
 		<ul id="cur_block_type_<%= nomer %>" class="tiny f-dropdown text-left" data-dropdown-content>
-		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Text');"><img src="img/sm-text.png" class="bt-img-option"/><a >Text</a></li>
+		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'RichText');"><img src="img/sm-text.png" class="bt-img-option"/><a >Text</a></li>
 		  <li onclick="MyApp.CManager.selectBlockType(<%= nomer %>,'Chart');"><img src="img/sm-chart.png" class="bt-img-option"/><a >Chart</a></li>
 		  <ul id="chart_sub_block_<%= nomer %>" class="hide">		  	
 	  	    <% _.each(_.values(MyApp.Chart.model.get('type_prop')), function(item){ %>
@@ -389,14 +389,14 @@
 			</div><!-- column-1-->
 			<!-- column-2-->
 			<div class="large-4 columns">
-				<label for="custom-style">Custom style</label>
-				<input id="custom-style" type="checkbox" widgettype="sortable" onchange="MyApp.customStyleChange(this);">
+				<label for="CustomStyle">Custom style</label>
+				<input id="CustomStyle" type="checkbox" widgettype="sortable" onchange="MyApp.customStyleChange(this);">
 				
 			</div><!-- column-2-->
 			<!-- column-3-->
 			<div class="large-4 columns">
-				<label for="active_sortable">Active</label>
-				<input id="active_sortable" type="checkbox">				
+				<label for="IsActive">Active</label>
+				<input id="IsActive" type="checkbox">				
 			</div>
  			</div>
  	</fieldset>
@@ -476,8 +476,8 @@
 			</div><!-- column-2-->
 			<!-- column-3-->
 			<div class="large-4 columns">
-				<label for="active_slider">Active</label>
-				<input id="active_slider" type="checkbox">				
+				<label for="IsActive">Active</label>
+				<input id="IsActive" type="checkbox">				
 			</div>
 			<!-- column-3-->
 	     </div>
@@ -502,29 +502,29 @@
  			<div class="row">
  				<div class="large-4 columns">
  					<label>Minimum Value</label>
- 					<input id="minVal" type="text" value="0" />
+ 					<input id="Min" type="text" value="0" />
  				</div>
  				<div class="large-4 columns"></div>
  				<div class="large-4 columns">
  					<label>Maximum Value</label>
- 					<input id="maxVal" type="text" value="0" />
+ 					<input id="Max" type="text" value="0" />
  				</div>
  			</div>
  			<div class="row">
  				<div class="large-4 columns">
  					<label>Default Value</label>
- 					<input id="defVal" type="text" value="0" />
+ 					<input id="Default" type="text" value="0" />
  				</div>
  				<div class="large-4 columns"></div>
  				<div class="large-4 columns">
  					<label>Slider Title</label>
- 					<input id="titleText" type="text" value="" />
+ 					<input id="Title" type="text" value="" />
  				</div>
  			</div>
  			<div class="row">
  				<div class="large-4 columns">
  					<label>Slider step</label>
- 					<input id="step" type="text" value="0" />
+ 					<input id="sStep" type="text" value="0" />
  				</div>
  			</div>
  		</fieldset>
@@ -542,28 +542,28 @@
  			<div class="row">
  				<!-- <form name="video-prop"> -->
  				<div class="large-5 columns">
- 					<label for="video-source">Video source</label>
- 					<select id="video_source">
+ 					<label for="VideoSource">Video source</label>
+ 					<select id="VideoSource">
  						<option value="Youtube" selected>Youtube</option>
  						<option value="Custom-URL">Custom URL</option>
 						<option value="SF-Content">SF Content</option>
  					</select>
  				
 					 <label>Width</label>
-				     <input id="video_width" type="text" name="video_width" placeholder="100%" value="100%" />
+				     <input id="Width" type="text" name="Width" placeholder="100%" value="100%" />
 				     <label>Height</label>
-				     <input id="video_height" type="text" name="video_height" placeholder="100%" value="500" />			    
+				     <input id="Height" type="text" name="Height" placeholder="100%" value="500" />			    
 
  				</div>
  				<div class="large-4  large-offset-3 columns">
- 					<label for="video_active">Active</label>
-					<input id="video_active" type="checkbox" checked /><br><br>
+ 					<label for="IsActive">Active</label>
+					<input id="IsActive" type="checkbox" checked /><br><br>
 					
-					<label for="autoplay">Autoplay</label>
-					<input id="autoplay" type="checkbox" /><br><br>
+					<label for="Autoplay">Autoplay</label>
+					<input id="Autoplay" type="checkbox" /><br><br>
 					
-					<label for="video_id">Video Id</label>
-					<input  id="video_id" type="text" value="nJQW-rbHMS0" placeholder="nJQW-rbHMS0" />
+					<label for="VideoId">Video Id</label>
+					<input  id="VideoId" type="text" value="nJQW-rbHMS0" placeholder="nJQW-rbHMS0" />
  				</div>
  				<!-- </form> -->
  			</div>
@@ -622,14 +622,14 @@
 			</div><!-- column-1-->
 			<!-- column-2-->
 			<div class="large-4 columns">
-				<label for="custom-style">Custom style</label>
-				<input id="custom-style" type="checkbox" widgettype="chart" onchange="MyApp.customStyleChange(this);">
+				<label for="CustomStyle">Custom style</label>
+				<input id="CustomStyle" type="checkbox" widgettype="chart" onchange="MyApp.customStyleChange(this);">
 				
 			</div><!-- column-2-->
 			<!-- column-3-->
 			<div class="large-4 columns">
-				<label for="activechart">Active</label>
-				<input id="activechart" type="checkbox">				
+				<label for="IsActive">Active</label>
+				<input id="IsActive" type="checkbox">				
 			</div>
 			<!-- column-3-->
 	      </div>		
@@ -640,27 +640,27 @@
 	      <!-- colum 1 -->
 			  <div class="large-4 columns">
 			    <label>Title</label>
-			    <input id="title" type="text" placeholder="Chart title..." />
+			    <input id="Title" type="text" placeholder="Chart title..." />
 			    <label>Width</label>
-			    <input id="width" type="text" name="width" placeholder="100" value=100 />
+			    <input id="Width" type="text" name="width" placeholder="100" value=100 />
 			    <label>Height</label>
-			    <input id="height" type="text" name="height" placeholder="100" value=100 />			    
-				<label for="min">Min</label>
-			    <input  id="min" type="text" ></input>			    
-			    <label for="max">Max</label>
-			    <input  id="max" type="text" ></input>			    
+			    <input id="Height" type="text" name="height" placeholder="100" value=100 />			    
+				<label for="Min">Min</label>
+			    <input  id="Min" type="text" ></input>			    
+			    <label for="Max">Max</label>
+			    <input  id="Max" type="text" ></input>			    
 			   </div>
 			<!-- colum 1 -->
 			<!-- colum 2 -->
 			 <div class="large-4 columns">
 			 	
-			 	    <label for="showlegend">Show legended</label>
-			    	<input  id="showlegend" type="checkbox" ></input>
+			 	    <label for="ShowLegend">Show legended</label>
+			    	<input  id="ShowLegend" type="checkbox" ></input>
 			    	<br>			  
-				    <label for="legend">Legend style</label>
-				    <input id="legend" type="text" name="legend" placeholder="100" value=100 />
-			      <label for="legendlocation">Legend location</label>
-			      <select id="legendlocation" name="legendlocation" >
+				    <label for="Legend">Legend style</label>
+				    <input id="Legend" type="text" name="legend" placeholder="100" value=100 />
+			      <label for="LegendLocation">Legend location</label>
+			      <select id="LegendLocation" name="legendlocation" >
 						  <option value="left">Left</option>
 						  <option selected="selected" value="right">Right</option>
 						  <option value="top">Top</option>
@@ -682,10 +682,10 @@
     <!--  ----------------------- Slider Code templatea ------------------- -->
     <script type="text/template" id="slider-code-template">
      	//jQuery.noConflict();
-        var defValue = <%= defVal %>;
-        var minValue = <%= minVal %>;
-        var maxValue = <%= maxVal %>;
-        var step = <%= step %>;
+        var defValue = <%= Default %>;
+        var minValue = <%= Min %>;
+        var maxValue = <%= Max %>;
+        var step = <%= sStep %>;
         var handle = null;
      	
      	var updateSliderValue = function(e, ui){
@@ -720,7 +720,7 @@
 	    var valType = "";
 	    var maxScale = "<%= max %>";
 	    var minScale = "<%= min %>";
-	    var theme = "<%= themeName %>"; 
+	    var theme = "<%= Theme %>"; 
 	    var style = "<%= styleName %>";
 	    	    
 	    var shadowChart = true;
@@ -920,6 +920,6 @@
 	<!-- <script src="http://code.jquery.com/jquery-1.8.3.js"></script> -->
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-    <script src="js/app.ob.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>

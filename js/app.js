@@ -208,6 +208,7 @@ $(document).on('open', '[data-reveal]', function () {
       MyApp.Chart.FillScreenData();
   }
   if (modal[0].id=="videoDataModal") {
+    MyApp.Video.FillScreenProp();
   }
   if (modal[0].id=="sliderControlModal") {
       MyApp.Slider.FillScreenProp();
@@ -242,7 +243,7 @@ MyApp.on("initialize:after", function(options){
       MyApp.initFieldsObjectsCollection();
       //----------Modules start----
  
-      MyApp.module("Text").start();
+      MyApp.module("RichText").start();
       MyApp.module("Chart").start();
       MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
@@ -262,7 +263,7 @@ MyApp.module("CManager", function(CManager){
   //---buildPage
   //---setBlockType's for blocks in page
   CManager.addInitializer(function(){
-        this.block_type_arr   = new Array("Text","Chart","Sortable","Slider","Video");
+        this.block_type_arr   = new Array("RichText","Chart","Sortable","Slider","Video");
         this.home_page_model  = new HomePageModel();
         this.block_model      = new BlockModel();
         this.block_collection = new BlockCollection();
@@ -305,6 +306,7 @@ MyApp.module("CManager", function(CManager){
   this.getBlockCollection=function(n){
       console.log("getBlockCollection  n=",n);
       console.log("getBlockCollection  home_model=",this.home_page_model);
+      console.log("getBlockCollection  [b-"+n+"].data_collection=",this.home_page_model.get("blocks_list")["b-"+n].data_collection);
       return this.home_page_model.get("blocks_list")["b-"+n].data_collection;
   },
   this.setBlockModel=function(n,m){
@@ -338,7 +340,7 @@ MyApp.module("CManager", function(CManager){
              var w_model = blocks["b-"+n].model;
              var w_name = blocks[prop].type;
              var widget_class_name = w_name.capitalize();//w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
-            
+             this.home_page_model.get("blocks_list")["b-"+n].model=MyApp[widget_class_name].model;
              this.setBlockModel(n,MyApp[widget_class_name].model);
              console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
              if (MyApp[widget_class_name].data_collection !=undefined) {
@@ -359,10 +361,20 @@ MyApp.module("CManager", function(CManager){
   },
   this.setWidgetCurBlock=function(click_el,widget_name,what) {
         if (this.home_page_model.get("blocks_cnt") >=1) {
-               try {  
+               try {
                  var n=click_el.prop("id").match(/\d$/)[0];
+                 var cur_block_model = this.home_page_model.get("blocks_list")["b-"+n].model;
+                 console.log("setWidgetCurBlock cur_block_model=",cur_block_model.attributes);
+                 if (cur_block_model.get("model_name") != widget_name) {
+                      console.info("Error setWidgetCurBlock: ",cur_block_model.get("model_name"),widget_name);
+                      //---don't write anything !
+                      return;
+                 }  
+                 
                  var n_str='-'+n;
                  var cur_type = this.home_page_model.get("blocks_list")["b-"+n].type;
+                
+              
                  console.log("!setWidgetCurBlock n="+n+" cur_type="+cur_type);
                  
                  if (what == "model") {
@@ -374,12 +386,12 @@ MyApp.module("CManager", function(CManager){
                  }
                  if (what == "data_collection") {
                       if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
-                          MyApp[widget_name].data_collection=this.getBlockModel(n);                        
+                          MyApp[widget_name].data_collection=this.getBlockCollection(n);                        
                       }
                  }
                  MyApp[widget_name].model.set("n_str",n_str);  
                 } catch (e) {
-                   console.error("CManager setWidgetCurblock ERROR "+e.name+e.lineNumber);
+                   console.error("CManager setWidgetCurblock ERROR ",e.name,e.lineNumber);
                 }                                                      
         }
   },
@@ -406,13 +418,16 @@ MyApp.module("CManager", function(CManager){
   };
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        MyApp.CManager.setBlockModel(n,MyApp[name.capitalize()].model);
+        console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //---set first model, collection--
         var cur_widget   = MyApp.CManager.home_page_model.get("blocks_list")["b-"+n];
         cur_widget.model = MyApp[name.capitalize()].model;
+
         if (cur_widget.data_collection != undefined ) {
             cur_widget.data_collection = MyApp[name.capitalize()].data_collection;
         }
-        console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
+        
         MyApp.CManager.fillModelsCollections(n);
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
@@ -482,18 +497,17 @@ MyApp.module("CManager", function(CManager){
   }
 });
 //-------------------------- Module Text ----------------------------
-MyApp.module("Text", function(Text){
+MyApp.module("RichText", function(RichText){
    //-------------------------Init-----------------------------------
-   Text.addInitializer(function(){
-        this.model = new TextModel();
+   RichText.addInitializer(function(){
+        this.model = new RichTextModel();
    });
    //--------------------------Models---------------------------------
-   var TextModel = Backbone.Model.extend({
+   var RichTextModel = Backbone.Model.extend({
         defaults: {
-            text_html:"",
+            Code:"",
             text_default:"<p>You can write and modify any text here...</p>",
             lng:"en",//---lang
-            //------------- tpl params ---1,-2,-3----------
             n_str:"",
             model_name:"Text"
         }
@@ -503,8 +517,8 @@ MyApp.module("Text", function(Text){
       if (n != undefined) {
         
           var n_str="-"+n;
-          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+MyApp.Text.model.get("text_default")+"</div>";
-          MyApp.Text.model.set("n_str",n_str);
+          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+MyApp.RichText.model.get("text_default")+"</div>";
+          MyApp.RichText.model.set("n_str",n_str);
           console.log("Text.showContent  n=",rich_text_node);
           $(".widget-block-content"+n_str).html("").append(rich_text_node);
           console.log("Text showContent attr  n_str=",n_str);              
@@ -546,13 +560,19 @@ MyApp.module("Sortable", function(Sortable){
     //-------------------------Models----------------------------
     var SortableModel = Backbone.Model.extend({
         defaults: {
-            active_sortable:1,
-            sobjects_sortable:"sforceObject",
-            sfields_sortable:"sobjectField",
+            IsActive:false,
+            sobjects_sortable:"sforceObject", //--my
+            sfields_sortable:"sobjectField",  //--my
+            ObjectName    : 'ActivityData__c',//--sf
+            FieldName     : 'SomeField__c',   //--sf
             titleText:"Sortable title",
-            themeName: "ClearGreen",
-            themeList: "Clear-Green",
-            customStyleInput:"",
+            Theme: "ClearGreen",              //--sf
+            themeList: "Clear-Green",         //--my
+            CustomStyle:false,                //--sf
+            customStyleInput:"",              //--my
+            Labels      : 'First;Second;Third',  //--sf
+            Values      : 'Value1;Value2,Value3',//--sf
+            Code:"",
             n_str:"",
             model_name:"Sortable"
         }
@@ -606,7 +626,7 @@ MyApp.module("Sortable", function(Sortable){
           }
           var fields = _.keys(MyApp.Sortable.model.attributes);
           jQuery.each(fields,function(i,f) {
-              var f_val=MyApp.Sortable.model.get(fields[f]);
+              var f_val=MyApp.Sortable.model.get(fields[i]);
               //---tags select
               if (f=="themeList") {
                   console.log("sortable themeList",f_val);
@@ -614,7 +634,7 @@ MyApp.module("Sortable", function(Sortable){
               //---tags checkbox
               //---tags input
               $("#"+fields[f]).val(f_val);
-              console.log("Sortable fields[f]="+fields[f]+" f_val="+f_val);
+              console.log("Sortable fields[i]="+fields[i]+" f_val="+f_val);
   
           });
           MyApp.FillScreenFieldsObjects("sortable");//--select fill--
@@ -656,6 +676,10 @@ MyApp.module("Sortable", function(Sortable){
           jQuery.each(prop_arr,function(i,prop){
               MyApp.Sortable.model.set(prop.id,prop.value);          
           });
+          //-----correcting Object,Field fields------------------
+          this.model.set("ObjectName",this.model.get("sobjects_sortable"));
+          this.model.set("FieldName",this.model.get("sfields_sortable"));
+          this.model.set("Theme",this.model.get("themeList"));
           //--------  fill CManager Model ----------
           var n_str=this.model.get("n_str");
           MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
@@ -759,6 +783,7 @@ MyApp.module("Slider", function(Slider){
     };
     this.FillScreenProp=function(){
           var fields = _.keys(MyApp.Slider.model.attributes);
+          console.log("SLIDER FillScreenProp fields=",fields);
           jQuery.each(fields,function(i,f) {
               var f_val=MyApp.Slider.model.get(f);
               //---tags select
@@ -768,7 +793,7 @@ MyApp.module("Slider", function(Slider){
               //---tags checkbox
               //---tags input
               $("#"+f).val(f_val);
-              //console.log("FillScreenSliderProp field="+f,MyApp.Slider.model.get(f));
+              console.log("FillScreenSliderProp field="+f,MyApp.Slider.model.get(f));
           });
           MyApp.FillScreenFieldsObjects("slider");
     };
@@ -790,6 +815,9 @@ MyApp.module("Slider", function(Slider){
           jQuery.each(prop_arr,function(i,prop){
               MyApp.Slider.model.set(prop.id,prop.value);          
           });
+          //-----correcting Object,Field fields------------------
+          this.model.set("ObjectName",this.model.get("sobjects_slider"));
+          this.model.set("FieldName",this.model.get("sfields_slider"));
           //--------  fill CManager Model ----------
           var n_str=this.model.get("n_str");
           MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
@@ -832,17 +860,22 @@ MyApp.module("Slider", function(Slider){
     //-------------------------Models----------------------------
     var SliderModel = Backbone.Model.extend({
       defaults: {
-        defVal:90,
-        minVal:1,
-        maxVal:99,
-        active_slider:1,
+        Default:90,
+        Min:0,  //minVal:1,
+        Max:100,//maxVal:99,
+        sStep:5,// step:1,
+        IsActive:false,
         sobjects_slider:"sforceObject",
         sfields_slider:"sobjectField",
-        titleText:"slider title",
-        step:1,
-        themeName: "ClearGreen",
+        ObjectName:'ActivityData__c',
+        FieldName :'SomeField__c',
+        Title:"slider title",
+       
+        Theme: "ClearGreen",
         themeList: "Clear-Green",
+        customStyle:false,
         customStyleInput:"",
+        Code:"",
         n_str:"",
         model_name:"Slider"
       }
@@ -919,6 +952,23 @@ MyApp.module("Video", function(Video){
           });
           //}
     };
+    this.FillScreenProp=function() {
+      var n_str=this.model.get("n_str");      
+      var n = n_str.split("-")[1];
+      if (n != undefined) {
+          this.model=MyApp.CManager.getBlockModel(n);        
+      }
+      var fields = _.keys(this.model.attributes);
+      jQuery.each(fields,function(f) {
+              var f_val=this.model.get(fields[f]);
+              //---tags select
+              if (f=="themeList") {
+
+              }           
+              $("#"+fields[f]).val(f_val);
+              console.log("VIDEO field="+fields[f],this.model.get(fields[f]));
+      });
+    };
     this.FillModelProp=function() {
           var screen_items=$("#videoControlModal  :input");
           var prop_arr=[];
@@ -945,12 +995,13 @@ MyApp.module("Video", function(Video){
     //-------------------------Models----------------------------
     var VideoModel = Backbone.Model.extend({
        defaults: {
-         video_active:1,
-         video_source:"Youtube",
-         video_id:"nJQW-rbHMS0",//--salesforce--
-         video_width:"100%",
-         video_height:"100%",
-         autoplay:0,
+         IsActive:false,
+         VideoSource:"Youtube",
+         VideoId:"nJQW-rbHMS0",//--salesforce--
+         Width:"200px",
+         Height:"200px",
+         Autoplay:false,
+         Code:'http://www.youtube.com/embed/2423525',
          n_str:"",
          model_name:"Video"
        }
@@ -973,22 +1024,24 @@ MyApp.module("Chart", function(Chart){
     var ChartModel = Backbone.Model.extend({
         
         defaults: {
-            activechart:1,
-            title: "Chart title",
-            width:120,
-            height:120,
+            IsActive:true,//activechart:1,
+            Title: "Chart title",
+            Width:120,
+            Height:120,
             legendLine:1,
-      	    legend:  ['15px sans-serif', '#331e11', '#af9960', '#5f3b21'],
-      	    showlegend: 'true',
-      	    legendlocation:"right",
+      	    Legend:  'Legend',//['15px sans-serif', '#331e11', '#af9960', '#5f3b21'],
+      	    ShowLegend: true,
+      	    LegendLocation:"right",
       	    bordercolor:"black",
             legendbackground:"#eeeeee",
-      	    min:0,
-      	    max:100,
-      	    themeName: "Green",
+      	    Min:0,
+      	    Max:100,
+      	    Theme:"Red",//themeName: "Green",
             styleName:"ClearBlue",
       	    themeList:"ClearOrange",
+            CustomStyle: false,
             customStyleInput:"",
+            ChartType:"pie",
       	    type:"pie",
             type_prop:{"pie":{name:"Pie",click_cnt:0},"line":{name:"Line",click_cnt:0},"spline":{name:"Spline",click_cnt:0},"area":{name:"Area",click_cnt:0}},
       	    chart_data:[['New Name0' , '0'], ['New Name1' , '10'], ['New Name2' , '20']],
@@ -1160,9 +1213,9 @@ MyApp.module("Chart", function(Chart){
       
           var strFormat = "";
           var valType = "";
-          var maxScale = block_model.get("max");
-          var minScale = block_model.get("min");
-          var theme    = block_model.get("themeName");
+          var maxScale = block_model.get("Max");
+          var minScale = block_model.get("Min");
+          var theme    = block_model.get("Theme");
           var style    = block_model.get("styleName");
          
 
@@ -1240,9 +1293,9 @@ MyApp.module("Chart", function(Chart){
         };
         jQuery('#chartstub'+n_str).empty();
         jQuery('#chartwidget'+n_str).jqChart({
-                  title: { text: block_model.get("title") },
+                  title: { text: block_model.get("Title") },
                   legend: { 
-                  title: { text: block_model.get("title"), fillStyle: legend[3], font: '17px sans-serif', }, 
+                  title: { text: block_model.get("Title"), fillStyle: legend[3], font: '17px sans-serif', }, 
                   location : block_model.get("legendlocation"), // legend location 
                   border: { // legend border 
                     padding: 8, 
@@ -1303,22 +1356,20 @@ MyApp.module("Chart", function(Chart){
               MyApp.rm.get("chartRegion").show(this.main_chart_view);            
           } else {
               n_str="-"+n;
-              this.model=MyApp.CManager.getBlockModel(n);
+              //this.model=MyApp.CManager.getBlockModel(n);
               this.chart_view.model=this.model;
-              this.chart_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!            
+              //this.chart_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!            
               $(".widget-block-content"+n_str).empty().html(this.main_chart_view.render().el.innerHTML);
           }  
 
          $(document).foundation();
-         $("#chart-control-btn"+n_str).unbind().click(function(){
-                                                    
+         $("#chart-control-btn"+n_str).unbind().click(function(){                                                    
                                                         MyApp.CManager.setWidgetCurBlock($(this),"Chart","model");
                                                         $("#chartControlModal").foundation('reveal', 'open');
                                                      });
-         $("#chart-data-btn"+n_str).unbind().click(function(){
-                                                
-                                                      MyApp.CManager.setWidgetCurBlock($(this),"Chart","data_collection");
-                                                       $("#chartDataModal").foundation('reveal', 'open');
+         $("#chart-data-btn"+n_str).unbind().click(function(){                                                
+                                                        MyApp.CManager.setWidgetCurBlock($(this),"Chart","data_collection");
+                                                        $("#chartDataModal").foundation('reveal', 'open');
                                                      });
          //MyApp.CManager.showBlockType("Chart");
          console.log("Chart showContent done! n_str=",n_str) ;
@@ -1346,12 +1397,13 @@ MyApp.module("Chart", function(Chart){
            console.log("Chart setChartData done!  n_str="+n_str) ;
     },
     this.FillScreenProp=function() {    
-      var n_str=this.model.get("n_str");
-      console.log("FillScreenChartProp n_str=",n_str);
+      var n_str=this.model.get("n_str");     
+      console.log("CHART FillScreenChartProp n_str="+n_str+" model BEFORE set n=",MyApp.Chart.model.attributes);
       var n = n_str.split("-")[1];
       if (n != undefined) {
           MyApp.Chart.model=MyApp.CManager.getBlockModel(n);        
       }
+      console.log("CHART FillScreenChartProp model AFTER set n=",MyApp.Chart.model.attributes);
       var fields = _.keys(MyApp.Chart.model.attributes);
       jQuery.each(fields,function(f) {
               var f_val=MyApp.Chart.model.get(fields[f]);
@@ -1362,7 +1414,7 @@ MyApp.module("Chart", function(Chart){
               //---tags checkbox
               //---tags input
               $("#"+fields[f]).val(f_val);
-              console.log("field="+fields[f],MyApp.Chart.model.get(fields[f]));
+              //console.log("field="+fields[f],MyApp.Chart.model.get(fields[f]));
       });
     },
     this.FillScreenData=function() {
@@ -1391,6 +1443,8 @@ MyApp.module("Chart", function(Chart){
           jQuery.each(prop_arr,function(i,prop){
               MyApp.Chart.model.set(prop.id,prop.value);
           });
+          //--Theme correct-------------------------
+          MyApp.Chart.model.set("Theme",MyApp.Chart.model.get("themeList"));
           //--------  fill CManager Model ----------
           var n_str=this.model.get("n_str");
           MyApp.CManager.setBlockModel(n_str.split("-")[1],MyApp.Chart.model);
