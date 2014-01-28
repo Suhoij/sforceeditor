@@ -35,6 +35,10 @@ MyApp.addInitializer(function(options){
   String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
   };
+  String.prototype.del_spaces=function(){
+    var out = this.replace(/\s/g, ''); 
+    return out;   
+  };
   //this.rm = new Marionette.RegionManager();
   this.clearScreen=function(cur_region){ //return;
        var cur_id_region=MyApp.rm.get(cur_region).el;
@@ -267,6 +271,7 @@ MyApp.module("CManager", function(CManager){
   //---setBlockType's for blocks in page
   CManager.addInitializer(function(){
         this.block_type_arr   = new Array("RichText","Chart","Sortable","Slider","Video");
+        this.clmPlaceholderList ={};
         this.home_page_model  = new HomePageModel();
         this.se_model         = new SEPageModel();
         this.block_model      = new BlockModel();        
@@ -338,8 +343,9 @@ MyApp.module("CManager", function(CManager){
       //var params = { action: "getPlaceVar", org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id } ;
       $.getJSON(url).done(function(data){
                                 try {
-                                  MyApp.CManager.clmPlaceholderList=eval(data);
-                                  MyApp.CManager.buildSEPage();
+                                    MyApp.CManager.clmPlaceholderList=eval(data);
+                                    console.log("clmPlaceholderList data=",MyApp.CManager.clmPlaceholderList);
+                                    MyApp.CManager.buildSEPage();
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
                                     MyApp.error_data=data;
@@ -358,10 +364,11 @@ MyApp.module("CManager", function(CManager){
     var clm_list=MyApp.CManager.clmPlaceholderList;
     var blocks_cnt = clm_list.length;
     this.se_model.set("blocks_cnt",blocks_cnt);
-    for (var i=0;i<blocks_cnt;i++) {      
-            console.log("clm_list["+i+"].widgets[0].type=",clm_list[i].widgets[0].type);
+    for (var i=0;i<blocks_cnt;i++) {
+            cur_type=clm_list[i].widgets[0].Type.del_spaces();
+            console.log("clm_list["+i+"].widgets[0].type=",cur_type);
             blk_obj=this.se_model.get("blocks_list");
-            cur_widget = clm_list[i].widgets[0].type.capitalize;
+            cur_widget = cur_type.capitalize();
             blk_obj=blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
             this.se_model.set("blocks_list",bll_obj);
     }
