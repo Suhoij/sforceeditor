@@ -349,7 +349,7 @@ MyApp.module("CManager", function(CManager){
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
                                     MyApp.error_data=data;
-                                    delete  MyApp.CManager.clmPlaceholderList;
+                                    //delete  MyApp.CManager.clmPlaceholderList;
                                     alert("Convert error...");
                                 }
       }).fail(function( jqxhr, textStatus, error ) {
@@ -369,7 +369,7 @@ MyApp.module("CManager", function(CManager){
             console.log("clm_list["+i+"].widgets[0].type=",cur_type);
             blk_obj=this.se_model.get("blocks_list");
             cur_widget = cur_type.capitalize();
-            blk_obj=blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
+            blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
             this.se_model.set("blocks_list",bll_obj);
     }
     //alert("Start build page with widgets");
