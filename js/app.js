@@ -370,7 +370,7 @@ MyApp.module("CManager", function(CManager){
             blk_obj=this.se_model.get("blocks_list");
             cur_widget = cur_type.capitalize();
             blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
-            this.se_model.set("blocks_list",bll_obj);
+            this.se_model.set("blocks_list",blk_obj);
     }
     //alert("Start build page with widgets");
     console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
