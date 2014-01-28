@@ -19,11 +19,13 @@ var FieldsObjectsCollection = Backbone.Collection.extend({
 });
 
 MyApp.addInitializer(function(options){
+  this.base_url="http://ppthtml2.cloudapp.net/";
   this.state='init';
   this.sf_app_params={};
   this.widget_regions={};
   this.zero_regions={
         homeRegion:"#homewidget-content",
+        slideEditorRegion:"#slideeditor-content",
         videoRegion:"#videowidget-content",
         sliderRegion:"#sliderwidget-content",
         sortableRegion:"#sortablewidget-content",
@@ -61,6 +63,7 @@ MyApp.addInitializer(function(options){
       $("#head-menu-video").click(function()    {MyApp.clearScreen("videoRegion");MyApp.Video.showContent();MyApp.Video.draw();}   );
       $("#head-menu-slider").click(function()   {MyApp.clearScreen("sliderRegion");MyApp.Slider.showContent();MyApp.Slider.draw();}   );
       $("#head-menu-sortable").click(function() {MyApp.clearScreen("sortableRegion");MyApp.Sortable.showContent();MyApp.Sortable.draw();}   );
+     
   };
   this.fieldValidate=function(el,cond){
       var widget_type=el.getAttribute("widgettype");
@@ -83,7 +86,7 @@ MyApp.addInitializer(function(options){
   this.initChartMenu=function() {  
      $(".dropdown >li >a").click(function(){
             var chart_type=$(this).attr("jq-type");
-            //console.log(chart_type);
+            console.log(chart_type);
 
             $("#chart-menu >a").text($(this).text());           
             MyApp.Chart.model.set("type",chart_type);
@@ -230,7 +233,7 @@ MyApp.vent.on("getSfparams", function(){
   //console.table(MyApp.options);
   MyApp.org_id=MyApp.getUrlParams()['org_id'];
   MyApp.app_id=MyApp.getUrlParams()['app_id'];
-  MyApp.slider_id=MyApp.getUrlParams()['slider_id'];
+  MyApp.slide_id=MyApp.getUrlParams()['slide_id'];
   MyApp.session_id=MyApp.getUrlParams()['session_id'];
 });
 MyApp.on("initialize:after", function(options){
@@ -269,6 +272,7 @@ MyApp.module("CManager", function(CManager){
         this.block_collection = new BlockCollection();
         this.block_type_view  = new BlockTypeView();
         this.home_page_view   = new HomePageView();
+        this.initSeActions();
   });
   //----------------Models-------------------
   var HomePageModel=Backbone.Model.extend({
@@ -299,7 +303,73 @@ MyApp.module("CManager", function(CManager){
        template: "#block-type-tpl",
        model:MyApp.rm.block_model
   });
-  //----------------Methods------------------
+  //----------------SE Methods----------------------
+  this.initSeActions=function(){
+      $("#se-open").click(function() {MyApp.CManager.seOpen();MyApp.CManager.hideSeMenu();}   );
+      $("#se-create").click(function() {MyApp.CManager.seCreate();MyApp.CManager.hideSeMenu();}   );
+      $("#se-save").click(function() {MyApp.CManager.seSave();MyApp.CManager.hideSeMenu();}   );
+  };
+  this.hideSeMenu=function(){
+      $('#se-actions').css({left:'-99999px'});
+  };
+  this.seCreate=function(){
+      alert("Slide create...");
+  };
+  this.seOpen=function(){
+      //alert("se");
+      this.getPlaceholderVar();
+      if (this.clmPlaceholderList != undefined) {
+          this.buildSEPage();
+
+      } else {alert("Can't get data from service...");}
+  };
+  this.seSave=function(){
+      alert("Slide save...");
+  };
+  //----------------Obmen  Methods------------------
+  this.getPlaceholderVar=function(){
+      if ((MyApp.org_id == null)||(MyApp.org_id == undefined)) {alert("ERROR: no org_id");return;}
+      if ((MyApp.app_id == null)||(MyApp.app_id == undefined)) {alert("ERROR: no app_id");return;}
+      if ((MyApp.slide_id == null)||(MyApp.slide_id == undefined)) {alert("ERROR: no slide_id");return;}
+      var url=MyApp.base_url+"widgets.php?action=getPlaceVar&org_id="+MyApp.org_id+"&app_id="+MyApp.app_id+"&slide_id="+MyApp.slide_id;
+      $.getJSON(url,function(data){
+        try {
+          MyApp.CManager.clmPlaceholderList=eval(data);
+        } catch (e) {
+            console.info("ERROR: PlaceholderVar");
+            MyApp.error_data=data;
+            delete  MyApp.CManager.clmPlaceholderList;
+        }
+      })
+  };
+  //----------------Build Methods-------------------
+  this.buildSEPage=function(){
+    //--count blocks_cnt from clmPlaceholderList
+    alert("Start build page with widgets");
+    console.log("clmPlaceholderList=",clmPlaceholderList);
+  };
+  this.showHomePage=function() {
+        //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
+        MyApp.rm.get("homeRegion").show(this.home_page_view);   
+        MyApp.CManager.showBlockType();
+        //CKEDITOR.inlineAll();//---fire rich text editing
+        this.fillModelsCollections();
+        var blocks_cnt=this.home_page_model.get("blocks_cnt");
+        for (var i=1;i<=blocks_cnt;i++) {      
+            this.showWidgetContent(i);
+        }
+       
+  };
+  this.getPage=function() { //--from server--
+    //--- fill blocks_list
+    //---- set cnt: home_model.set('blocks_cnt', keys(MyApp.CManager.home_page_model.attributes.blocks_list).length);
+    //--- set block prop (for text set prop contenteditable='true')
+    //--- show home page
+  };
+  this.buildPage=function() {
+       MyApp.CManager.showBlockType();
+  };
+  //----------------Blocks Methods------------------
   this.getBlockModel=function(n){
       return this.home_page_model.get("blocks_list")["b-"+n].model;
   },
@@ -395,27 +465,7 @@ MyApp.module("CManager", function(CManager){
                 }                                                      
         }
   },
-  this.showHomePage=function() {
-        //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
-        MyApp.rm.get("homeRegion").show(this.home_page_view);   
-        MyApp.CManager.showBlockType();
-        //CKEDITOR.inlineAll();//---fire rich text editing
-        this.fillModelsCollections();
-        var blocks_cnt=this.home_page_model.get("blocks_cnt");
-        for (var i=1;i<=blocks_cnt;i++) {      
-            this.showWidgetContent(i);
-        }
-       
-  };
-  this.getPage=function() { //--from server--
-    //--- fill blocks_list
-    //---- set cnt: home_model.set('blocks_cnt', keys(MyApp.CManager.home_page_model.attributes.blocks_list).length);
-    //--- set block prop (for text set prop contenteditable='true')
-    //--- show home page
-  };
-  this.buildPage=function() {
-       MyApp.CManager.showBlockType();
-  };
+
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
         MyApp.CManager.setBlockModel(n,MyApp[name.capitalize()].model);
@@ -863,7 +913,7 @@ MyApp.module("Slider", function(Slider){
         Default:90,
         Min:0,  //minVal:1,
         Max:100,//maxVal:99,
-        sStep:5,// step:1,
+        Step:5,// step:1,
         IsActive:false,
         sobjects_slider:"sforceObject",
         sfields_slider:"sobjectField",

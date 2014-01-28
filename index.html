@@ -29,7 +29,15 @@
         </ul>
         <section class="top-bar-section">
           <ul>
-            <li><a href="#" id="head-menu-home">Home</a></li>
+            <li><a href="#" id="head-menu-home">Home Page</a></li>
+            <li><a href="#" id="head-menu-slide"  data-dropdown="se-actions" >Slide-Editor</a>  <!-- data-options="is_hover:true" -->
+       			<div class="tiny content f-dropdown text-left" id="se-actions" data-dropdown-content>                
+                	<a href="#"  class="button large radius round" style="color:white" id="se-create"  >Create  </a><hr>
+              		<a href="#"  class="button large radius round" style="color:white" id="se-open"  >Open  </a><hr>
+              		<a href="#"  class="button large radius round"  style="color:white" id="se-save"  >Save  </a>          
+              	</div>
+              
+            </li>
             <li><a href="#" id="head-menu-video">Widget video</a></li>
             <li><a href="#" id="head-menu-slider" >Widget slider</a></li>
             <li><a href="#" id="head-menu-sortable">Widget sortable</a></li>
@@ -46,7 +54,7 @@
         </section>
       </nav>
     </header>
-        <div class="row">
+        <div class="row hide">
         <br><br>
   			<div class="small-5 small-centered columns">
   				<a href="#" class="button large radius round">Save page</a>
@@ -63,6 +71,9 @@
    		<div id="allwidget-content">
 	    	<!-- homewidget-content -->
 		  	<div id="homewidget-content">
+		  	</div>
+		  	<!-- homewidget-content -->
+		  	<div id="slideeditor-content">
 		  	</div>
 		  	<!-- videowidget-content -->
 		  	<div id="videowidget-content">
@@ -524,7 +535,7 @@
  			<div class="row">
  				<div class="large-4 columns">
  					<label>Slider step</label>
- 					<input id="sStep" type="text" value="0" />
+ 					<input id="Step" type="text" value="0" />
  				</div>
  			</div>
  		</fieldset>
@@ -685,7 +696,7 @@
         var defValue = <%= Default %>;
         var minValue = <%= Min %>;
         var maxValue = <%= Max %>;
-        var step = <%= sStep %>;
+        var step = <%= Step %>;
         var handle = null;
      	
      	var updateSliderValue = function(e, ui){
