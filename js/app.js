@@ -268,7 +268,8 @@ MyApp.module("CManager", function(CManager){
   CManager.addInitializer(function(){
         this.block_type_arr   = new Array("RichText","Chart","Sortable","Slider","Video");
         this.home_page_model  = new HomePageModel();
-        this.block_model      = new BlockModel();
+        this.se_model         = new SEPageModel();
+        this.block_model      = new BlockModel();        
         this.block_collection = new BlockCollection();
         this.block_type_view  = new BlockTypeView();
         this.home_page_view   = new HomePageView();
@@ -281,6 +282,12 @@ MyApp.module("CManager", function(CManager){
           blocks_list:{"b-1":{"top":1,"left":1,"type":"Sortable",model:null,data_collection:null},
                        "b-2":{"top":1,"left":100,"type":"Slider",model:null,data_collection:null},
                        "b-3":{"top":100,"left":100,"type":"Chart",model:null,data_collection:null}}         
+        }
+  });
+  var SEPageModel=Backbone.Model.extend({//--Slide Editor model - from SF-Azure service
+        defaults: {
+          blocks_cnt:1,
+          blocks_list:{}//{"b-1":{"type":"Text",model:null,data_collection:null}}                       
         }
   });
   var BlockModel=Backbone.Model.extend({
@@ -316,12 +323,7 @@ MyApp.module("CManager", function(CManager){
       alert("Slide create...");
   };
   this.seOpen=function(){
-      //alert("se");
       this.getPlaceholderVar();
-      if (this.clmPlaceholderList != undefined) {
-          this.buildSEPage();
-
-      } else {alert("Can't get data from service...");}
   };
   this.seSave=function(){
       alert("Slide save...");
@@ -332,21 +334,30 @@ MyApp.module("CManager", function(CManager){
       if ((MyApp.app_id == null)||(MyApp.app_id == undefined)) {alert("ERROR: no app_id");return;}
       if ((MyApp.slide_id == null)||(MyApp.slide_id == undefined)) {alert("ERROR: no slide_id");return;}
       var url=MyApp.base_url+"widgets.php?action=getPlaceVar&org_id="+MyApp.org_id+"&app_id="+MyApp.app_id+"&slide_id="+MyApp.slide_id;
-      $.getJSON(url,function(data){
-        try {
-          MyApp.CManager.clmPlaceholderList=eval(data);
-        } catch (e) {
-            console.info("ERROR: PlaceholderVar");
-            MyApp.error_data=data;
-            delete  MyApp.CManager.clmPlaceholderList;
-        }
-      })
+      // var url=MyApp.base_url+"widgets.php";
+      //var params = { action: "getPlaceVar", org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id } ;
+      $.getJSON(url).done(function(data){
+                                try {
+                                  MyApp.CManager.clmPlaceholderList=eval(data);
+                                  MyApp.CManager.buildSEPage();
+                                } catch (e) {
+                                    console.info("ERROR: PlaceholderVar");
+                                    MyApp.error_data=data;
+                                    delete  MyApp.CManager.clmPlaceholderList;
+                                    alert("Convert error...");
+                                }
+      }).fail(function( jqxhr, textStatus, error ) {
+                var err = textStatus + ", " + error;
+                alert( "Can't get data from service: " + err );
+
+      });
   };
   //----------------Build Methods-------------------
   this.buildSEPage=function(){
     //--count blocks_cnt from clmPlaceholderList
-    alert("Start build page with widgets");
-    console.log("clmPlaceholderList=",clmPlaceholderList);
+    this.se_model.set("blocks_cnt",MyApp.CManager.clmPlaceholderList.length);
+    //alert("Start build page with widgets");
+    console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
   };
   this.showHomePage=function() {
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
