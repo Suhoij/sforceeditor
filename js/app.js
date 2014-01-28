@@ -355,7 +355,16 @@ MyApp.module("CManager", function(CManager){
   //----------------Build Methods-------------------
   this.buildSEPage=function(){
     //--count blocks_cnt from clmPlaceholderList
-    this.se_model.set("blocks_cnt",MyApp.CManager.clmPlaceholderList.length);
+    var clm_list=MyApp.CManager.clmPlaceholderList;
+    var blocks_cnt = clm_list.length;
+    this.se_model.set("blocks_cnt",blocks_cnt);
+    for (var i=0;i<blocks_cnt;i++) {      
+            console.log("clm_list["+i+"].widgets[0].type=",clm_list[i].widgets[0].type);
+            blk_obj=this.se_model.get("blocks_list");
+            cur_widget = clm_list[i].widgets[0].type.capitalize;
+            blk_obj=blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
+            this.se_model.set("blocks_list",bll_obj);
+    }
     //alert("Start build page with widgets");
     console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
   };
