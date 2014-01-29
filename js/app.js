@@ -278,6 +278,7 @@ MyApp.module("CManager", function(CManager){
         this.block_collection = new BlockCollection();
         this.block_type_view  = new BlockTypeView();
         this.home_page_view   = new HomePageView();
+        this.se_page_view     = new SEPageView();
         this.initSeActions();
   });
   //----------------Models-------------------
@@ -314,6 +315,10 @@ MyApp.module("CManager", function(CManager){
   var BlockTypeView = Backbone.Marionette.ItemView.extend({
        template: "#block-type-tpl",
        model:MyApp.rm.block_model
+  });
+  var SEPageView = Backbone.Marionette.ItemView.extend({
+       template: "#se-main-page-template",
+       model:this.se_model
   });
   //----------------SE Methods----------------------
   this.initSeActions=function(){
@@ -374,6 +379,9 @@ MyApp.module("CManager", function(CManager){
     }
     //alert("Start build page with widgets");
     console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
+    this.se_page_view.model=this.se_model;
+    //this.se_page_view.render();
+    MyApp.rm.get("homeRegion").show(this.se_page_view.render());
   };
   this.showHomePage=function() {
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
