@@ -350,6 +350,7 @@ MyApp.module("CManager", function(CManager){
                                 try {
                                     MyApp.CManager.clmPlaceholderList=eval(data);
                                     console.log("clmPlaceholderList data=",MyApp.CManager.clmPlaceholderList);
+                                    $('#se-actions').css({left:'-99999px'});
                                     MyApp.CManager.buildSEPage();
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
@@ -381,7 +382,10 @@ MyApp.module("CManager", function(CManager){
     console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
     this.se_page_view.model=this.se_model;
     //this.se_page_view.render();
-    MyApp.rm.get("homeRegion").show(this.se_page_view.render());
+    MyApp.rm.get("homeRegion").show(this.se_page_view.render());    
+    for (var i=1;i<=blocks_cnt;i++) {      
+            this.showWidgetContent(i);
+    }
   };
   this.showHomePage=function() {
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
