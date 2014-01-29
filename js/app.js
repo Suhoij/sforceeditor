@@ -351,13 +351,15 @@ MyApp.module("CManager", function(CManager){
                                     MyApp.CManager.clmPlaceholderList=eval(data);
                                     console.log("clmPlaceholderList data=",MyApp.CManager.clmPlaceholderList);
                                     $('#se-actions').css({left:'-99999px'});
-                                    MyApp.CManager.buildSEPage();
+                                
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
                                     MyApp.error_data=data;
                                     //delete  MyApp.CManager.clmPlaceholderList;
                                     alert("Convert error...");
+                                    return;
                                 }
+                                MyApp.CManager.buildSEPage();
       }).fail(function( jqxhr, textStatus, error ) {
                 var err = textStatus + ", " + error;
                 alert( "Can't get data from service: " + err );
@@ -367,25 +369,28 @@ MyApp.module("CManager", function(CManager){
   //----------------Build Methods-------------------
   this.buildSEPage=function(){
     //--count blocks_cnt from clmPlaceholderList
-    var clm_list=MyApp.CManager.clmPlaceholderList;
-    var blocks_cnt = clm_list.length;
-    this.se_model.set("blocks_cnt",blocks_cnt);
-    for (var i=0;i<blocks_cnt;i++) {
-            cur_type=clm_list[i].widgets[0].Type.del_spaces();
-            console.log("clm_list["+i+"].widgets[0].type=",cur_type);
-            blk_obj=this.se_model.get("blocks_list");
-            cur_widget = cur_type.capitalize();
-            blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
-            this.se_model.set("blocks_list",blk_obj);
-    }
-    //alert("Start build page with widgets");
-    console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
-    this.se_page_view.model=this.se_model;
-    //this.se_page_view.render();
-    MyApp.rm.get("homeRegion").show(this.se_page_view.render());    
-    for (var i=1;i<=blocks_cnt;i++) {      
-            this.showWidgetContent(i);
-    }
+    try {
+          var clm_list=MyApp.CManager.clmPlaceholderList;
+          var blocks_cnt = clm_list.length;
+          this.se_model.set("blocks_cnt",blocks_cnt);
+          for (var i=0;i<blocks_cnt;i++) {
+                  cur_type=clm_list[i].widgets[0].Type.del_spaces();
+                  console.log("clm_list["+i+"].widgets[0].type=",cur_type);
+                  blk_obj=this.se_model.get("blocks_list");
+                  cur_widget = cur_type.capitalize();
+                  blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
+                  this.se_model.set("blocks_list",blk_obj);
+          };
+          console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
+          this.se_page_view.model=this.se_model;
+          MyApp.rm.get("homeRegion").show(this.se_page_view.render());
+          this.showBlockType(undefined,'se_model');    
+          for (var i=1;i<=blocks_cnt;i++) {      
+                  this.showWidgetContent(i,'se_model');
+          }
+    } catch (e) {
+     console.info("ERROR build slide page ",e.name,e.lineNumber);
+  }
   };
   this.showHomePage=function() {
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
@@ -547,8 +552,14 @@ MyApp.module("CManager", function(CManager){
             this.showWidgetContent(n);
         }
   };
-  this.showWidgetContent=function(n) {
-        var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
+  this.showWidgetContent=function(n,page_model) {
+        if (page_model == undefined) {
+            pg_m='home_page_model';
+        } else {
+            pg_m=page_model;
+        }
+        //var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
+        var w_type=MyApp.CManager[pg_m].get("blocks_list")["b-"+n].type;
         try {
         w_type=w_type.capitalize(); 
          $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+w_type); 
@@ -569,14 +580,20 @@ MyApp.module("CManager", function(CManager){
          console.error("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
       }
   };
-  this.showBlockType=function(block_name) {
+  this.showBlockType=function(block_name,page_model) {
+      if (page_model == undefined) {
+            pg_m='home_page_model';
+        } else {
+            pg_m=page_model;
+        }
         //---get html from render
-        var blocks_cnt=MyApp.CManager.home_page_model.get("blocks_cnt");
+        //var blocks_cnt=MyApp.CManager.home_page_model.get("blocks_cnt");
+        var blocks_cnt=MyApp.CManager[pg_m].get("blocks_cnt");
         var type_before_str="<b>Type:</b>";
         MyApp.CManager.block_type_view.model=this.block_model;
         for (var i=1;i<=blocks_cnt;i++) {            
             MyApp.CManager.block_type_view.model.set("nomer",i);
-            MyApp.CManager.block_type_view.model.set("cur_name",type_before_str+MyApp.CManager.home_page_model.get("blocks_list")["b-"+i].type);
+            MyApp.CManager.block_type_view.model.set("cur_name",type_before_str+MyApp.CManager[pg_m].get("blocks_list")["b-"+i].type);
             var block_html=MyApp.CManager.block_type_view.render().el.innerHTML;
             $(".block-type.bt-"+i).html(block_html);
 
