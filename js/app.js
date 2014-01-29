@@ -273,6 +273,7 @@ MyApp.module("CManager", function(CManager){
         this.block_type_arr   = new Array("RichText","Chart","Sortable","Slider","Video");
         this.clmPlaceholderList ={};
         this.home_page_model  = new HomePageModel();
+        this.bufer_home_page_model = new HomePageModel();
         this.se_model         = new SEPageModel();
         this.block_model      = new BlockModel();        
         this.block_collection = new BlockCollection();
@@ -351,6 +352,8 @@ MyApp.module("CManager", function(CManager){
                                     MyApp.CManager.clmPlaceholderList=eval(data);
                                     console.log("clmPlaceholderList data=",MyApp.CManager.clmPlaceholderList);
                                     $('#se-actions').css({left:'-99999px'});
+                                    $('#se-actions').removeClass('open');
+                                    //$('#se-actions').foundation('dropdown', 'close', $('#se-actions'));
                                 
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
@@ -377,16 +380,24 @@ MyApp.module("CManager", function(CManager){
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);
                   blk_obj=this.se_model.get("blocks_list");
-                  cur_widget = cur_type.capitalize();
-                  blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
+                  cur_widget = cur_type.capitalize();                  
+                  if (MyApp[cur_widget].data_collection !=undefined) {
+                         MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);
+                         MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
+                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model,data_collection:MyApp[cur_widget].data_collection};
+                  } else {
+                         MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);
+                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
+                  }
                   this.se_model.set("blocks_list",blk_obj);
           };
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
           this.se_page_view.model=this.se_model;
+          this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
           MyApp.rm.get("homeRegion").show(this.se_page_view.render());
           this.showBlockType(undefined,'se_model');    
           for (var i=1;i<=blocks_cnt;i++) {      
-                  this.showWidgetContent(i,'se_model');
+                  this.showWidgetContent(i);
           }
     } catch (e) {
      console.info("ERROR build slide page ",e.name,e.lineNumber);
@@ -398,6 +409,7 @@ MyApp.module("CManager", function(CManager){
         MyApp.CManager.showBlockType();
         //CKEDITOR.inlineAll();//---fire rich text editing
         this.fillModelsCollections();
+        this.home_page_model=this.bufer_home_page_model;
         var blocks_cnt=this.home_page_model.get("blocks_cnt");
         for (var i=1;i<=blocks_cnt;i++) {      
             this.showWidgetContent(i);
@@ -612,6 +624,7 @@ MyApp.module("RichText", function(RichText){
    var RichTextModel = Backbone.Model.extend({
         defaults: {
             Code:"",
+            Data:"Text data...",
             text_default:"<p>You can write and modify any text here...</p>",
             lng:"en",//---lang
             n_str:"",
@@ -619,6 +632,14 @@ MyApp.module("RichText", function(RichText){
         }
     });
    //--------------------------Methods--------------------------------
+   this.FillModelFromCLM=function(prop){
+        if (prop.isActive != undefined) {
+           this.model.set("isActive",prop.isActive);
+        };
+        if (prop.Data != undefined) {
+           this.model.set("Data",prop.Data);
+        };
+   };
    this.showContent=function(n) {
       if (n != undefined) {
         
@@ -701,6 +722,33 @@ MyApp.module("Sortable", function(Sortable){
         }
     });
     //-------------------------Methods---------------------------
+    this.FillModelFromCLM=function(prop){
+       if (prop.isActive != undefined) {
+           this.model.set("isActive",prop.isActive);
+       };
+       if (prop.Theme != undefined) {
+           this.model.set("Theme",prop.Theme);
+       };
+       if (prop.CustomStyle != undefined) {
+           this.model.set("CustomStyle",prop.CustomStyle);
+       };
+       if (prop.ObjectName != undefined) {
+           this.model.set("ObjectName",prop.ObjectName);
+       };
+       if (prop.FieldName != undefined) {
+           this.model.set("FieldName",prop.FieldName);
+       };
+    };
+    this.FillCollectionFromCLM=function(prop){
+        if ((prop.Data !=undefined)&&(prop.Data.length>=1) ){
+            this.data_collection.reset();
+            for (var i=0;i<prop.Data.length;i++) {
+                  name=prop.Data[i][0];
+                  value=prop.Data[i][1];
+                  this.data_collection.add({data_name:name,data_value:value,data_i:i});
+            }
+        }
+    };
     this.showContent=function(n) {
           var n_str="";//-- widget number str for tpl --
           this.sortable_view.model=this.model;
@@ -870,7 +918,61 @@ MyApp.module("Slider", function(Slider){
           this.slider_view = new SliderView({model:this.model});
           this.slider_code_view = new SliderCodeView({model:this.model});
     });
+    //-------------------------Models----------------------------
+    var SliderModel = Backbone.Model.extend({
+      defaults: {
+        Default:90,
+        Min:0,  //minVal:1,
+        Max:100,//maxVal:99,
+        Step:5,// step:1,
+        IsActive:false,
+        sobjects_slider:"sforceObject",
+        sfields_slider:"sobjectField",
+        ObjectName:'ActivityData__c',
+        FieldName :'SomeField__c',
+        Title:"slider title",       
+        Theme: "ClearGreen",
+        themeList: "Clear-Green",
+        customStyle:false,
+        customStyleInput:"",
+        Code:"",
+        n_str:"",
+        model_name:"Slider"
+      }
+    });
     //-------------------------Methods---------------------------
+    this.FillModelFromCLM=function(prop){
+        if (prop.isActive != undefined) {
+           this.model.set("isActive",prop.isActive);
+        };
+        if (prop.Theme != undefined) {
+           this.model.set("Theme",prop.Theme);
+        };
+        if (prop.CustomStyle != undefined) {
+           this.model.set("CustomStyle",prop.CustomStyle);
+        };
+        if (prop.Title != undefined) {
+           this.model.set("Title",prop.Title);
+        };
+        if (prop.Default != undefined) {
+           this.model.set("Default",prop.Default);
+        };
+        if (prop.Min != undefined) {
+           this.model.set("Min",prop.Min);
+        };
+        if (prop.Max != undefined) {
+           this.model.set("Max",prop.Max);
+        };
+        if (prop.sSep != undefined) {
+           this.model.set("sSep",prop.sSep);
+        };
+        if (prop.ObjectName != undefined) {
+           this.model.set("ObjectName",prop.ObjectName);
+        };
+        if (prop.FieldName != undefined) {
+           this.model.set("FieldName",prop.FieldName);
+        };
+    };
     this.showContent=function(n) {
           var n_str="";//-- widget number str for tpl --
           this.slider_view.model=this.model;
@@ -963,29 +1065,7 @@ MyApp.module("Slider", function(Slider){
         var sliderwidget_code   = this.slider_code_view.render().el.innerHTML;      
         $("#sliderwidget-code"+n_str).empty().html("<script>"+sliderwidget_code+"</script>");
     };
-    //-------------------------Models----------------------------
-    var SliderModel = Backbone.Model.extend({
-      defaults: {
-        Default:90,
-        Min:0,  //minVal:1,
-        Max:100,//maxVal:99,
-        Step:5,// step:1,
-        IsActive:false,
-        sobjects_slider:"sforceObject",
-        sfields_slider:"sobjectField",
-        ObjectName:'ActivityData__c',
-        FieldName :'SomeField__c',
-        Title:"slider title",
-       
-        Theme: "ClearGreen",
-        themeList: "Clear-Green",
-        customStyle:false,
-        customStyleInput:"",
-        Code:"",
-        n_str:"",
-        model_name:"Slider"
-      }
-    });
+
     //-------------------------Views-----------------------------
 
     var SliderView = Backbone.Marionette.ItemView.extend({
@@ -1012,7 +1092,42 @@ MyApp.module("Video", function(Video){
           this.video_view = new VideoView();
           this.video_player_view = new VideoPlayerView();
     });
+    //-------------------------Models----------------------------
+    var VideoModel = Backbone.Model.extend({
+       defaults: {
+         IsActive:false,
+         VideoSource:"Youtube",
+         VideoId:"nJQW-rbHMS0",//--salesforce--
+         Width:"200px",
+         Height:"200px",
+         Autoplay:false,
+         Code:'http://www.youtube.com/embed/2423525',
+         n_str:"",
+         model_name:"Video"
+       }
+    });
     //-------------------------Methods---------------------------
+    this.FillModelFromCLM=function(prop){
+        if (prop.isActive != undefined) {
+            this.model.set("isActive",prop.isActive);
+        };
+        if (prop.isActive != undefined) {
+            this.model.set("Width",prop.Width);
+        };
+        if (prop.Height != undefined) {
+            this.model.set("Height",prop.Height);
+        };
+        if (prop.VideoSource != undefined) {
+            this.model.set("VideoSource",prop.VideoSource);
+        };
+        if (prop.VideoUrl != undefined) {
+            this.model.set("VideoUrl",prop.VideoUrl);
+        };
+        if (prop.Autoplay != undefined) {
+            this.model.set("Autoplay",prop.Autoplay);
+        };
+
+    };
     this.draw=function(){
           this.showVideoPlayer()
     };
@@ -1098,20 +1213,7 @@ MyApp.module("Video", function(Video){
           var n_str=this.model.get("n_str");
           MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
     };
-    //-------------------------Models----------------------------
-    var VideoModel = Backbone.Model.extend({
-       defaults: {
-         IsActive:false,
-         VideoSource:"Youtube",
-         VideoId:"nJQW-rbHMS0",//--salesforce--
-         Width:"200px",
-         Height:"200px",
-         Autoplay:false,
-         Code:'http://www.youtube.com/embed/2423525',
-         n_str:"",
-         model_name:"Video"
-       }
-    });
+
     //-------------------------Views-----------------------------
     var VideoView = Backbone.Marionette.ItemView.extend({
        template: "#main-video-template",
@@ -1247,6 +1349,46 @@ MyApp.module("Chart", function(Chart){
     });
 
     // ------------------------- Methods --------------------
+    this.FillModelFromCLM=function(prop){
+       if (prop.isActive != undefined) {
+           this.model.set("isActive",prop.isActive);
+       };
+       if (prop.Theme != undefined) {
+           this.model.set("Theme",prop.Theme);
+       };
+       if (prop.CustomStyle != undefined) {
+           this.model.set("CustomStyle",prop.CustomStyle);
+       };
+       if (prop.ChartType != undefined) {
+           this.model.set("ChartType",prop.ChartType);
+           this.model.set("type",prop.ChartType);
+       };
+       if (prop.ShowLegend != undefined) {
+           this.model.set("ShowLegend",prop.ShowLegend);
+       };
+       if (prop.Legend != undefined) {
+           this.model.set("Legend",prop.Legend);
+       };
+       if (prop.LegendLocation != undefined) {
+           this.model.set("LegendLocation",prop.LegendLocation);
+       };
+       if (prop.Width != undefined) {
+           this.model.set("Width",prop.Width);
+        };
+        if (prop.Height != undefined) {
+           this.model.set("Heigth",prop.Height);
+        };
+    };
+    this.FillCollectionFromCLM=function(prop){
+        if ((prop.Data !=undefined)&&(prop.Data.length>=1) ){
+            this.data_collection.reset();
+            for (var i=0;i<prop.Data.length;i++) {
+                  name=prop.Data[i][0];
+                  value=prop.Data[i][1];
+                  this.data_collection.add({data_name:name,data_value:value,data_i:i});
+            }
+        }
+    };
     this.clickLinkShow=function() {
       try {
         var click_cnt = 1;
