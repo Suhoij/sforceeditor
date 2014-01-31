@@ -362,7 +362,7 @@ MyApp.module("CManager", function(CManager){
           dataType: "json",
           async: false,
           data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
-          success: function(data){ alert("success:",data);},
+          success: function(data){ alert('Widgets has sent successfully!');console.log("success:",data);},
           error: function(jqXHR, textStatus, errorThrown){ alert("error",error,textStatus);}
       });
   };
