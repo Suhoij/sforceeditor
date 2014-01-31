@@ -338,6 +338,33 @@ MyApp.module("CManager", function(CManager){
   };
   this.seSave=function(){
       alert("Slide save...");
+      var send_url="widgets.php";
+      var blocks_list_out=[];
+      var blocks_list = MyApp.CManager.home_page_model.get("blocks_list");
+      //console.log("blocks_list ",blocks_list);
+      jQuery.each(blocks_list,function(block,prop) {
+        //console.log("Block -prop",block,prop);
+            var coll_prop=null;
+            if (prop.data_collection !=undefined) {
+                coll_prop=prop.data_collection.toJSON();
+            }
+            if (prop.type == 'RichText') {
+                prop.model.set('Data',$('#rich-text-'+block.split('-')[1]).html());
+            }
+            var cur_prop={type:prop.type,model_prop:prop.model.toJSON(),data_coll_prop:coll_prop};
+            blocks_list_out.push(cur_prop);
+      });
+      console.log("Save this ",blocks_list_out);
+      //return;
+      $.ajax ({
+          type:"POST",
+          url:MyApp.base_url+send_url,
+          dataType: "json",
+          async: false,
+          data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
+          success: function(data){ alert("success:",data);},
+          error: function(jqXHR, textStatus, errorThrown){ alert("error",error,textStatus);}
+      });
   };
   //----------------Obmen  Methods------------------
   this.getPlaceholderVar=function(){
@@ -429,9 +456,8 @@ MyApp.module("CManager", function(CManager){
   this.getBlockModel=function(n){
       return this.home_page_model.get("blocks_list")["b-"+n].model;
   },
-  this.getBlockCollection=function(n){
-      console.log("getBlockCollection  n=",n);
-      console.log("getBlockCollection  home_model=",this.home_page_model);
+  this.getBlockCollection=function(n){      
+      console.log("getBlockCollection n= "+n+"  home_model=",this.home_page_model);
       console.log("getBlockCollection  [b-"+n+"].data_collection=",this.home_page_model.get("blocks_list")["b-"+n].data_collection);
       return this.home_page_model.get("blocks_list")["b-"+n].data_collection;
   },
@@ -448,9 +474,8 @@ MyApp.module("CManager", function(CManager){
     }
   },
   this.setBlockCollection=function(n,col){
-    try {
-      console.log("!!!setBlockCollection n="+n);
-      console.log("!!!setBlockCollection col=",col);
+    try {      
+      console.log("!!!setBlockCollection n= "+n+" col=",col);
       block_model = this.home_page_model.get("blocks_list");
       console.log("!!!setBlockCollection block_model=",block_model);
       //delete block_model["b-"+n].data_collection;
@@ -524,6 +549,8 @@ MyApp.module("CManager", function(CManager){
 
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
+        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].model=null;
+        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].data_collection=null;
         MyApp.CManager.setBlockModel(n,MyApp[name.capitalize()].model);
         console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //---set first model, collection--
@@ -532,6 +559,8 @@ MyApp.module("CManager", function(CManager){
 
         if (cur_widget.data_collection != undefined ) {
             cur_widget.data_collection = MyApp[name.capitalize()].data_collection;
+        } else {
+           cur_widget.data_collection = null;
         }
         
         MyApp.CManager.fillModelsCollections(n);
@@ -576,8 +605,8 @@ MyApp.module("CManager", function(CManager){
         w_type=w_type.capitalize(); 
          $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+w_type); 
         console.log("BEGIN)showWidgetContent w_type="+w_type+" n="+n);
-        if (w_type != "Text") {
-            //MyApp.Text.clearContent(n);
+        if (w_type == "RichText") {
+            //MyApp.RichText.clearContent(n);
         }
         if (w_type == "Chart") {
             MyApp.Chart.draw(n);
