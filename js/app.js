@@ -569,7 +569,7 @@ MyApp.module("CManager", function(CManager){
         $('#cur_block_type_'+n).css({left:'-99999px'});
         $("#chart_sub_block_"+n).removeClass("show").addClass("hide");       
   };
-  this.selectBlockType=function(n,name,sub_menu="") {
+  this.selectBlockType=function(n,name) {
     
      if (name == "Chart") {
         if ($("#chart_sub_block_"+n).hasClass("show")) {
@@ -584,7 +584,7 @@ MyApp.module("CManager", function(CManager){
         this.showWidgetContent(n);
       }
   };
-  this.selectSubBlockType=function(n,name,sub_type="") {
+  this.selectSubBlockType=function(n,name,sub_type) {
         //MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
         this.closeBlockType(n,name);
         if (name =="Chart") {
@@ -675,7 +675,7 @@ MyApp.module("RichText", function(RichText){
            this.model.set("IsActive",prop.IsActive);
         };
         if (prop.Data != undefined) {
-           this.model.set("Data",prop.Data);
+           this.model.set("Data",atob(prop.Data));
         };
    };
    this.showContent=function(n) {
@@ -786,11 +786,19 @@ MyApp.module("Sortable", function(Sortable){
        };
     };
     this.FillCollectionFromCLM=function(prop){
-        if ((prop.Data !=undefined)&&(prop.Data.length>=1) ){
+        if (prop.Data != undefined) {
+            try {
+              uncode_data=eval(atob(prop.Data));
+          } catch (e) {
+              MyApp.error_data=prop.Data;
+              uncode_data=[{data_name:'Error-data-1',data_value:1},{data_name:'Error-data-2',data_value:2}];
+          }
+        };
+        if ((uncode_data.length>=1) ){
             this.data_collection.reset();
-            for (var i=0;i<prop.Data.length;i++) {
-                  name=prop.Data[i][0];
-                  value=prop.Data[i][1];
+            for (var i=0;i<uncode_data.length;i++) {
+                  name=uncode_data[i][0];
+                  value=uncode_data[i][1];
                   this.data_collection.add({data_name:name,data_value:value,data_i:i});
             }
         }
@@ -1450,14 +1458,31 @@ MyApp.module("Chart", function(Chart){
         };
     };
     this.FillCollectionFromCLM=function(prop){
-        if ((prop.Data !=undefined)&&(prop.Data.length>=1) ){
+    if (prop.Data != undefined) {
+            try {
+              uncode_data=eval(atob(prop.Data));
+          } catch (e) {
+              MyApp.error_data=prop.Data;
+              uncode_data=[{data_name:'Error-data-1',data_value:1},{data_name:'Error-data-2',data_value:2}];
+          }
+        };
+        if ((uncode_data.length>=1) ){
             this.data_collection.reset();
-            for (var i=0;i<prop.Data.length;i++) {
-                  name=prop.Data[i][0];
-                  value=prop.Data[i][1];
+            for (var i=0;i<uncode_data.length;i++) {
+                  name=uncode_data[i][0];
+                  value=uncode_data[i][1];
                   this.data_collection.add({data_name:name,data_value:value,data_i:i});
             }
         }
+        //-------------------------------------------------------
+        // if ((prop.Data !=undefined)&&(prop.Data.length>=1) ){
+        //     this.data_collection.reset();
+        //     for (var i=0;i<prop.Data.length;i++) {
+        //           name=prop.Data[i][0];
+        //           value=prop.Data[i][1];
+        //           this.data_collection.add({data_name:name,data_value:value,data_i:i});
+        //     }
+        // }
     };
     this.clickLinkShow=function() {
       try {
