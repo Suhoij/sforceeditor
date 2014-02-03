@@ -5,7 +5,7 @@ $(document).ready(function(){
   MyApp.vent.trigger("getSfparams"); 
   MyApp.CManager.showBlockType();
 });
-//----------------------MAIN------------------------
+//----------------------MAIN----------------------
 
 //------------------APP INIT----------------------
 MyApp    = new Backbone.Marionette.Application();
@@ -549,8 +549,8 @@ MyApp.module("CManager", function(CManager){
 
   this.closeBlockType=function(n,name){
         MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type=name;
-        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].model=null;
-        MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].data_collection=null;
+        //MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].model=null;
+        //MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].data_collection=null;
         MyApp.CManager.setBlockModel(n,MyApp[name.capitalize()].model);
         console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //---set first model, collection--
@@ -652,6 +652,8 @@ MyApp.module("RichText", function(RichText){
    //--------------------------Models---------------------------------
    var RichTextModel = Backbone.Model.extend({
         defaults: {
+            WidgetID:"",
+            PlaceholderId:"",
             Code:"",
             Data:"Text data...",
             text_default:"<p>You can write and modify any text here...</p>",
@@ -662,6 +664,12 @@ MyApp.module("RichText", function(RichText){
     });
    //--------------------------Methods--------------------------------
    this.FillModelFromCLM=function(prop){
+        if (prop.WidgetID != undefined) {
+           this.model.set("WidgetID",prop.WidgetID);
+        };
+        if (prop.PlaceholderId != undefined) {
+           this.model.set("PlaceholderId",prop.PlaceholderId);
+        };
         if (prop.isActive != undefined) {
            this.model.set("isActive",prop.isActive);
         };
@@ -716,6 +724,8 @@ MyApp.module("Sortable", function(Sortable){
     //-------------------------Models----------------------------
     var SortableModel = Backbone.Model.extend({
         defaults: {
+            WidgetID:"",
+            PlaceholderId:"",
             IsActive:false,
             sobjects_sortable:"sforceObject", //--my
             sfields_sortable:"sobjectField",  //--my
@@ -752,6 +762,12 @@ MyApp.module("Sortable", function(Sortable){
     });
     //-------------------------Methods---------------------------
     this.FillModelFromCLM=function(prop){
+       if (prop.WidgetID != undefined) {
+           this.model.set("WidgetID",prop.WidgetID);
+       };
+       if (prop.PlaceholderId != undefined) {
+           this.model.set("PlaceholderId",prop.PlaceholderId);
+       };
        if (prop.isActive != undefined) {
            this.model.set("isActive",prop.isActive);
        };
@@ -950,6 +966,8 @@ MyApp.module("Slider", function(Slider){
     //-------------------------Models----------------------------
     var SliderModel = Backbone.Model.extend({
       defaults: {
+        WidgetID:"",
+        PlaceholderId:"",
         Default:90,
         Min:0,  //minVal:1,
         Max:100,//maxVal:99,
@@ -971,6 +989,12 @@ MyApp.module("Slider", function(Slider){
     });
     //-------------------------Methods---------------------------
     this.FillModelFromCLM=function(prop){
+        if (prop.WidgetID != undefined) {
+           this.model.set("WidgetID",prop.WidgetID);
+        };
+        if (prop.PlaceholderId != undefined) {
+           this.model.set("PlaceholderId",prop.PlaceholderId);
+        };
         if (prop.isActive != undefined) {
            this.model.set("isActive",prop.isActive);
         };
@@ -1124,6 +1148,8 @@ MyApp.module("Video", function(Video){
     //-------------------------Models----------------------------
     var VideoModel = Backbone.Model.extend({
        defaults: {
+         WidgetID:"",
+         PlaceholderId:"",
          IsActive:false,
          VideoSource:"Youtube",
          VideoId:"nJQW-rbHMS0",//--salesforce--
@@ -1137,6 +1163,12 @@ MyApp.module("Video", function(Video){
     });
     //-------------------------Methods---------------------------
     this.FillModelFromCLM=function(prop){
+        if (prop.WidgetID != undefined) {
+           this.model.set("WidgetID",prop.WidgetID);
+        };
+        if (prop.PlaceholderId != undefined) {
+           this.model.set("PlaceholderId",prop.PlaceholderId);
+        };
         if (prop.isActive != undefined) {
             this.model.set("isActive",prop.isActive);
         };
@@ -1261,6 +1293,8 @@ MyApp.module("Chart", function(Chart){
     var ChartModel = Backbone.Model.extend({
         
         defaults: {
+            WidgetID:"",
+            PlaceholderId:"",
             IsActive:true,//activechart:1,
             Title: "Chart title",
             Width:120,
@@ -1379,6 +1413,12 @@ MyApp.module("Chart", function(Chart){
 
     // ------------------------- Methods --------------------
     this.FillModelFromCLM=function(prop){
+       if (prop.WidgetID != undefined) {
+           this.model.set("WidgetID",prop.WidgetID);
+       };
+       if (prop.PlaceholderId != undefined) {
+           this.model.set("PlaceholderId",prop.PlaceholderId);
+       };
        if (prop.isActive != undefined) {
            this.model.set("isActive",prop.isActive);
        };
