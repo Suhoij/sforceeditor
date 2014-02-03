@@ -654,6 +654,7 @@ MyApp.module("RichText", function(RichText){
         defaults: {
             WidgetID:"",
             PlaceholderId:"",
+            IsActive:false,
             Code:"",
             Data:"Text data...",
             text_default:"<p>You can write and modify any text here...</p>",
@@ -670,8 +671,8 @@ MyApp.module("RichText", function(RichText){
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
         };
-        if (prop.isActive != undefined) {
-           this.model.set("isActive",prop.isActive);
+        if (prop.IsActive != undefined) {
+           this.model.set("IsActive",prop.IsActive);
         };
         if (prop.Data != undefined) {
            this.model.set("Data",prop.Data);
@@ -768,8 +769,8 @@ MyApp.module("Sortable", function(Sortable){
        if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
        };
-       if (prop.isActive != undefined) {
-           this.model.set("isActive",prop.isActive);
+       if (prop.IsActive != undefined) {
+           this.model.set("IsActive",prop.IsActive);
        };
        if (prop.Theme != undefined) {
            this.model.set("Theme",prop.Theme);
@@ -995,8 +996,8 @@ MyApp.module("Slider", function(Slider){
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
         };
-        if (prop.isActive != undefined) {
-           this.model.set("isActive",prop.isActive);
+        if (prop.IsActive != undefined) {
+           this.model.set("IsActive",prop.IsActive);
         };
         if (prop.Theme != undefined) {
            this.model.set("Theme",prop.Theme);
@@ -1169,10 +1170,10 @@ MyApp.module("Video", function(Video){
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
         };
-        if (prop.isActive != undefined) {
-            this.model.set("isActive",prop.isActive);
+        if (prop.IsActive != undefined) {
+            this.model.set("IsActive",prop.IsActive);
         };
-        if (prop.isActive != undefined) {
+        if (prop.IsActive != undefined) {
             this.model.set("Width",prop.Width);
         };
         if (prop.Height != undefined) {
@@ -1419,8 +1420,8 @@ MyApp.module("Chart", function(Chart){
        if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
        };
-       if (prop.isActive != undefined) {
-           this.model.set("isActive",prop.isActive);
+       if (prop.IsActive != undefined) {
+           this.model.set("IsActive",prop.IsActive);
        };
        if (prop.Theme != undefined) {
            this.model.set("Theme",prop.Theme);
