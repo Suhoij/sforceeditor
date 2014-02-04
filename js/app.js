@@ -428,7 +428,7 @@ MyApp.module("CManager", function(CManager){
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
-                  console.log("MyApp["+cur_widget+"].model.get('WidgetID')=",MyApp[cur_widget].model.get('WidgetID'));
+                  console.log("MyApp[cur_widget].model.get('WidgetID')=",MyApp[cur_widget].model.get('WidgetID'));
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
                          MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model,data_collection:MyApp[cur_widget].data_collection};
@@ -441,12 +441,13 @@ MyApp.module("CManager", function(CManager){
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
           this.se_page_view.model=this.se_model;
           this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
-          console.info("buildSEPage home_page_model=",this.home_page_model);
+          console.info("buildSEPage BEFORE home_page_model=",this.home_page_model);
           MyApp.rm.get("homeRegion").show(this.se_page_view.render());
           this.showBlockType(undefined,'se_model');    
           for (var i=1;i<=blocks_cnt;i++) {      
                   this.showWidgetContent(i);
           }
+          console.log('buildSEPage AFTER home_page_model=',this.home_page_model);
     } catch (e) {
      console.info("ERROR build slide page ",e.name,e.lineNumber);
   }
