@@ -414,8 +414,7 @@ MyApp.module("CManager", function(CManager){
           var blk_obj=this.se_model.get("blocks_list");
           for (var i=0;i<blocks_cnt;i++) {
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
-                  console.log("clm_list["+i+"].widgets[0].type=",cur_type);
-                  
+                  console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
@@ -429,6 +428,7 @@ MyApp.module("CManager", function(CManager){
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
           this.se_page_view.model=this.se_model;
           this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
+          console.info("buildSEPage home_page_model=",this.home_page_model);
           MyApp.rm.get("homeRegion").show(this.se_page_view.render());
           this.showBlockType(undefined,'se_model');    
           for (var i=1;i<=blocks_cnt;i++) {      
@@ -619,6 +619,7 @@ MyApp.module("CManager", function(CManager){
         if (w_type == "Chart") {
             MyApp.Chart.draw(n);
         } else {
+            MyApp[w_type].model=MyApp.CManager[pg_m].get("blocks_list")["b-"+n].model;
             MyApp[w_type].model.set("n_str","-"+n);
             MyApp[w_type].showContent(n);
             MyApp[w_type].draw();
@@ -691,7 +692,7 @@ MyApp.module("RichText", function(RichText){
       if (n != undefined) {
         
           var n_str="-"+n;
-          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+MyApp.RichText.model.get("text_default")+"</div>";
+          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+MyApp.RichText.model.get("Data")+"</div>";
           MyApp.RichText.model.set("n_str",n_str);
           console.log("Text.showContent  n=",rich_text_node);
           $(".widget-block-content"+n_str).html("").append(rich_text_node);
