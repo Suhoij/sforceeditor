@@ -338,6 +338,14 @@ MyApp.module("CManager", function(CManager){
   this.hideSeMenu=function(){
       $('#se-actions').css({left:'-99999px'});
   };
+  this.changePlBand=function(el){
+      console.log($(el).is(':checked'));
+      if ($(el).is(':checked')==false) {
+          $('div.placeholder-content').removeClass('ui-island');
+      } else {
+        $('div.placeholder-content').addClass('ui-island');
+      }
+  };
   this.seCreate=function(){
       alert("Slide create...");
   };
@@ -411,8 +419,9 @@ MyApp.module("CManager", function(CManager){
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
           this.se_model.set("blocks_cnt",blocks_cnt);
-          var blk_obj=this.se_model.get("blocks_list");
+          var blk_obj={};//this.se_model.get("blocks_list");
           for (var i=0;i<blocks_cnt;i++) {
+                  //this.se_model.reset();
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
@@ -423,8 +432,9 @@ MyApp.module("CManager", function(CManager){
                   } else {                         
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
                   }
-                  this.se_model.set("blocks_list",blk_obj);
+                  
           };
+          this.se_model.set("blocks_list",blk_obj);
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
           this.se_page_view.model=this.se_model;
           this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
@@ -610,25 +620,28 @@ MyApp.module("CManager", function(CManager){
         //var w_type=MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type;
         var w_type=MyApp.CManager[pg_m].get("blocks_list")["b-"+n].type;
         try {
-        w_type=w_type.capitalize(); 
-         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+w_type); 
-        console.log("BEGIN)showWidgetContent w_type="+w_type+" n="+n);
-        if (w_type == "RichText") {
-            //MyApp.RichText.clearContent(n);
+              w_type=w_type.capitalize(); 
+               $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+w_type); 
+              console.log("BEGIN)showWidgetContent w_type="+w_type+" n="+n);
+              if (w_type == "RichText") {
+                  //MyApp.RichText.clearContent(n);
+              }
+              if (w_type == "Chart") {
+                  MyApp.Chart.draw(n);
+              } else {
+                  var cm_model=MyApp.CManager[pg_m].get("blocks_list")["b-"+n].model;
+                  if (cm_model !=undefined) {
+                      MyApp[w_type].model=cm_model;
+                  }                
+                  MyApp[w_type].model.set("n_str","-"+n);
+                  MyApp[w_type].showContent(n);
+                  MyApp[w_type].draw();
+              }       
+              console.log("END)showWidgetContent w_type="+w_type+" n="+n);
+              //if (w_type != "Text") {  
+        } catch (e) {
+           console.error("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
         }
-        if (w_type == "Chart") {
-            MyApp.Chart.draw(n);
-        } else {
-            MyApp[w_type].model=MyApp.CManager[pg_m].get("blocks_list")["b-"+n].model;
-            MyApp[w_type].model.set("n_str","-"+n);
-            MyApp[w_type].showContent(n);
-            MyApp[w_type].draw();
-        }       
-        console.log("END)showWidgetContent w_type="+w_type+" n="+n);
-        //if (w_type != "Text") {  
-      } catch (e) {
-         console.error("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
-      }
   };
   this.showBlockType=function(block_name,page_model) {
       if (page_model == undefined) {
