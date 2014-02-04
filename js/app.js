@@ -411,10 +411,11 @@ MyApp.module("CManager", function(CManager){
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
           this.se_model.set("blocks_cnt",blocks_cnt);
+          var blk_obj=this.se_model.get("blocks_list");
           for (var i=0;i<blocks_cnt;i++) {
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);
-                  blk_obj=this.se_model.get("blocks_list");
+                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
