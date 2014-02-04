@@ -39,6 +39,14 @@ MyApp.addInitializer(function(options){
     var out = this.replace(/\s/g, ''); 
     return out;   
   };
+  String.prototype.isBase64 = function() {
+    var base64Matcher = new RegExp("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})([=]{1,2})?$");
+    if (base64Matcher.test(this)) {
+        return true;
+    } else {
+        return false;
+    }
+  };
   //this.rm = new Marionette.RegionManager();
   this.clearScreen=function(cur_region){ //return;
        var cur_id_region=MyApp.rm.get(cur_region).el;
@@ -407,13 +415,12 @@ MyApp.module("CManager", function(CManager){
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);
                   blk_obj=this.se_model.get("blocks_list");
-                  cur_widget = cur_type.capitalize();                  
-                  if (MyApp[cur_widget].data_collection !=undefined) {
-                         MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);
+                  cur_widget = cur_type.capitalize();
+                  MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
+                  if (MyApp[cur_widget].data_collection !=undefined) {                         
                          MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model,data_collection:MyApp[cur_widget].data_collection};
-                  } else {
-                         MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);
+                  } else {                         
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
                   }
                   this.se_model.set("blocks_list",blk_obj);
@@ -667,6 +674,7 @@ MyApp.module("RichText", function(RichText){
    this.FillModelFromCLM=function(prop){
         if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
+           console.info("RichText  FillModelFromCLM WidgetID=",prop.WidgetID);
         };
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
@@ -786,6 +794,8 @@ MyApp.module("Sortable", function(Sortable){
        };
     };
     this.FillCollectionFromCLM=function(prop){
+        var name='Empty-name';
+        var value=0;
         if (prop.Data != undefined) {
             try {
               uncode_data=eval(atob(prop.Data));
@@ -794,11 +804,14 @@ MyApp.module("Sortable", function(Sortable){
               uncode_data=[{data_name:'Error-data-1',data_value:1},{data_name:'Error-data-2',data_value:2}];
           }
         };
+        console.info("Sortable FillCollectionFromCLM=",uncode_data);
         if ((uncode_data.length>=1) ){
             this.data_collection.reset();
             for (var i=0;i<uncode_data.length;i++) {
-                  name=uncode_data[i][0];
-                  value=uncode_data[i][1];
+                   try {
+                    name=uncode_data[i].data_name;//uncode_data[i][0];
+                    value=uncode_data[i].data_value;//uncode_data[i][1];
+                  } catch (e) {console.info('Chart Error collection set...');}
                   this.data_collection.add({data_name:name,data_value:value,data_i:i});
             }
         }
@@ -1424,6 +1437,7 @@ MyApp.module("Chart", function(Chart){
     this.FillModelFromCLM=function(prop){
        if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
+           console.info("Chart  FillModelFromCLM WidgetID=",prop.WidgetID);
        };
        if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
@@ -1458,7 +1472,9 @@ MyApp.module("Chart", function(Chart){
         };
     };
     this.FillCollectionFromCLM=function(prop){
-    if (prop.Data != undefined) {
+        var name='Empty-name';
+        var value=0;
+        if (prop.Data != undefined) {
             try {
               uncode_data=eval(atob(prop.Data));
           } catch (e) {
@@ -1469,8 +1485,10 @@ MyApp.module("Chart", function(Chart){
         if ((uncode_data.length>=1) ){
             this.data_collection.reset();
             for (var i=0;i<uncode_data.length;i++) {
-                  name=uncode_data[i][0];
-                  value=uncode_data[i][1];
+                  try {
+                    name=uncode_data[i].data_name;//uncode_data[i][0];
+                    value=uncode_data[i].data_value;//uncode_data[i][1];
+                  } catch (e) {console.info('Chart Error collection set...');}
                   this.data_collection.add({data_name:name,data_value:value,data_i:i});
             }
         }
