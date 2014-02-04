@@ -418,14 +418,17 @@ MyApp.module("CManager", function(CManager){
     try {
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
+          this.se_model.reset();
           this.se_model.set("blocks_cnt",blocks_cnt);
           var blk_obj={};//this.se_model.get("blocks_list");
+
           for (var i=0;i<blocks_cnt;i++) {
                   //this.se_model.reset();
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
+                  console.log("MyApp["+cur_widget+"].model.get('WidgetID')=",MyApp[cur_widget].model.get('WidgetID'));
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
                          MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model,data_collection:MyApp[cur_widget].data_collection};
@@ -475,14 +478,12 @@ MyApp.module("CManager", function(CManager){
       return this.home_page_model.get("blocks_list")["b-"+n].model;
   },
   this.getBlockCollection=function(n){      
-      console.log("getBlockCollection n= "+n+"  home_model=",this.home_page_model);
       console.log("getBlockCollection  [b-"+n+"].data_collection=",this.home_page_model.get("blocks_list")["b-"+n].data_collection);
       return this.home_page_model.get("blocks_list")["b-"+n].data_collection;
   },
   this.setBlockModel=function(n,m){
     try {
-      console.log("!!!Try set setBlockModel n="+n);
-      console.log("!!!Try set setBlockModel model=",m);
+      console.log("!!!Try set setBlockModel n="+n+" model=",m);
       block_model = this.home_page_model.get("blocks_list");
       block_model["b-"+n].model=m.clone();
       //block_model.model=m;
@@ -532,7 +533,8 @@ MyApp.module("CManager", function(CManager){
         if (this.home_page_model.get("blocks_cnt") >=1) {
                try {
                  var n=click_el.prop("id").match(/\d$/)[0];
-                 var cur_block_model = this.home_page_model.get("blocks_list")["b-"+n].model;
+                 var cur_block=this.home_page_model.get("blocks_list")["b-"+n];
+                 var cur_block_model = cur_block.model;
                  console.log("setWidgetCurBlock cur_block_model=",cur_block_model.attributes);
                  if (cur_block_model.get("model_name") != widget_name) {
                       console.info("Error setWidgetCurBlock: ",cur_block_model.get("model_name"),widget_name);
@@ -541,7 +543,7 @@ MyApp.module("CManager", function(CManager){
                  }  
                  
                  var n_str='-'+n;
-                 var cur_type = this.home_page_model.get("blocks_list")["b-"+n].type;
+                 var cur_type = cur_block.type;
                 
               
                  console.log("!setWidgetCurBlock n="+n+" cur_type="+cur_type);
@@ -555,7 +557,11 @@ MyApp.module("CManager", function(CManager){
                  }
                  if (what == "data_collection") {
                       if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
-                          MyApp[widget_name].data_collection=this.getBlockCollection(n);                        
+                         if ((cur_block.data_collection != undefined)&&(cur_block.data_collection != null)) {
+                            MyApp[widget_name].data_collection=this.getBlockCollection(n);                        
+                         } else {
+                            console.info('Error set empty collection!')
+                         }
                       }
                  }
                  MyApp[widget_name].model.set("n_str",n_str);  
