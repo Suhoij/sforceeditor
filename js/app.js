@@ -418,7 +418,7 @@ MyApp.module("CManager", function(CManager){
     try {
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
-          this.se_model.reset();
+          //this.se_model.reset();
           this.se_model.set("blocks_cnt",blocks_cnt);
           var blk_obj={};//this.se_model.get("blocks_list");
 
