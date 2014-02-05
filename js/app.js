@@ -430,14 +430,10 @@ MyApp.module("CManager", function(CManager){
     try {
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
-          //this.se_model.reset();
-          //////////this.se_model.set("blocks_cnt",blocks_cnt);
           this.bufer_home_page_model=this.home_page_model;
-          this.home_page_model.set("blocks_cnt",blocks_cnt);
-          //////////var blk_obj={};//this.se_model.get("blocks_list");
+          this.home_page_model.set("blocks_cnt",blocks_cnt);       
           var blk_obj=this.home_page_model.get("blocks_list");
-          for (var i=0;i<blocks_cnt;i++) {
-                  //this.se_model.reset();
+          for (var i=0;i<blocks_cnt;i++) {                 
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
@@ -446,29 +442,29 @@ MyApp.module("CManager", function(CManager){
                   console.info("buildSEPage from clm_list[i].widgets[0] WidgetID=",clm_list[i].widgets[0].WidgetID);
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
                          MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
-                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model,data_collection:MyApp[cur_widget].data_collection};
+                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model.clone(),data_collection:MyApp[cur_widget].data_collection};
                   } else {                         
-                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model};
+                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model.clone()};
                   }
                   
           };
-          ////////this.se_model.set("blocks_list",blk_obj);
+         
           console.info('buildSEPage blk_obj=',blk_obj);
           this.home_page_model.set("blocks_list",blk_obj);
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
-          ////////this.se_page_view.model=this.se_model;
+       
           this.se_page_view.model=this.home_page_model;
-          ////////this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
+         
           console.info("buildSEPage BEFORE home_page_model=",this.home_page_model);
           MyApp.rm.get("homeRegion").show(this.se_page_view.render());
-          ////////this.showBlockType(undefined,'se_model');    
+           
           this.showBlockType(undefined);    
           for (var i=1;i<=blocks_cnt;i++) {      
                   this.showWidgetContent(i);
           }
           console.log('buildSEPage AFTER home_page_model=',this.home_page_model);
     } catch (e) {
-     console.info("ERROR build slide page ",e.name,e.lineNumber);
+          console.info("ERROR build slide page ",e.name,e.lineNumber);
   }
   };
   this.showHomePage=function() {
@@ -716,7 +712,7 @@ MyApp.module("RichText", function(RichText){
    this.FillModelFromCLM=function(prop){
         if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
-           console.info("RichText  FillModelFromCLM WidgetID=",prop.WidgetID);
+           console.info("RichText  FillModelFromCLM set,get,WidgetID=",prop.WidgetID,this.model.get("WidgetID"));
         };
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
