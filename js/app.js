@@ -844,6 +844,7 @@ MyApp.module("Sortable", function(Sortable){
           }
         };
         console.info("Sortable FillCollectionFromCLM=",uncode_data);
+        if (uncode_data == undefined) { return;}//--Don't write anything!
         if ((uncode_data.length>=1) ){
             this.data_collection.reset();
             for (var i=0;i<uncode_data.length;i++) {
@@ -1521,6 +1522,7 @@ MyApp.module("Chart", function(Chart){
               uncode_data=[{data_name:'Error-data-1',data_value:1},{data_name:'Error-data-2',data_value:2}];
           }
         };
+        if (uncode_data == undefined) { return;}//--Don't write anything!
         if ((uncode_data.length>=1) ){
             this.data_collection.reset();
             for (var i=0;i<uncode_data.length;i++) {
@@ -1569,25 +1571,25 @@ MyApp.module("Chart", function(Chart){
     },
     this.draw=function(n){
        //var n=this.model.get("n_str").split("-")[1];
-       try {
-        if (n != undefined){
-            this.model.set("n_str","-"+n);
-        }
-        this.showContent(n);
-        this.show_chart();
-        if (this.clickLinkShow() == 0 ) {
-            //---correct collection for some chart type---
-            this.setFirstCollection();
-        } 
-        this.setChartData();
-        //--fix bug! Hard code!
-        if (n != undefined){
-            $("#chartwidget-content").empty();
-        }
-      } catch (e) {
+        try {
+            if (n != undefined){
+                this.model.set("n_str","-"+n);
+            }
+            this.showContent(n);
+            this.show_chart();
+            if (this.clickLinkShow() == 0 ) {
+                //---correct collection for some chart type---
+                this.setFirstCollection();
+            } 
+            this.setChartData();
+            //--fix bug! Hard code!
+            if (n != undefined){
+                $("#chartwidget-content").empty();
+            }
+        } catch (e) {
           console.info("Error chart draw ",e.name,e.lineNumber);
           $(".reveal-modal-bg").hide();//--- fix black screen bag--
-      }
+        }
     },
     this.setChartTheme=function() {
         var n_str=this.model.get("n_str");
@@ -1788,7 +1790,9 @@ MyApp.module("Chart", function(Chart){
            var coll_length=MyApp.Chart.data_collection.length;
            for (var i=0;i<coll_length;i++) {   
               var m=MyApp.Chart.data_collection.at(i);
-              collection_data.push([m.get("data_name"),m.get("data_value")]);
+              var value = parseInt(m.get("data_value"));
+              if (value == NaN) {value=0;}
+              collection_data.push([m.get("data_name"),value]);
            };
            console.log("Chart setChartData  n_str="+n_str) ;
            console.log("Chart setChartData  collection_data=",collection_data) ;
