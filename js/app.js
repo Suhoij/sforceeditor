@@ -339,12 +339,24 @@ MyApp.module("CManager", function(CManager){
       $('#se-actions').css({left:'-99999px'});
   };
   this.changePlBand=function(el){
-      console.log($(el).is(':checked'));
+      //console.log($(el).is(':checked'));
       if ($(el).is(':checked')==false) {
           $('div.placeholder-content').removeClass('ui-island');
       } else {
-        $('div.placeholder-content').addClass('ui-island');
-      }
+          $('div.placeholder-content').addClass('ui-island');
+      };
+      this.hideSeMenu();
+  };
+  this.changePlControls=function(el){
+      //console.log($(el).is(':checked'));
+      if ($(el).is(':checked')==false) {
+          $('div.placeholder-controls').addClass('hide');
+          $('div.block-type').addClass('hide');
+      } else {
+          $('div.placeholder-controls').removeClass('hide');
+          $('div.block-type').removeClass('hide');
+      };
+      this.hideSeMenu();
   };
   this.seCreate=function(){
       alert("Slide create...");
@@ -419,9 +431,11 @@ MyApp.module("CManager", function(CManager){
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
           //this.se_model.reset();
-          this.se_model.set("blocks_cnt",blocks_cnt);
-          var blk_obj={};//this.se_model.get("blocks_list");
-
+          //////////this.se_model.set("blocks_cnt",blocks_cnt);
+          this.bufer_home_page_model=this.home_page_model;
+          this.home_page_model.set("blocks_cnt",blocks_cnt);
+          //////////var blk_obj={};//this.se_model.get("blocks_list");
+          var blk_obj=this.home_page_model.get("blocks_list");
           for (var i=0;i<blocks_cnt;i++) {
                   //this.se_model.reset();
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
@@ -437,13 +451,15 @@ MyApp.module("CManager", function(CManager){
                   }
                   
           };
-          this.se_model.set("blocks_list",blk_obj);
+          ////////this.se_model.set("blocks_list",blk_obj);
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
-          this.se_page_view.model=this.se_model;
-          this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
+          ////////this.se_page_view.model=this.se_model;
+          this.se_page_view.model=this.home_page_model;
+          ////////this.home_page_model=this.se_model;//---WORK WITH HOME_PAGE_MODEL !!!
           console.info("buildSEPage BEFORE home_page_model=",this.home_page_model);
           MyApp.rm.get("homeRegion").show(this.se_page_view.render());
-          this.showBlockType(undefined,'se_model');    
+          ////////this.showBlockType(undefined,'se_model');    
+          this.showBlockType(undefined);    
           for (var i=1;i<=blocks_cnt;i++) {      
                   this.showWidgetContent(i);
           }
@@ -459,6 +475,7 @@ MyApp.module("CManager", function(CManager){
         //CKEDITOR.inlineAll();//---fire rich text editing
         this.fillModelsCollections();
         this.home_page_model=this.bufer_home_page_model;
+        this.bufer_home_page_model=this.home_page_model;
         var blocks_cnt=this.home_page_model.get("blocks_cnt");
         for (var i=1;i<=blocks_cnt;i++) {      
             this.showWidgetContent(i);
