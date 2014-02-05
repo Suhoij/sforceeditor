@@ -442,7 +442,8 @@ MyApp.module("CManager", function(CManager){
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
-                  //console.log("MyApp[cur_widget].model.get('WidgetID')=",MyApp[cur_widget].model.get('WidgetID'));
+                  console.info("buildSEPage MyApp[cur_widget].model WidgetID=",MyApp[cur_widget].model.get('WidgetID'));
+                  console.info("buildSEPage from clm_list[i].widgets[0] WidgetID=",clm_list[i].widgets[0].WidgetID);
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
                          MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model,data_collection:MyApp[cur_widget].data_collection};
