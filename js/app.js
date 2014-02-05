@@ -453,6 +453,7 @@ MyApp.module("CManager", function(CManager){
                   
           };
           ////////this.se_model.set("blocks_list",blk_obj);
+          this.home_page_model.set("blocks_list",blk_obj);
           console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
           ////////this.se_page_view.model=this.se_model;
           this.se_page_view.model=this.home_page_model;
