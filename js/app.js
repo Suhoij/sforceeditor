@@ -329,6 +329,35 @@ MyApp.module("CManager", function(CManager){
        template: "#se-main-page-template",
        model:this.se_model
   });
+  //----------------  Progress ---------------------
+  this.showProgress=function(mes,action,val) {
+    
+    $('.meter').html(mes);
+    if (action == 'show') {
+        $('.progress').removeClass('hide');
+        if (val == undefined) {
+            MyApp.CManager.p_cur=0;
+        } else {
+            MyApp.CManager.p_cur=val;
+        }
+        
+        MyApp.CManager.t1=setInterval(function(){
+                        if (MyApp.CManager.p_cur >=100) {
+                            clearTimeout(MyApp.CManager.t1);
+                            MyApp.CManager.showProgress('Done!','hide');
+                            return;
+                        }
+                        MyApp.CManager.p_cur=MyApp.CManager.p_cur+5;
+                        $('.meter').css('width',MyApp.CManager.p_cur+"%");
+                      },250);
+    };
+    if (action == 'hide') {
+        $('.progress').addClass('hide');
+        $('.meter').html('');
+        clearTimeout(MyApp.CManager.t1);
+        MyApp.CManager.p_cur=0;
+    };
+  };
   //----------------SE Methods----------------------
   this.initSeActions=function(){
       $("#se-open").click(function() {MyApp.CManager.seOpen();MyApp.CManager.hideSeMenu();}   );
@@ -384,14 +413,15 @@ MyApp.module("CManager", function(CManager){
       });
       console.log("Save this ",blocks_list_out);
       //return;
+      MyApp.CManager.showProgress('Save widgets...','show');
       $.ajax ({
           type:"POST",
           url:MyApp.base_url+send_url,
           dataType: "json",
           async: false,
           data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
-          success: function(data){ alert('Widgets has sent successfully!');console.log("success:",data);},
-          error: function(jqXHR, textStatus, errorThrown){ alert("error");console.log("error",errorThrown,textStatus);}
+          success: function(data){ alert('Widgets has sent successfully!');MyApp.CManager.showProgress('Saved! ','hide',100);console.log("success:",data);},
+          error: function(jqXHR, textStatus, errorThrown){ alert("error");MyApp.CManager.showProgress('Error! ','hide',100);console.log("error",errorThrown,textStatus);}
       });
   };
   //----------------Obmen  Methods------------------
@@ -402,6 +432,7 @@ MyApp.module("CManager", function(CManager){
       var url=MyApp.base_url+"widgets.php?action=getPlaceVar&org_id="+MyApp.org_id+"&app_id="+MyApp.app_id+"&slide_id="+MyApp.slide_id;
       // var url=MyApp.base_url+"widgets.php";
       //var params = { action: "getPlaceVar", org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id } ;
+      this.showProgress('Get widgets... ','show',10);
       $.getJSON(url).done(function(data){
                                 try {
                                     MyApp.CManager.clmPlaceholderList=eval(data);
@@ -409,18 +440,20 @@ MyApp.module("CManager", function(CManager){
                                     $('#se-actions').css({left:'-99999px'});
                                     $('#se-actions').removeClass('open');
                                     //$('#se-actions').foundation('dropdown', 'close', $('#se-actions'));
-                                
+                                    MyApp.CManager.showProgress('Done!','hide',100);
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
                                     MyApp.error_data=data;
                                     //delete  MyApp.CManager.clmPlaceholderList;
                                     alert("Convert error...");
+                                    MyApp.CManager.showProgress('Error!','hide',100);
                                     return;
                                 }
                                 MyApp.CManager.buildSEPage();
       }).fail(function( jqxhr, textStatus, error ) {
                 var err = textStatus + ", " + error;
                 alert( "Can't get data from service: " + err );
+                MyApp.CManager.showProgress('Error!','hide',100);
 
       });
   };
@@ -438,20 +471,20 @@ MyApp.module("CManager", function(CManager){
                   console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
-                  console.info("buildSEPage MyApp[cur_widget].model WidgetID=",MyApp[cur_widget].model.get('WidgetID'));
-                  console.info("buildSEPage from clm_list[i].widgets[0] WidgetID=",clm_list[i].widgets[0].WidgetID);
+                  //console.info("buildSEPage MyApp[cur_widget].model WidgetID=",MyApp[cur_widget].model.get('WidgetID'));
+                  //console.info("buildSEPage from clm_list[i].widgets[0] WidgetID=",clm_list[i].widgets[0].WidgetID);
                   if (MyApp[cur_widget].data_collection !=undefined) {                         
                          MyApp[cur_widget].FillCollectionFromCLM(clm_list[i].widgets[0]);
-                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model.clone(),data_collection:MyApp[cur_widget].data_collection};
+                         blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model.clone(),data_collection:MyApp[cur_widget].data_collection.clone()};
                   } else {                         
                          blk_obj["b-"+(i+1)]={type:cur_widget,model:MyApp[cur_widget].model.clone()};
                   }
                   
           };
          
-          console.info('buildSEPage blk_obj=',blk_obj);
+          //console.info('buildSEPage blk_obj=',blk_obj);
           this.home_page_model.set("blocks_list",blk_obj);
-          console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
+          //console.log("clmPlaceholderList=",MyApp.CManager.clmPlaceholderList);
        
           this.se_page_view.model=this.home_page_model;
          
@@ -728,7 +761,11 @@ MyApp.module("RichText", function(RichText){
       if (n != undefined) {
         
           var n_str="-"+n;
-          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+MyApp.RichText.model.get("Data")+"</div>";
+          var rich_text_txt=MyApp.RichText.model.get("Data");
+          if ((rich_text_txt == undefined)||(rich_text_txt == '')) {
+              rich_text_txt=MyApp.RichText.model.get("text_default");
+          }
+          var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+rich_text_txt+"</div>";
           MyApp.RichText.model.set("n_str",n_str);
           console.log("Text.showContent  n=",rich_text_node);
           $(".widget-block-content"+n_str).html("").append(rich_text_node);
