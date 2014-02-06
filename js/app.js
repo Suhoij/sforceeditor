@@ -238,6 +238,7 @@ $(document).on('open', '[data-reveal]', function () {
 $(document).on('close', '[data-reveal]', function (params) {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
+  $(".reveal-modal-bg").hide();//---bug fix
 
 });
 //--------e:-- modal events----------------------------
@@ -481,7 +482,8 @@ MyApp.module("CManager", function(CManager){
           var clm_list=MyApp.CManager.clmPlaceholderList;
           var blocks_cnt = clm_list.length;
           this.bufer_home_page_model=this.home_page_model;
-          this.home_page_model.set("blocks_cnt",blocks_cnt);       
+          this.home_page_model.set("blocks_cnt",blocks_cnt);
+          this.home_page_model.set("blocks_list",{});
           var blk_obj=this.home_page_model.get("blocks_list");
           for (var i=0;i<blocks_cnt;i++) {                 
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
@@ -544,28 +546,33 @@ MyApp.module("CManager", function(CManager){
   this.getBlockModel=function(n){
       return this.home_page_model.get("blocks_list")["b-"+n].model;
   },
-  this.getBlockCollection=function(n){      
+  this.getBlockCollection=function(n,to_collection){      
       console.log("getBlockCollection  [b-"+n+"].data_collection=",this.home_page_model.get("blocks_list")["b-"+n].data_collection);
+      //---May be this way?
+      //if (this.home_page_model.get("blocks_list")["b-"+n].data_collection == undefined) {
+      //    return to_collection;
+      //}
       return this.home_page_model.get("blocks_list")["b-"+n].data_collection;
   },
   this.setBlockModel=function(n,m){
     try {
-      console.log("!!!Try set setBlockModel n="+n+" model=",m);
-      block_model = this.home_page_model.get("blocks_list");
-      block_model["b-"+n].model=m.clone();
-      //block_model.model=m;
-      
+        console.log("!!!Try set setBlockModel n="+n+" model=",m);
+        block_model = this.home_page_model.get("blocks_list");
+        block_model["b-"+n].model={};
+        block_model["b-"+n].model=m.clone();
+        //block_model.model=m;     
     } catch (e) {
        console.info("ERROR setBlockModel ",e.name,e.lineNumber);
     }
   },
   this.setBlockCollection=function(n,col){
     try {      
-      console.log("!!!setBlockCollection n= "+n+" col=",col);
-      block_model = this.home_page_model.get("blocks_list");
-      console.log("!!!setBlockCollection block_model=",block_model);
-      //delete block_model["b-"+n].data_collection;
-      block_model["b-"+n].data_collection=col.clone();
+        console.log("!!!setBlockCollection n= "+n+" col=",col);
+        block_model = this.home_page_model.get("blocks_list");
+        console.log("!!!setBlockCollection block_model=",block_model);
+        //delete block_model["b-"+n].data_collection;
+        block_model["b-"+n].data_collection={};
+        block_model["b-"+n].data_collection=col.clone();
     } catch (e) {
       console.info("ERROR setBlockCollection ",e.name,e.lineNumber);
     }
@@ -604,7 +611,7 @@ MyApp.module("CManager", function(CManager){
                  var cur_block_model = cur_block.model;
                  console.log("setWidgetCurBlock cur_block_model=",cur_block_model.attributes);
                  if (cur_block_model.get("model_name") != widget_name) {
-                      console.info("Error setWidgetCurBlock: ",cur_block_model.get("model_name"),widget_name);
+                      console.info("Error setWidgetCurBlock: ",cur_block_model.get("model_name"),widget_name,n);
                       //---don't write anything !
                       return;
                  }  
@@ -625,7 +632,10 @@ MyApp.module("CManager", function(CManager){
                  if (what == "data_collection") {
                       if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
                          if ((cur_block.data_collection != undefined)&&(cur_block.data_collection != null)) {
-                            MyApp[widget_name].data_collection=this.getBlockCollection(n);                        
+                            var n_collection =this.getBlockCollection(n);
+                            if (n_collection !=undefined) {
+                                MyApp[widget_name].data_collection=n_collection;                        
+                            }else {console.info('Error try set undefined collection');}
                          } else {
                             console.info('Error set empty collection!')
                          }
@@ -957,8 +967,11 @@ MyApp.module("Sortable", function(Sortable){
           //MyApp.Sortable.controller.addCollectionData();
           var n_str = this.model.get("n_str");
           var n=n_str.split("-")[1];
-          if (n_str !="") {                                                      
-                this.data_collection=MyApp.CManager.getBlockCollection(n);
+          if (n_str !="") {
+                var n_collection =this.getBlockCollection(n);
+                if (n_collection !=undefined) {                                                      
+                      this.data_collection=MyApp.CManager.getBlockCollection(n);
+                } else {console.info('Error try set undefined collection');}
           }
           //var data_coll=MyApp.Sortable.data_collection;
           var data_coll=this.data_collection;
@@ -1490,8 +1503,11 @@ MyApp.module("Chart", function(Chart){
         addCollectionData:function() {
             var n_str = MyApp.Chart.model.get("n_str");
             var n=n_str.split("-")[1];
-            if (n_str !="") {                                                      
-                MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
+            if (n_str !="") {
+                      var n_collection =this.getBlockCollection(n);
+                      if (n_collection !=undefined) {                                                      
+                          MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
+                      } else {console.info('Error set undefined collection');}
             }
             if ( MyApp.Chart.data_collection.length <=1) {return;}
             $("#chartDataModal table tbody").empty();
@@ -1785,7 +1801,7 @@ MyApp.module("Chart", function(Chart){
                                     font: labelFont[0], // pie text 
                                     fillStyle: labelFont[1] // pie text color
                                 },
-                                data: [['New Name' , 10], ['New Name1' , 15], ['New Name2' , 20]]
+                                data: [['New Name0' , 10], ['New Name1' , 15], ['New Name2' , 20]]
                             }
                         ]
             });
@@ -1802,6 +1818,7 @@ MyApp.module("Chart", function(Chart){
             console.log("Chart runChartCode done!") ;
     },
     this.showContent=function(n) { 
+      try {
           var n_str=this.model.get("n_str");//-- widget number str for tpl --
           
           //$("#chartwidget-content").empty();//--yf dczrbq ckexfq
@@ -1829,13 +1846,20 @@ MyApp.module("Chart", function(Chart){
          //MyApp.CManager.showBlockType("Chart");
          console.log("Chart showContent done! n_str=",n_str) ;
          //$(".reveal-modal-bg").hide();//--bug fix--
+       } catch (e) {
+          console.info('Error ',arguments.callee.toString(),e.lineNumber);
+       }
     },
     this.show_chart=function() {
-          var n_str=this.model.get("n_str");
-      	  console.log("Module Chart ->show_chart n_str",n_str);
-          this.setChartTheme();
-      	  this.runChartCode();
-          console.log("Chart show_chart done! n_str="+n_str) ;
+          try {
+              var n_str=this.model.get("n_str");
+          	  console.log("BEFORE Chart ->show_chart n_str",n_str);
+              this.setChartTheme();
+          	  this.runChartCode();
+              console.log("AFTER Chart show_chart done! n_str="+n_str) ;
+          } catch (e) {
+              console.info('Error ',e.lineNumber,arguments.callee.toString());
+          }
     },
     this.setChartData=function(){
            var n_str=this.model.get("n_str");
@@ -1847,7 +1871,7 @@ MyApp.module("Chart", function(Chart){
               if (value == NaN) {value=0;}
               collection_data.push([m.get("data_name"),value]);
            };
-           console.log("Chart setChartData  n_str="+n_str) ;
+           //console.log("Chart setChartData  n_str="+n_str) ;
            console.log("Chart setChartData  collection_data=",collection_data) ;
            $('#chartwidget'+n_str).unbind().jqChart('option', 'series')[0].data=collection_data;
            $('#chartwidget'+n_str).unbind().jqChart('update');
