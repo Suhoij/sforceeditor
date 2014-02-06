@@ -352,7 +352,11 @@ MyApp.module("CManager", function(CManager){
                       },250);
     };
     if (action == 'update') {
+        $('.progress').removeClass('hide');
         $('.meter').css('width',val+"%");
+        if (val >=100) {
+           $('.progress').addClass('hide');
+        }
     };
     if (action == 'hide') {
         $('.progress').addClass('hide');
@@ -416,8 +420,8 @@ MyApp.module("CManager", function(CManager){
       });
       console.log("Save this ",blocks_list_out);
       //return;
-      //MyApp.CManager.showProgress('Save widgets...','show');
-      MyApp.CManager.hostsDone=1;
+      MyApp.CManager.showProgress('Save widgets...','show');
+      //MyApp.CManager.hostsDone=1;
       $.ajax ({
           type:"POST",
           url:MyApp.base_url+send_url,
@@ -425,12 +429,13 @@ MyApp.module("CManager", function(CManager){
           async: true,          
           data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
           done: function(msg) { 
-                  MyApp.CManager.hostsDone++;
-                  MyApp.CManager.showProgress('Save widgets...','update',(MyApp.CManager.hostsDone/100)*100);
+                  //MyApp.CManager.hostsDone++;
+                  //MyApp.CManager.showProgress('Save widgets...','update',(MyApp.CManager.hostsDone/100)*100);
                   //updateProgress((hostsDone/hosts)*100);
                   //if(msg !=0 ){
                   //    logSuccess(ipToCheck);
                   // };
+                  console.info("Saved, done "+mes);
           },
           success: function(data){ MyApp.CManager.showProgress('Saved! ','hide',100);alert('Widgets has sent successfully!');console.log("success:",data);},
           error: function(jqXHR, textStatus, errorThrown){ MyApp.CManager.showProgress('Error! ','hide',100);alert("error");console.log("error",errorThrown,textStatus);}
