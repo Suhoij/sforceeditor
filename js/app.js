@@ -238,7 +238,7 @@ $(document).on('open', '[data-reveal]', function () {
 $(document).on('close', '[data-reveal]', function (params) {
   var modal = $(this);
   console.log("modal close ",modal[0].id);
-  $(".reveal-modal-bg").hide();//---bug fix??
+  //$(".reveal-modal-bg").hide();//---bug fix??
 
 });
 //--------e:-- modal events----------------------------
@@ -1894,7 +1894,7 @@ MyApp.module("Chart", function(Chart){
               }
               //---tags checkbox
               //---tags input
-              $("#"+fields[f]).val(f_val);
+              $("#chartControlModal,#"+fields[f]).val(f_val);
               console.log("FillScreenProp field="+fields[f],f_val);
       });
     },
