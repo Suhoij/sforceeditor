@@ -690,6 +690,9 @@ MyApp.module("CManager", function(CManager){
         this.closeBlockType(n,name);
         if (name =="Chart") {
             MyApp.Chart.model.set("type",sub_type.toLowerCase() );
+            if (MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type != undefined) {
+                MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type = sub_type.toLowerCase();
+            }
             this.fillModelsCollections(n);
             this.showWidgetContent(n);
         }
