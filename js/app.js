@@ -351,6 +351,9 @@ MyApp.module("CManager", function(CManager){
                         $('.meter').css('width',MyApp.CManager.p_cur+"%");
                       },250);
     };
+    if (action == 'update') {
+        $('.meter').css('width',val+"%");
+    };
     if (action == 'hide') {
         $('.progress').addClass('hide');
         $('.meter').html('');
@@ -413,15 +416,24 @@ MyApp.module("CManager", function(CManager){
       });
       console.log("Save this ",blocks_list_out);
       //return;
-      MyApp.CManager.showProgress('Save widgets...','show');
+      //MyApp.CManager.showProgress('Save widgets...','show');
+      MyApp.CManager.hostsDone=1;
       $.ajax ({
           type:"POST",
           url:MyApp.base_url+send_url,
           dataType: "json",
-          async: true,
+          async: true,          
           data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
-          success: function(data){ alert('Widgets has sent successfully!');MyApp.CManager.showProgress('Saved! ','hide',100);console.log("success:",data);},
-          error: function(jqXHR, textStatus, errorThrown){ alert("error");MyApp.CManager.showProgress('Error! ','hide',100);console.log("error",errorThrown,textStatus);}
+          done: function(msg) { 
+                  MyApp.CManager.hostsDone++;
+                  MyApp.CManager.showProgress('Save widgets...','update',(MyApp.CManager.hostsDone/100)*100);
+                  //updateProgress((hostsDone/hosts)*100);
+                  //if(msg !=0 ){
+                  //    logSuccess(ipToCheck);
+                  // };
+          },
+          success: function(data){ MyApp.CManager.showProgress('Saved! ','hide',100);alert('Widgets has sent successfully!');console.log("success:",data);},
+          error: function(jqXHR, textStatus, errorThrown){ MyApp.CManager.showProgress('Error! ','hide',100);alert("error");console.log("error",errorThrown,textStatus);}
       });
   };
   //----------------Obmen  Methods------------------
