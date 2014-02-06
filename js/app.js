@@ -418,7 +418,7 @@ MyApp.module("CManager", function(CManager){
           type:"POST",
           url:MyApp.base_url+send_url,
           dataType: "json",
-          async: false,
+          async: true,
           data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
           success: function(data){ alert('Widgets has sent successfully!');MyApp.CManager.showProgress('Saved! ','hide',100);console.log("success:",data);},
           error: function(jqXHR, textStatus, errorThrown){ alert("error");MyApp.CManager.showProgress('Error! ','hide',100);console.log("error",errorThrown,textStatus);}
