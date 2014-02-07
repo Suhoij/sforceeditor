@@ -602,24 +602,29 @@ MyApp.module("CManager", function(CManager){
       console.info("ERROR setBlockCollection ",e.name,e.lineNumber);
     }
   },
-  this.fillModelsCollections=function(n) {//--fill form widget Classes---
+  this.fillModelsCollections=function(n,name,sub_type) {//--fill form widget Classes---
       var blocks = this.home_page_model.get("blocks_list");
-      var w_with_data_col=["Chart","Sortable"];
+   
+    
       if (n != undefined) {//---exectly for block-----
-             var w_model = blocks["b-"+n].model;
-             var w_name = blocks[prop].type;
-             var widget_class_name = w_name.capitalize();//w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
-             this.home_page_model.get("blocks_list")["b-"+n].model=MyApp[widget_class_name].model;
-             this.setBlockModel(n,MyApp[widget_class_name].model);
-             console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
-             if (MyApp[widget_class_name].data_collection !=undefined) {
-                this.setBlockCollection(n,MyApp[widget_class_name].data_collection);
-             }
+              if (name == undefined) {
+                  w_name = blocks[prop].type;
+                  widget_class_name = w_name.capitalize();
+              } else {
+
+                  widget_class_name = name;
+              };
+              this.setBlockModel(n,MyApp[widget_class_name].model);
+              console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
+              if (MyApp[widget_class_name].data_collection !=undefined) {
+                 this.setBlockCollection(n,MyApp[widget_class_name].data_collection);
+              }
       } else { //---all blocks-------------------------
           for (prop in blocks){
             //console.log(prop);
+            var w_with_data_col=["Chart","Sortable"];
             var w_name = blocks[prop].type;
-            var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
+            widget_class_name = w_name.capitalize();//var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
             console.log("fillModelsCollections widget_class_name=",widget_class_name,prop);
             blocks[prop].model = MyApp[widget_class_name].model;
             if ( _.include(w_with_data_col,widget_class_name)) {
@@ -689,7 +694,7 @@ MyApp.module("CManager", function(CManager){
            cur_widget.data_collection = null;
         }
         
-        MyApp.CManager.fillModelsCollections(n);
+        MyApp.CManager.fillModelsCollections(n,name);
         $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+name);  
         $("#cur_block_type_"+n).removeClass("open");
         $('#cur_block_type_'+n).css({left:'-99999px'});
@@ -719,7 +724,7 @@ MyApp.module("CManager", function(CManager){
             //if (MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type != undefined) {
             //    MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type = sub_type.toLowerCase();
             //}
-            this.fillModelsCollections(n);
+            this.fillModelsCollections(n,name,sub_type);
             this.showWidgetContent(n);
         }
   };
