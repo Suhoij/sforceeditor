@@ -187,14 +187,14 @@
      
         <div id="body-chart" class="ui-island placeholder-content">
          
-         <!-- <div class="row center block-type bt-3"></div> -->
+         <!-- <div class="row center block-type bt-3 placeholder-type"></div> -->
           <div class="chart<%= n_str %>">
          <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
          	 
              <div class="row center">
              		<!-- 
              		<div class="columns large-4">
-						<div class="block-type bt-3 row ">Type</div>
+						<div class="block-type bt-3 row placeholder-type">Type</div>
              		</div>
              		-->
              		<div class="placeholder-controls">
@@ -876,7 +876,7 @@
 				 <% _.each(_.keys(MyApp.CManager.home_page_model.get('blocks_list')), function(item){ %>
 						<div class="row placeholder-content">
 							<div class="columns large-10">
-								<div class="block-type bt-<%= item.split('-')[1]  %> row">Type:widget</div>
+								<div class="block-type bt-<%= item.split('-')[1]  %> row placeholder-type">Type:widget</div>
             				</div>
             				<div class="columns large-10">
             					<div class="widget-block-content-<%= item.split('-')[1]  %> row center" ></div>			
@@ -894,7 +894,7 @@
         <div id="left-sidebar"  class="ui-island placeholder-content" >
 		   <div class="row">
      	   	<div class="columns large-12">
-				<div class="block-type bt-1 row">Type</div>
+				<div class="block-type bt-1 row placeholder-type">Type</div>
             </div>
      	  </div>
           <div class="widget-block-content-1 row center" >          	    
@@ -911,7 +911,7 @@
         <div id="title-chart" class="ui-island  hero placeholder-content" >
            <div class="row">
      	   	<div class="columns large-12">
-				<div class="block-type bt-2 row">Type</div>
+				<div class="block-type bt-2 row placeholder-type">Type</div>
             </div>
      	  </div>
           <div class="widget-block-content-2 row center" >          	     
@@ -924,7 +924,7 @@
                      	 
              <div class="row center">
              		<div class="columns large-4">
-						<div class="block-type bt-3 row ">Type</div>
+						<div class="block-type bt-3 row placeholder-type">Type</div>
              		</div>
              	
              </div>
@@ -957,6 +957,6 @@
 	<!-- <script src="http://code.jquery.com/jquery-1.8.3.js"></script> -->
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-    <script src="js/app.js"></script>
+    <script src="js/app.ob.js"></script>
   </body>
 </html>

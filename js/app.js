@@ -375,6 +375,7 @@ MyApp.module("CManager", function(CManager){
   this.hideSeMenu=function(){
       $('#se-actions').css({left:'-99999px'});
   };
+  //-----------------PlaceHolders controls--------------------
   this.changePlBand=function(el){
       //console.log($(el).is(':checked'));
       if ($(el).is(':checked')==false) {
@@ -395,6 +396,27 @@ MyApp.module("CManager", function(CManager){
       };
       this.hideSeMenu();
   };
+  this.bindPlShowHidecontrols=function() {
+      $('.placeholder-content').hover(
+            function(){
+              //--- show type,controls
+              MyApp.CManager.showPlControls(this);
+            },
+            function(){
+              //--- hide type,controls    
+              MyApp.CManager.hidePlControls(this);
+            }
+            );
+  };
+  this.showPlControls=function(el) {
+        pl_tc     = $(el).find('.placeholder-type,.placeholder-controls');              
+        pl_tc.removeClass('hide');
+  };
+  this.hidePlControls=function(el) {
+        pl_tc     = $(el).find('.placeholder-type,.placeholder-controls');              
+        pl_tc.addClass('hide');
+  };
+  //-------------------Slide protokol(open-save)-----------------
   this.seCreate=function(){
       alert("Slide create...");
   };
@@ -462,16 +484,17 @@ MyApp.module("CManager", function(CManager){
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
                                     MyApp.error_data=data;
-                                    //delete  MyApp.CManager.clmPlaceholderList;
-                                    alert("Convert error...");
+                                    //delete  MyApp.CManager.clmPlaceholderList;                                   
                                     MyApp.CManager.showProgress('Error!','hide',100);
+                                    alert("Convert error...");
                                     return;
                                 }
                                 MyApp.CManager.buildSEPage();
       }).fail(function( jqxhr, textStatus, error ) {
                 var err = textStatus + ", " + error;
-                alert( "Can't get data from service: " + err );
                 MyApp.CManager.showProgress('Error!','hide',100);
+                alert( "Can't get data from service: " + err );
+                
 
       });
   };
@@ -514,6 +537,7 @@ MyApp.module("CManager", function(CManager){
           for (var i=1;i<=blocks_cnt;i++) {      
                   this.showWidgetContent(i);
           }
+          this.bindPlShowHidecontrols();
           console.log('buildSEPage AFTER home_page_model=',this.home_page_model);
     } catch (e) {
           console.info("ERROR build slide page ",e.name,e.lineNumber);
@@ -531,6 +555,7 @@ MyApp.module("CManager", function(CManager){
         for (var i=1;i<=blocks_cnt;i++) {      
             this.showWidgetContent(i);
         }
+        this.bindPlShowHidecontrols();
        
   };
   this.getPage=function() { //--from server--
@@ -690,6 +715,7 @@ MyApp.module("CManager", function(CManager){
         this.closeBlockType(n,name);
         if (name =="Chart") {
             MyApp.Chart.model.set("type",sub_type.toLowerCase() );
+            MyApp.Chart.model.set("ChartType",sub_type.toLowerCase() );
             //if (MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type != undefined) {
             //    MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type = sub_type.toLowerCase();
             //}
@@ -716,9 +742,11 @@ MyApp.module("CManager", function(CManager){
                   MyApp.Chart.draw(n);
               } else {
                   var cm_model=MyApp.CManager[pg_m].get("blocks_list")["b-"+n].model;
-                  if (cm_model !=undefined) {
+                  if ((cm_model !=undefined)&&(w_type == MyApp[w_type].model.get('model_name'))) {
                       MyApp[w_type].model=cm_model;
-                  }                
+                  } else {
+                      console.info('ERROR showWidgetContent ',w_type,cm_model,MyApp[w_type].model.get('model_name'));
+                  }               
                   MyApp[w_type].model.set("n_str","-"+n);
                   MyApp[w_type].showContent(n);
                   MyApp[w_type].draw();
@@ -1683,7 +1711,7 @@ MyApp.module("Chart", function(Chart){
                block_model = MyApp.CManager.getBlockModel(block_n);
          }
        
-         var  chartType  = block_model.get("type");
+         var  chartType  = block_model.get("ChartType");
       
           var strFormat = "";
           var valType = "";
