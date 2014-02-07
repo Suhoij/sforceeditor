@@ -690,9 +690,9 @@ MyApp.module("CManager", function(CManager){
         this.closeBlockType(n,name);
         if (name =="Chart") {
             MyApp.Chart.model.set("type",sub_type.toLowerCase() );
-            if (MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type != undefined) {
-                MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type = sub_type.toLowerCase();
-            }
+            //if (MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type != undefined) {
+            //    MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type = sub_type.toLowerCase();
+            //}
             this.fillModelsCollections(n);
             this.showWidgetContent(n);
         }
@@ -971,9 +971,9 @@ MyApp.module("Sortable", function(Sortable){
           var n_str = this.model.get("n_str");
           var n=n_str.split("-")[1];
           if (n_str !="") {
-                var n_collection =this.getBlockCollection(n);
+                var n_collection =MyApp.CManager.getBlockCollection(n);
                 if (n_collection !=undefined) {                                                      
-                      this.data_collection=MyApp.CManager.getBlockCollection(n);
+                      this.data_collection=n_collection;
                 } else {console.info('Error try set undefined collection');}
           }
           //var data_coll=MyApp.Sortable.data_collection;
@@ -1507,9 +1507,9 @@ MyApp.module("Chart", function(Chart){
             var n_str = MyApp.Chart.model.get("n_str");
             var n=n_str.split("-")[1];
             if (n_str !="") {
-                      var n_collection =this.getBlockCollection(n);
+                      var n_collection =MyApp.CManager.getBlockCollection(n);
                       if (n_collection !=undefined) {                                                      
-                          MyApp.Chart.data_collection=MyApp.CManager.getBlockCollection(n);
+                          MyApp.Chart.data_collection=n_collection;
                       } else {console.info('Error set undefined collection');}
             }
             if ( MyApp.Chart.data_collection.length <=1) {return;}
@@ -1828,17 +1828,20 @@ MyApp.module("Chart", function(Chart){
           if (n==undefined) {
               this.chart_view.model=this.model;
               this.chart_view.model.set("n_str",n_str);              
-              MyApp.rm.get("chartRegion").show(this.main_chart_view);            
+              MyApp.rm.get("chartRegion").show(this.main_chart_view);
+              console.info('!!! CHART n=undefined !!!')            
           } else {
               n_str="-"+n;
               //this.model=MyApp.CManager.getBlockModel(n);
               this.chart_view.model=this.model;
               //this.chart_view.model.set("n_str",n_str);//-----SET n_str ------ !!!!            
               $(".widget-block-content"+n_str).empty().html(this.main_chart_view.render().el.innerHTML);
-          }  
 
-         $(document).foundation();
-         $("#chart-control-btn"+n_str).unbind().click(function(){                                                    
+          }  
+          //------bug fix------- !!!
+          $('#chartwidget-content').empty();
+          $(document).foundation();
+          $("#chart-control-btn"+n_str).unbind().click(function(){                                                    
                                                         MyApp.CManager.setWidgetCurBlock($(this),"Chart","model");
                                                         $("#chartControlModal").foundation('reveal', 'open');
                                                      });

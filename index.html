@@ -16,6 +16,8 @@
   </head>
   <style>
 	.bt-img-option {float:right;margin-right:15px}
+	.nav_menu_item {color:white;font-weight: bold;}
+	.nav_menu_pl   {vertical-align: text-top;}
   </style>
   <body>
     
@@ -29,29 +31,34 @@
         </ul>
         <section class="top-bar-section">
           <ul>
-            <li><a href="#" id="head-menu-home">Home Page</a></li>
-            <li><a href="#" id="head-menu-slide"  data-dropdown="se-actions" >Slide-Editor</a>  <!-- data-options="is_hover:true" -->
-       			<div id="se-actions" class="tiny content f-dropdown text-left"  data-dropdown-content>       			  
-       			    <input class="small" id="se-plband" style="vertical-align: text-top;" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" >Widgets band</input><hr>                
-       			    <input class="small" id="se-plcontrols" style="vertical-align: text-top;" type="checkbox" checked onclick="MyApp.CManager.changePlControls(this);" >Control buttons</input><hr>                
-                	<a href="#"  class="button large radius round" style="color:white" id="se-create"  >Create  </a><hr>
-              		<a href="#"  class="button large radius round" style="color:white" id="se-open"  >Open  </a><hr>
-              		<a href="#"  class="button large radius round"  style="color:white" id="se-save"  >Save  </a>          
-              	</div>
+       <!--      <li><a href="#" id="head-menu-home">Home Page</a></li> -->
+            <li><a href="#" id="se-open" >Open</a></li>
+            <li><a href="#" id="se-save">Save</a></li>
+            <li class='nav_menu_item'><input class="small nav_menu_pl" id="se-plband" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" > Show placeholders</input></li>
+
+
+        <!--      <li><a href="#" id="head-menu-slide"  data-dropdown="se-actions" >Slide-Editor</a> -->  <!-- data-options="is_hover:true" -->
+       	<!-- 		<div id="se-actions" class="tiny content f-dropdown text-left"  data-dropdown-content>     -->   			  
+       	<!-- 		    <input class="small" id="se-plband" style="vertical-align: text-top;" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" >Widgets band</input><hr>         -->        
+       	<!-- 		    <input class="small" id="se-plcontrols" style="vertical-align: text-top;" type="checkbox" checked onclick="MyApp.CManager.changePlControls(this);" >Control buttons</input><hr>   -->              
+        <!--         	<a href="#"  class="button large radius round" style="color:white" id="se-create"  >Create  </a><hr> -->
+        <!--         		<a href="#"  class="button large radius round" style="color:white" id="se-open"  >Open  </a><hr> -->
+        <!--         		<a href="#"  class="button large radius round"  style="color:white" id="se-save"  >Save  </a>   -->        
+        <!--      	</div> -->
               
-            </li>
-            <li><a href="#" id="head-menu-video">Widget video</a></li>
+         <!--    </li> -->
+        <!--     <li><a href="#" id="head-menu-video">Widget video</a></li>
             <li><a href="#" id="head-menu-slider" >Widget slider</a></li>
-            <li><a href="#" id="head-menu-sortable">Widget sortable</a></li>
-            <li class="has-dropdown" id="chart-menu">
-              <a href="#">Chart pie</a>
-              <ul class="dropdown">
-                <li><a href="#" jq-type="pie">Pie chart</a></li>
+            <li><a href="#" id="head-menu-sortable">Widget sortable</a></li> -->
+       <!--      <li class="has-dropdown" id="chart-menu"> -->
+        <!--       <a href="#">Chart pie</a> -->
+         <!--      <ul class="dropdown"> -->
+             <!--    <li><a href="#" jq-type="pie">Pie chart</a></li>
                 <li><a href="#" jq-type="line">Line chart</a></li>
                 <li><a href="#" jq-type="spline">Spline chart</a></li>
-                <li><a href="#" jq-type="area">Area chart</a></li>
-              </ul>
-            </li>
+                <li><a href="#" jq-type="area">Area chart</a></li> -->
+           <!--    </ul> -->
+           <!--  </li> -->
           </ul>
         </section>
       </nav>
@@ -103,7 +110,7 @@
 						<a  id="sortable-data-btn<%= n_str %>" class="button" data-reveal-id="sortableDataModal">Sortable   data</a>
 					</div>
 					<div class="large-4 columns" id="slider-logo">
-						<img src="img/sortable.png" />
+					
 					</div>
 				</div>
 		</div>
@@ -126,7 +133,7 @@
 						<a  id="slider-control-btn<%= n_str %>" class="button" data-reveal-id="sliderControlModal">Slider controls</a>
 					</div>
 					<div class="large-4 columns" id="slider-logo">
-						<img src="img/slider.png" />
+					
 					</div>
 				</div>
 			</div>
@@ -150,7 +157,7 @@
 					<a  id="video-control-btn<%= n_str %>" class="button" data-reveal-id="videoControlModal">Video controls</a>
 				</div>
 				<div class="large-4 columns" id="video-logo<%= n_str %>">
-					<img src="img/youtube.png" />
+					
 				</div>
 
 			</div>
@@ -950,6 +957,6 @@
 	<!-- <script src="http://code.jquery.com/jquery-1.8.3.js"></script> -->
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-    <script src="js/app.ob.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
