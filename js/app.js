@@ -20,7 +20,7 @@ var FieldsObjectsCollection = Backbone.Collection.extend({
 });
 
 MyApp.addInitializer(function(options){
-  //this.base_url="http://ppthtml2.cloudapp.net/";
+  this.base_url=window.location.origin+"/";//"http://ppthtml2.cloudapp.net/";
   this.state='init';
   this.sf_app_params={};
   this.widget_regions={};
@@ -254,6 +254,7 @@ MyApp.vent.on("getSfparams", function(){
   MyApp.app_id    =MyApp.getUrlParams()['app_id'];
   MyApp.slide_id  =MyApp.getUrlParams()['slide_id'];
   MyApp.session_id=MyApp.getUrlParams()['session_id'];
+  console.log('getSfparams done: ',  MyApp.base_url);
 });
 MyApp.on("initialize:after", function(options){
   MyApp.rm.addRegions(MyApp.zero_regions);
@@ -423,7 +424,8 @@ MyApp.module("CManager", function(CManager){
   };
   //-------------------Slide protokol(open-save)-----------------
   this.isSlideValid=function() {
-      if (MyApp.base_url == undefined) { return false;}
+      //if (MyApp.base_url == undefined) { return false;}
+      console.info("isSlideValid MyApp.base_url=",MyApp.base_url);
       var send_url="widgets.php";
       $.ajax ({
           type:"POST",
