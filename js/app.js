@@ -24,6 +24,7 @@ MyApp.addInitializer(function(options){
   this.sf_app_params={};
   this.widget_regions={};
   this.zero_regions={
+        errorRegion:"#errorwidget-content",
         homeRegion:"#homewidget-content",
         slideEditorRegion:"#slideeditor-content",
         videoRegion:"#videowidget-content",
@@ -417,6 +418,24 @@ MyApp.module("CManager", function(CManager){
         pl_tc.addClass('hide');
   };
   //-------------------Slide protokol(open-save)-----------------
+  this.isSlideValid=function() {
+      var send_url="widgets.php";
+      $.ajax ({
+          type:"POST",
+          url:MyApp.base_url+send_url,
+          dataType: "json",
+          async: false,          
+          data: {action:'isSlideValid',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id},
+          done: function(msg) {       
+                  console.info("done isSlideValid "+mes);
+          },
+          success: function(data){ MyApp.CManager.slideValid=data;console.log("isSlideValid success:",data);},
+          error: function(jqXHR, textStatus, errorThrown){ MyApp.CManager.slideValid='no';console.log("isSlideValid error",errorThrown,textStatus);}
+      });
+      if (MyApp.CManager.slideValid=='yes') {
+          return true;
+      } else return false;
+  };
   this.seCreate=function(){
       alert("Slide create...");
   };
@@ -543,7 +562,15 @@ MyApp.module("CManager", function(CManager){
           console.info("ERROR build slide page ",e.name,e.lineNumber);
   }
   };
+  this.showErrorPage=function() {
+      MyApp.rm.get("errorRegion").show("<h2>Slider ID not valid!</h2>");  
+  };
   this.showHomePage=function() {
+        if (this.isSlideValid() == false) {
+           this.showErrorPage();
+           return; 
+        }
+
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
         MyApp.rm.get("homeRegion").show(this.home_page_view);   
         MyApp.CManager.showBlockType();
