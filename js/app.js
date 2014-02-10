@@ -3,7 +3,7 @@ $(document).ready(function(){
   $(document).foundation();
   MyApp.start({'sf_app_params':{org_id:1,app_id:11,slide_id:111,session_id:1111}});
   MyApp.vent.trigger("getSfparams"); 
-  MyApp.CManager.showBlockType();
+  //MyApp.CManager.showBlockType();
 });
 //----------------------MAIN----------------------
 
@@ -19,7 +19,7 @@ var FieldsObjectsCollection = Backbone.Collection.extend({
 });
 
 MyApp.addInitializer(function(options){
-  this.base_url="http://ppthtml2.cloudapp.net/";
+  //this.base_url="http://ppthtml2.cloudapp.net/";
   this.state='init';
   this.sf_app_params={};
   this.widget_regions={};
@@ -68,6 +68,9 @@ MyApp.addInitializer(function(options){
     function(m,key,value) {
       vars[key] = value;
     });
+    if (!window.location.origin)
+          window.location.origin = window.location.protocol+"//"+window.location.host+"/";
+    vars['base_url'] = window.location.origin;
     return vars;
   
   };
@@ -245,9 +248,10 @@ $(document).on('close', '[data-reveal]', function (params) {
 //--------e:-- modal events----------------------------
 MyApp.vent.on("getSfparams", function(){
   //console.table(MyApp.options);
-  MyApp.org_id=MyApp.getUrlParams()['org_id'];
-  MyApp.app_id=MyApp.getUrlParams()['app_id'];
-  MyApp.slide_id=MyApp.getUrlParams()['slide_id'];
+  MyApp.base_url  =MyApp.getUrlParams()['base_url'];
+  MyApp.org_id    =MyApp.getUrlParams()['org_id'];
+  MyApp.app_id    =MyApp.getUrlParams()['app_id'];
+  MyApp.slide_id  =MyApp.getUrlParams()['slide_id'];
   MyApp.session_id=MyApp.getUrlParams()['session_id'];
 });
 MyApp.on("initialize:after", function(options){
@@ -471,12 +475,7 @@ MyApp.module("CManager", function(CManager){
           async: true,          
           data: {action:'sendWidgets',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id,blocks_list:blocks_list_out},
           done: function(msg) { 
-                  //MyApp.CManager.hostsDone++;
-                  //MyApp.CManager.showProgress('Save widgets...','update',(MyApp.CManager.hostsDone/100)*100);
-                  //updateProgress((hostsDone/hosts)*100);
-                  //if(msg !=0 ){
-                  //    logSuccess(ipToCheck);
-                  // };
+
                   console.info("Saved, done "+mes);
           },
           success: function(data){ MyApp.CManager.showProgress('Saved! ','hide',100);alert('Widgets has sent successfully!');console.log("success:",data);},
@@ -563,7 +562,8 @@ MyApp.module("CManager", function(CManager){
   }
   };
   this.showErrorPage=function() {
-      MyApp.rm.get("errorRegion").show("<h2>Slider ID not valid!</h2>");  
+      //MyApp.rm.get("errorRegion").show("<h2>Slider ID not valid!</h2>");  
+      $("#errorwidget-content").html("<h2>Slider ID not valid!</h2>");  
   };
   this.showHomePage=function() {
         if (this.isSlideValid() == false) {
