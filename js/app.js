@@ -69,8 +69,8 @@ MyApp.addInitializer(function(options){
       vars[key] = value;
     });
     if (!window.location.origin)
-          window.location.origin = window.location.protocol+"//"+window.location.host+"/";
-    vars['base_url'] = window.location.origin;
+          window.location.origin = window.location.protocol+"//"+window.location.host;
+    vars['base_url'] = window.location.origin+"/";
     return vars;
   
   };
@@ -269,7 +269,6 @@ MyApp.on("initialize:after", function(options){
       MyApp.module("Slider").start();
       MyApp.module("Sortable").start();
       MyApp.module("CManager").start();
-      //MyApp.Chart.draw();
       MyApp.CManager.showHomePage(); 
       //MyApp.CManager.buildPage(); 
 
