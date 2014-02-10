@@ -423,7 +423,7 @@ MyApp.module("CManager", function(CManager){
       $.ajax ({
           type:"POST",
           url:MyApp.base_url+send_url,
-          dataType: "json",
+          dataType: "text",
           async: false,          
           data: {action:'isSlideValid',org_id: MyApp.org_id,app_id:MyApp.app_id,slide_id:MyApp.slide_id},
           done: function(msg) {       
