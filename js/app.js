@@ -1,8 +1,10 @@
 //----------------------MAIN------------------------
 $(document).ready(function(){
-  $(document).foundation();
+  
+  MyApp.vent.trigger("getSfparams");
+  $(document).foundation(); 
   MyApp.start({'sf_app_params':{org_id:1,app_id:11,slide_id:111,session_id:1111}});
-  MyApp.vent.trigger("getSfparams"); 
+ 
   //MyApp.CManager.showBlockType();
 });
 //----------------------MAIN----------------------
@@ -422,6 +424,7 @@ MyApp.module("CManager", function(CManager){
   };
   //-------------------Slide protokol(open-save)-----------------
   this.isSlideValid=function() {
+      if (MyApp.base_url == undefined) { return false;}
       var send_url="widgets.php";
       $.ajax ({
           type:"POST",
