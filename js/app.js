@@ -12,7 +12,7 @@ $(document).ready(function(){
 MyApp    = new Backbone.Marionette.Application();
 MyApp.rm = new Marionette.RegionManager();
 MyApp.rm.on("show", function(name, region){
-  console.log("REGION SHOW ",name,region);
+  //console.log("REGION SHOW ",name,region);
 });
 
 //---------------Model Fields&Objects--------------
@@ -90,7 +90,7 @@ MyApp.addInitializer(function(options){
   };
   this.customStyleChange=function(el) {
     var widget_type=el.getAttribute("widgettype");
-    console.log("customStyleChange ",$(el),widget_type);
+    //console.log("customStyleChange ",$(el),widget_type);
     if ( $(el).prop("checked")==true){
           $('#customStyleInput[widgettype="'+widget_type+'"]').show().focus();
           $('#themeList[widgettype="'+widget_type+'"]').attr('disabled', 'disabled');
@@ -103,7 +103,7 @@ MyApp.addInitializer(function(options){
   this.initChartMenu=function() {  
      $(".dropdown >li >a").click(function(){
             var chart_type=$(this).attr("jq-type");
-            console.log(chart_type);
+            //console.log(chart_type);
 
             $("#chart-menu >a").text($(this).text());           
             MyApp.Chart.model.set("type",chart_type);
@@ -220,7 +220,7 @@ try {
 //--------b:-- modal events----------------------------
 $(document).on('open', '[data-reveal]', function () {
   var modal = $(this);
-  console.log("modal open ",modal[0].id);
+  //console.log("modal open ",modal[0].id);
   if (modal[0].id=="chartControlModal") {
       MyApp.Chart.FillScreenProp();
   }
@@ -242,7 +242,7 @@ $(document).on('open', '[data-reveal]', function () {
 });
 $(document).on('close', '[data-reveal]', function (params) {
   var modal = $(this);
-  console.log("modal close ",modal[0].id);
+  //console.log("modal close ",modal[0].id);
   //$(".reveal-modal-bg").hide();//---bug fix??
 
 });
@@ -254,13 +254,13 @@ MyApp.vent.on("getSfparams", function(){
   MyApp.app_id    =MyApp.getUrlParams()['app_id'];
   MyApp.slide_id  =MyApp.getUrlParams()['slide_id'];
   MyApp.session_id=MyApp.getUrlParams()['session_id'];
-  console.log('getSfparams done: ',  MyApp.base_url);
+  //console.log('getSfparams done: ',  MyApp.base_url);
 });
 MyApp.on("initialize:after", function(options){
   MyApp.rm.addRegions(MyApp.zero_regions);
   if (Backbone.history){
       Backbone.history.start();
-      console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
+      //console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
       MyApp.initHeadMenu();
       MyApp.initChartMenu();
       MyApp.initFieldsObjectsCollection();
@@ -425,7 +425,7 @@ MyApp.module("CManager", function(CManager){
   //-------------------Slide protokol(open-save)-----------------
   this.isSlideValid=function() {
       //if (MyApp.base_url == undefined) { return false;}
-      console.info("isSlideValid MyApp.base_url=",MyApp.base_url);
+      //console.info("isSlideValid MyApp.base_url=",MyApp.base_url);
       var send_url="widgets.php";
       $.ajax ({
           type:"POST",
@@ -531,7 +531,7 @@ MyApp.module("CManager", function(CManager){
           var blk_obj=this.home_page_model.get("blocks_list");
           for (var i=0;i<blocks_cnt;i++) {                 
                   cur_type=clm_list[i].widgets[0].Type.del_spaces();
-                  console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
+                  //console.log("clm_list["+i+"].widgets[0].type=",cur_type);                  
                   cur_widget = cur_type.capitalize();
                   MyApp[cur_widget].FillModelFromCLM(clm_list[i].widgets[0]);                  
                   //console.info("buildSEPage MyApp[cur_widget].model WidgetID=",MyApp[cur_widget].model.get('WidgetID'));
@@ -551,7 +551,7 @@ MyApp.module("CManager", function(CManager){
        
           this.se_page_view.model=this.home_page_model;
          
-          console.info("buildSEPage BEFORE home_page_model=",this.home_page_model);
+          //console.info("buildSEPage BEFORE home_page_model=",this.home_page_model);
           MyApp.rm.get("homeRegion").show(this.se_page_view.render());
            
           this.showBlockType(undefined);    
@@ -559,21 +559,25 @@ MyApp.module("CManager", function(CManager){
                   this.showWidgetContent(i);
           }
           this.bindPlShowHidecontrols();
-          console.log('buildSEPage AFTER home_page_model=',this.home_page_model);
+          //console.log('buildSEPage AFTER home_page_model=',this.home_page_model);
     } catch (e) {
           console.info("ERROR build slide page ",e.name,e.lineNumber);
   }
   };
-  this.showErrorPage=function() {
-      //MyApp.rm.get("errorRegion").show("<h2>Slider ID not valid!</h2>");  
-      $("#errorwidget-content").html("<h2>Slider ID not valid!</h2>");  
+  this.showErrorPage=function(mes) {
+      //MyApp.rm.get("errorRegion").show("<h2>Slider ID not valid!</h2>");
+      if (mes==undefined) {
+          mes='Slider ID not valid!'  ;
+      }
+      $("#errorwidget-content").html("<img src='img/ctmobile.logo.png'></img><h3>"+mes+"</h3>");  
   };
   this.showHomePage=function() {
         if (this.isSlideValid() == false) {
            this.showErrorPage();
            return; 
         }
-
+        MyApp.CManager.seOpen();
+        return;
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
         MyApp.rm.get("homeRegion").show(this.home_page_view);   
         MyApp.CManager.showBlockType();
@@ -602,7 +606,7 @@ MyApp.module("CManager", function(CManager){
       return this.home_page_model.get("blocks_list")["b-"+n].model;
   },
   this.getBlockCollection=function(n,to_collection){      
-      console.log("getBlockCollection  [b-"+n+"].data_collection=",this.home_page_model.get("blocks_list")["b-"+n].data_collection);
+      //console.log("getBlockCollection  [b-"+n+"].data_collection=",this.home_page_model.get("blocks_list")["b-"+n].data_collection);
       //---May be this way?
       //if (this.home_page_model.get("blocks_list")["b-"+n].data_collection == undefined) {
       //    return to_collection;
@@ -611,7 +615,7 @@ MyApp.module("CManager", function(CManager){
   },
   this.setBlockModel=function(n,m){
     try {
-        console.log("!!!Try set setBlockModel n="+n+" model=",m);
+        //console.log("!!!Try set setBlockModel n="+n+" model=",m);
         block_model = this.home_page_model.get("blocks_list");
         block_model["b-"+n].model={};
         block_model["b-"+n].model=m.clone();
@@ -622,9 +626,9 @@ MyApp.module("CManager", function(CManager){
   },
   this.setBlockCollection=function(n,col){
     try {      
-        console.log("!!!setBlockCollection n= "+n+" col=",col);
+        //console.log("!!!setBlockCollection n= "+n+" col=",col);
         block_model = this.home_page_model.get("blocks_list");
-        console.log("!!!setBlockCollection block_model=",block_model);
+        //console.log("!!!setBlockCollection block_model=",block_model);
         //delete block_model["b-"+n].data_collection;
         block_model["b-"+n].data_collection={};
         block_model["b-"+n].data_collection=col.clone();
@@ -645,7 +649,7 @@ MyApp.module("CManager", function(CManager){
                   widget_class_name = name;
               };
               this.setBlockModel(n,MyApp[widget_class_name].model);
-              console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
+              //console.log("N "+n+" fillModelsCollections widget_class_name=",widget_class_name,this.home_page_model.get("blocks_list")["b-"+n].model);
               if (MyApp[widget_class_name].data_collection !=undefined) {
                  this.setBlockCollection(n,MyApp[widget_class_name].data_collection);
               }
@@ -655,7 +659,7 @@ MyApp.module("CManager", function(CManager){
             var w_with_data_col=["Chart","Sortable"];
             var w_name = blocks[prop].type;
             widget_class_name = w_name.capitalize();//var widget_class_name=  w_name.charAt(0).toUpperCase() + w_name.slice(1).toLowerCase();
-            console.log("fillModelsCollections widget_class_name=",widget_class_name,prop);
+            //console.log("fillModelsCollections widget_class_name=",widget_class_name,prop);
             blocks[prop].model = MyApp[widget_class_name].model;
             if ( _.include(w_with_data_col,widget_class_name)) {
                 blocks[prop].data_collection = MyApp[widget_class_name].data_collection;
@@ -669,7 +673,7 @@ MyApp.module("CManager", function(CManager){
                  var n=click_el.prop("id").match(/\d$/)[0];
                  var cur_block=this.home_page_model.get("blocks_list")["b-"+n];
                  var cur_block_model = cur_block.model;
-                 console.log("setWidgetCurBlock cur_block_model=",cur_block_model.attributes);
+                 //console.log("setWidgetCurBlock cur_block_model=",cur_block_model.attributes);
                  if (cur_block_model.get("model_name") != widget_name) {
                       console.info("Error setWidgetCurBlock: ",cur_block_model.get("model_name"),widget_name,n);
                       //---don't write anything !
@@ -680,13 +684,13 @@ MyApp.module("CManager", function(CManager){
                  var cur_type = cur_block.type;
                 
               
-                 console.log("!setWidgetCurBlock n="+n+" cur_type="+cur_type);
+                 //console.log("!setWidgetCurBlock n="+n+" cur_type="+cur_type);
                  
                  if (what == "model") {
                       //---Тип блока в CManager должен совпадать с типом класса вызова!
                       if (cur_type.toLowerCase() == widget_name.toLowerCase()) {
                          MyApp[widget_name].model=this.getBlockModel(n);                      
-                         console.log("!!setWidgetCurBlock model from CManager is ",this.getBlockModel(n));
+                         //console.log("!!setWidgetCurBlock model from CManager is ",this.getBlockModel(n));
                       }
                  }
                  if (what == "data_collection") {
@@ -697,7 +701,7 @@ MyApp.module("CManager", function(CManager){
                                 MyApp[widget_name].data_collection=n_collection;                        
                             }else {console.info('Error try set undefined collection');}
                          } else {
-                            console.info('Error set empty collection!')
+                            //console.info('Error set empty collection!')
                          }
                       }
                  }
@@ -713,7 +717,7 @@ MyApp.module("CManager", function(CManager){
         //MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].model=null;
         //MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].data_collection=null;
         MyApp.CManager.setBlockModel(n,MyApp[name.capitalize()].model);
-        console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
+        //console.log("closeBlockType set type "+MyApp.CManager.home_page_model.get("blocks_list")["b-"+n].type);
         //---set first model, collection--
         var cur_widget   = MyApp.CManager.home_page_model.get("blocks_list")["b-"+n];
         cur_widget.model = MyApp[name.capitalize()].model;
@@ -769,7 +773,7 @@ MyApp.module("CManager", function(CManager){
         try {
               w_type=w_type.capitalize(); 
                $("a[data-dropdown=cur_block_type_"+n+"]").html("<b>Type:</b> "+w_type); 
-              console.log("BEGIN)showWidgetContent w_type="+w_type+" n="+n);
+              //console.log("BEGIN)showWidgetContent w_type="+w_type+" n="+n);
               if (w_type == "RichText") {
                   //MyApp.RichText.clearContent(n);
               }
@@ -780,13 +784,13 @@ MyApp.module("CManager", function(CManager){
                   if ((cm_model !=undefined)&&(w_type == MyApp[w_type].model.get('model_name'))) {
                       MyApp[w_type].model=cm_model;
                   } else {
-                      console.info('ERROR showWidgetContent ',w_type,cm_model,MyApp[w_type].model.get('model_name'));
+                      //console.info('ERROR showWidgetContent ',w_type,cm_model,MyApp[w_type].model.get('model_name'));
                   }               
                   MyApp[w_type].model.set("n_str","-"+n);
                   MyApp[w_type].showContent(n);
                   MyApp[w_type].draw();
               }       
-              console.log("END)showWidgetContent w_type="+w_type+" n="+n);
+              //console.log("END)showWidgetContent w_type="+w_type+" n="+n);
               //if (w_type != "Text") {  
         } catch (e) {
            console.error("Can't create widget: "+w_type+"->"+e.name+"line:"+e.lineNumber);
@@ -838,7 +842,7 @@ MyApp.module("RichText", function(RichText){
    this.FillModelFromCLM=function(prop){
         if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
-           console.info("RichText  FillModelFromCLM set,get,WidgetID=",prop.WidgetID,this.model.get("WidgetID"));
+           //console.info("RichText  FillModelFromCLM set,get,WidgetID=",prop.WidgetID,this.model.get("WidgetID"));
         };
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
@@ -860,9 +864,9 @@ MyApp.module("RichText", function(RichText){
           }
           var rich_text_node="<div id='rich-text"+n_str+"' contenteditable='true'>"+rich_text_txt+"</div>";
           MyApp.RichText.model.set("n_str",n_str);
-          console.log("Text.showContent  n=",rich_text_node);
+          //console.log("Text.showContent  n=",rich_text_node);
           $(".widget-block-content"+n_str).html("").append(rich_text_node);
-          console.log("Text showContent attr  n_str=",n_str);              
+          //console.log("Text showContent attr  n_str=",n_str);              
           //CKEDITOR.replace("rich-text"+n_str);          
           try {
               CKEDITOR.inline("rich-text"+n_str);
@@ -876,7 +880,7 @@ MyApp.module("RichText", function(RichText){
         var n_str="-"+n;
         $(".widget-block-content"+n_str).empty();
         CKEDITOR.remove(CKEDITOR.instances['rich-text'+n_str]);
-        console.log("hideContent AFTER prop=");
+        //console.log("hideContent AFTER prop=");
    };
    this.draw=function() {
          //var n_str= MyApp.Text.model.get("n_str");
@@ -972,7 +976,7 @@ MyApp.module("Sortable", function(Sortable){
               uncode_data=[{data_name:'Error-data-1',data_value:1},{data_name:'Error-data-2',data_value:2}];
           }
         };
-        console.info("Sortable FillCollectionFromCLM=",uncode_data);
+        //console.info("Sortable FillCollectionFromCLM=",uncode_data);
         if (uncode_data == undefined) { return;}//--Don't write anything!
         if ((uncode_data.length>=1) ){
             this.data_collection.reset();
@@ -1019,12 +1023,12 @@ MyApp.module("Sortable", function(Sortable){
               var f_val=MyApp.Sortable.model.get(fields[i]);
               //---tags select
               if (f=="themeList") {
-                  console.log("sortable themeList",f_val);
+                  //console.log("sortable themeList",f_val);
               }
               //---tags checkbox
               //---tags input
               $("#"+fields[f]).val(f_val);
-              console.log("Sortable fields[i]="+fields[i]+" f_val="+f_val);
+              //console.log("Sortable fields[i]="+fields[i]+" f_val="+f_val);
   
           });
           MyApp.FillScreenFieldsObjects("sortable");//--select fill--
@@ -1076,16 +1080,16 @@ MyApp.module("Sortable", function(Sortable){
           //--------  fill CManager Model ----------
           var n_str=this.model.get("n_str");
           MyApp.CManager.setBlockModel(n_str.split("-")[1],this.model);
-          console.log("SORTABLE FillModelProp n_str="+n_str,this.model);
+          //console.log("SORTABLE FillModelProp n_str="+n_str,this.model);
     };
     this.FillCollectionData=function() {
-          console.log("FillCollectionData");
+          //console.log("FillCollectionData");
           MyApp.Sortable.data_collection.reset();
           $("#sortableDataModal  table tbody tr").each(function(i) {
               var fields = $(this).find("input");
               var name = fields.eq(0).val();
               var value = fields.eq(1).val();
-              console.log("Sortable FillCollectionData ",name,value);
+              //console.log("Sortable FillCollectionData ",name,value);
               MyApp.Sortable.data_collection.add({data_name:name,data_value:value,data_i:i});              
           });
           //--------  fill CManager Collection ----------
@@ -1238,7 +1242,7 @@ MyApp.module("Slider", function(Slider){
     };
     this.FillScreenProp=function(){
           var fields = _.keys(MyApp.Slider.model.attributes);
-          console.log("SLIDER FillScreenProp fields=",fields);
+          //console.log("SLIDER FillScreenProp fields=",fields);
           jQuery.each(fields,function(i,f) {
               var f_val=MyApp.Slider.model.get(f);
               //---tags select
@@ -1248,7 +1252,7 @@ MyApp.module("Slider", function(Slider){
               //---tags checkbox
               //---tags input
               $("#"+f).val(f_val);
-              console.log("FillScreenSliderProp field="+f,MyApp.Slider.model.get(f));
+              //console.log("FillScreenSliderProp field="+f,MyApp.Slider.model.get(f));
           });
           MyApp.FillScreenFieldsObjects("slider");
     };
@@ -1284,9 +1288,9 @@ MyApp.module("Slider", function(Slider){
     this.setSliderTheme=function() {
           var n_str=this.model.get("n_str");
           var themeList=this.model.get("themeList");
-          console.log("setSliderTheme...themeList=",themeList);
+          //console.log("setSliderTheme...themeList=",themeList);
           var css_str="<link rel='stylesheet' type='text/css' href='JSLibrary/css/themes/" + themeList.replace("-","") +".css'  />";
-          console.log("css_str=",css_str);
+          //console.log("css_str=",css_str);
           $("#sliderwidget-theme"+n_str).html(css_str);
         
             // <script type="text/javascript" src="JSLibrary/js/jquery-ui-1.9.1.min.js"></script>
@@ -1403,7 +1407,7 @@ MyApp.module("Video", function(Video){
               $("#video-logo"+n_str).html("<img src='img/video.jpeg'  />");
           }
           var vp_html=this.video_player_view.render().el.innerHTML;
-          console.log("----------showVideoPlayer--n_str ="+n_str);
+          //console.log("----------showVideoPlayer--n_str ="+n_str);
           // console.log(vp_html);
           $("#video-player"+n_str).html(vp_html);
     };
@@ -1442,7 +1446,7 @@ MyApp.module("Video", function(Video){
 
               }           
               $("#"+fields[f]).val(f_val);
-              console.log("VIDEO field="+fields[f],this.model.get(fields[f]));
+              //console.log("VIDEO field="+fields[f],this.model.get(fields[f]));
       });
     };
     this.FillModelProp=function() {
@@ -1601,7 +1605,7 @@ MyApp.module("Chart", function(Chart){
         delData: function(row_ptr){
           //this.trigger("data:done", this.stuff);
           //alert("delData from chart controller");
-          console.log(row_ptr);
+          //console.log(row_ptr);
           //$(row_ptr).closest('tr').remove();
           
         }
@@ -1612,7 +1616,7 @@ MyApp.module("Chart", function(Chart){
     this.FillModelFromCLM=function(prop){
        if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
-           console.info("Chart  FillModelFromCLM WidgetID=",prop.WidgetID);
+           //console.info("Chart  FillModelFromCLM WidgetID=",prop.WidgetID);
        };
        if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
@@ -1686,7 +1690,7 @@ MyApp.module("Chart", function(Chart){
         // var click_cnt = this.model.get("type_prop")[cur_type].click_cnt++;
       } catch(e) {
           click_cnt =1;
-          console.info("Error chart.clickLinkShow..."+e.name+"line:"+e.lineNumber);
+          //console.info("Error chart.clickLinkShow..."+e.name+"line:"+e.lineNumber);
       }
       return click_cnt;
     
@@ -1722,7 +1726,7 @@ MyApp.module("Chart", function(Chart){
                 $("#chartwidget-content").empty();
             }
         } catch (e) {
-          console.info("Error chart draw ",e.name,e.lineNumber);
+          //console.info("Error chart draw ",e.name,e.lineNumber);
           $(".reveal-modal-bg").hide();//--- fix black screen bag--
         }
     },
@@ -1881,7 +1885,7 @@ MyApp.module("Chart", function(Chart){
                            data.value + ' (' + percentage + ')';
                 });
             }
-            console.log("Chart runChartCode done!") ;
+            //console.log("Chart runChartCode done!") ;
     },
     this.showContent=function(n) { 
       try {
@@ -1892,7 +1896,7 @@ MyApp.module("Chart", function(Chart){
               this.chart_view.model=this.model;
               this.chart_view.model.set("n_str",n_str);              
               MyApp.rm.get("chartRegion").show(this.main_chart_view);
-              console.info('!!! CHART n=undefined !!!')            
+              //console.info('!!! CHART n=undefined !!!')            
           } else {
               n_str="-"+n;
               //this.model=MyApp.CManager.getBlockModel(n);
@@ -1913,7 +1917,7 @@ MyApp.module("Chart", function(Chart){
                                                         $("#chartDataModal").foundation('reveal', 'open');
                                                      });
          //MyApp.CManager.showBlockType("Chart");
-         console.log("Chart showContent done! n_str=",n_str) ;
+         //console.log("Chart showContent done! n_str=",n_str) ;
          //$(".reveal-modal-bg").hide();//--bug fix--
        } catch (e) {
           console.info('Error ',arguments.callee.toString(),e.lineNumber);
@@ -1922,10 +1926,10 @@ MyApp.module("Chart", function(Chart){
     this.show_chart=function() {
           try {
               var n_str=this.model.get("n_str");
-          	  console.log("BEFORE Chart ->show_chart n_str",n_str);
+          	  //console.log("BEFORE Chart ->show_chart n_str",n_str);
               this.setChartTheme();
           	  this.runChartCode();
-              console.log("AFTER Chart show_chart done! n_str="+n_str) ;
+              //console.log("AFTER Chart show_chart done! n_str="+n_str) ;
           } catch (e) {
               console.info('Error ',e.lineNumber,arguments.callee.toString());
           }
@@ -1941,19 +1945,19 @@ MyApp.module("Chart", function(Chart){
               collection_data.push([m.get("data_name"),value]);
            };
            //console.log("Chart setChartData  n_str="+n_str) ;
-           console.log("Chart setChartData  collection_data=",collection_data) ;
+           //console.log("Chart setChartData  collection_data=",collection_data) ;
            $('#chartwidget'+n_str).unbind().jqChart('option', 'series')[0].data=collection_data;
            $('#chartwidget'+n_str).unbind().jqChart('update');
-           console.log("Chart setChartData done!  n_str="+n_str) ;
+           //console.log("Chart setChartData done!  n_str="+n_str) ;
     },
     this.FillScreenProp=function() {    
       var n_str=this.model.get("n_str");     
-      console.log("CHART FillScreenChartProp n_str="+n_str+" model BEFORE set n=",MyApp.Chart.model.attributes);
+      //console.log("CHART FillScreenChartProp n_str="+n_str+" model BEFORE set n=",MyApp.Chart.model.attributes);
       var n = n_str.split("-")[1];
       if (n != undefined) {
           MyApp.Chart.model=MyApp.CManager.getBlockModel(n);        
       }
-      console.log("CHART FillScreenChartProp model AFTER set n=",MyApp.Chart.model.attributes);
+      //console.log("CHART FillScreenChartProp model AFTER set n=",MyApp.Chart.model.attributes);
       var fields = _.keys(MyApp.Chart.model.attributes);
       jQuery.each(fields,function(f) {
               var f_val=MyApp.Chart.model.get(fields[f]);
@@ -1964,15 +1968,15 @@ MyApp.module("Chart", function(Chart){
               //---tags checkbox
               //---tags input
               $("#chartControlModal,#"+fields[f]).val(f_val);
-              console.log("FillScreenProp field="+fields[f],f_val);
+              //console.log("FillScreenProp field="+fields[f],f_val);
       });
     },
     this.FillScreenData=function() {
-          console.log("FillScreenChartData");        
+          //console.log("FillScreenChartData");        
           MyApp.Chart.controller.addCollectionData();
     },
     this.FillModelProp=function() {
-          console.log("FillModelChartProp");
+          //console.log("FillModelChartProp");
           var screen_items=$("form[name='chart-prop'] select,input");//---check on ??
           var prop_arr=[];
           //--select id,name from screen_items
@@ -2002,13 +2006,13 @@ MyApp.module("Chart", function(Chart){
     },
     this.FillCollectionData=function() {
           var n_str=this.model.get("n_str");
-          console.log("FillCollectionChartData n_str="+n_str);
+          //console.log("FillCollectionChartData n_str="+n_str);
           MyApp.Chart.data_collection.reset();
           $("#chartDataModal  table tbody tr").each(function(i) {
               var fields = $(this).find("input");
               var name = fields.eq(0).val();
               var value = fields.eq(1).val();
-              console.log(name,value);
+              //console.log(name,value);
               MyApp.Chart.data_collection.add({data_name:name,data_value:value,data_i:i});
           });
           //--------  fill CManager Collection ----------

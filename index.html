@@ -15,61 +15,38 @@
 
   </head>
   <style>
+    .header {padding-bottom: 0px;}
 	.bt-img-option {float:right;margin-right:15px}
 	.nav_menu_item {color:white;font-weight: bold;}
 	.nav_menu_pl   {vertical-align: text-top;}
+	.nav-center {text-align:center;}
+	.top-bar-section ul {display: table; margin: 0 auto;padding: 10px; background-image: linear-gradient(to right, #81A550 0%, #BBD160 100%);}
+    .top-bar-section ul li {display: table-cell;}
+     #errorwidget-content {text-align:center;color:red;}
   </style>
   <body>
     
     <header class="header">
-      <div class="logo-wrapper">
-        <a class="logo" href="/">CT Mobile</a>
-      </div>
-      <nav class="row  top-bar  mainNav" data-topbar>
-        <ul class="title-area">
-          <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
-        </ul>
+
+      <nav class="row  top-bar  mainNav " data-topbar>
+
         <section class="top-bar-section">
           <ul>
-       <!--      <li><a href="#" id="head-menu-home">Home Page</a></li> -->
             <li><a href="#" id="se-open" >Open</a></li>
             <li><a href="#" id="se-save">Save</a></li>
-            <li class='nav_menu_item'><input class="small nav_menu_pl" id="se-plband" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" > Show placeholders</input></li>
-
-
-        <!--      <li><a href="#" id="head-menu-slide"  data-dropdown="se-actions" >Slide-Editor</a> -->  <!-- data-options="is_hover:true" -->
-       	<!-- 		<div id="se-actions" class="tiny content f-dropdown text-left"  data-dropdown-content>     -->   			  
-       	<!-- 		    <input class="small" id="se-plband" style="vertical-align: text-top;" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" >Widgets band</input><hr>         -->        
-       	<!-- 		    <input class="small" id="se-plcontrols" style="vertical-align: text-top;" type="checkbox" checked onclick="MyApp.CManager.changePlControls(this);" >Control buttons</input><hr>   -->              
-        <!--         	<a href="#"  class="button large radius round" style="color:white" id="se-create"  >Create  </a><hr> -->
-        <!--         		<a href="#"  class="button large radius round" style="color:white" id="se-open"  >Open  </a><hr> -->
-        <!--         		<a href="#"  class="button large radius round"  style="color:white" id="se-save"  >Save  </a>   -->        
-        <!--      	</div> -->
-              
-         <!--    </li> -->
-        <!--     <li><a href="#" id="head-menu-video">Widget video</a></li>
-            <li><a href="#" id="head-menu-slider" >Widget slider</a></li>
-            <li><a href="#" id="head-menu-sortable">Widget sortable</a></li> -->
-       <!--      <li class="has-dropdown" id="chart-menu"> -->
-        <!--       <a href="#">Chart pie</a> -->
-         <!--      <ul class="dropdown"> -->
-             <!--    <li><a href="#" jq-type="pie">Pie chart</a></li>
-                <li><a href="#" jq-type="line">Line chart</a></li>
-                <li><a href="#" jq-type="spline">Spline chart</a></li>
-                <li><a href="#" jq-type="area">Area chart</a></li> -->
-           <!--    </ul> -->
-           <!--  </li> -->
+            <li class='nav_menu_item'>
+            		<input class="small nav_menu_pl" id="se-plband" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" > Show placeholders</input>
+       		</li>
           </ul>
         </section>
       </nav>
     </header>
-       
-        
-  			<div class="row">
-	        	<div class="progress small-12 success radius hide">
-		         	<span class="meter" style="width:0%"></span>
-	        	</div>
-       		</div>
+              
+	<div class="row">
+		<div class="progress small-12 success radius hide">
+	     	<span class="meter" style="width:0%"></span>
+		</div>
+	</div>
 	 	
    <div class="row  content">
 
