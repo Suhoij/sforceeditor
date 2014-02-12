@@ -3,7 +3,7 @@ $(document).ready(function(){
   
   $(document).foundation(); 
   MyApp.start({'sf_app_params':{org_id:1,app_id:11,slide_id:111,session_id:1111}});
-  MyApp.vent.trigger("getSfparams");
+  //MyApp.vent.trigger("getSfparams");
   //MyApp.CManager.showBlockType();
 });
 //----------------------MAIN----------------------
@@ -21,6 +21,7 @@ var FieldsObjectsCollection = Backbone.Collection.extend({
 
 MyApp.addInitializer(function(options){
   this.base_url=window.location.origin+"/";//"http://ppthtml2.cloudapp.net/";
+  
   this.state='init';
   this.sf_app_params={};
   this.widget_regions={};
@@ -256,11 +257,15 @@ MyApp.vent.on("getSfparams", function(){
   MyApp.session_id=MyApp.getUrlParams()['session_id'];
   //console.log('getSfparams done: ',  MyApp.base_url);
 });
+MyApp.on("initialize:before", function(options){
+      //MyApp.vent.trigger("getSfparams");
+});
 MyApp.on("initialize:after", function(options){
   MyApp.rm.addRegions(MyApp.zero_regions);
   if (Backbone.history){
       Backbone.history.start();
       //console.log("sf_app_params.org_id="+options.sf_app_params.org_id);
+      MyApp.vent.trigger("getSfparams");
       MyApp.initHeadMenu();
       MyApp.initChartMenu();
       MyApp.initFieldsObjectsCollection();
