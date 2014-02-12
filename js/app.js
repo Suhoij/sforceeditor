@@ -503,10 +503,15 @@ MyApp.module("CManager", function(CManager){
                                 try {
                                     MyApp.CManager.clmPlaceholderList=eval(data);
                                     console.log("clmPlaceholderList data=",MyApp.CManager.clmPlaceholderList);
-                                    $('#se-actions').css({left:'-99999px'});
-                                    $('#se-actions').removeClass('open');
+                                   
+                                    //$('#se-actions').css({left:'-99999px'});
+                                    //$('#se-actions').removeClass('open');
                                     //$('#se-actions').foundation('dropdown', 'close', $('#se-actions'));
                                     MyApp.CManager.showProgress('Done!','hide',100);
+                                    if (MyApp.CManager.clmPlaceholderList==null) {
+                                        MyApp.CManager.showErrorPage('Error: no slide clm-var');
+                                        return;
+                                    }
                                 } catch (e) {
                                     console.info("ERROR: PlaceholderVar");
                                     MyApp.error_data=data;
