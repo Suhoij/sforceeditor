@@ -21,7 +21,8 @@ var FieldsObjectsCollection = Backbone.Collection.extend({
 
 MyApp.addInitializer(function(options){
   this.base_url=window.location.origin+"/";//"http://ppthtml2.cloudapp.net/";
-  
+  this.local=false;
+  //this.local=true;
   this.state='init';
   this.sf_app_params={};
   this.widget_regions={};
@@ -421,11 +422,13 @@ MyApp.module("CManager", function(CManager){
   };
   this.showPlControls=function(el) {
         pl_tc     = $(el).find('.placeholder-type,.placeholder-controls');              
-        pl_tc.removeClass('hide');
+        //pl_tc.removeClass('hide');
+        pl_tc.fadeTo(0,1);
   };
   this.hidePlControls=function(el) {
         pl_tc     = $(el).find('.placeholder-type,.placeholder-controls');              
-        pl_tc.addClass('hide');
+        //pl_tc.addClass('hide');
+        pl_tc.fadeTo(0,0);
   };
   //-------------------Slide protokol(open-save)-----------------
   this.isSlideValid=function() {
@@ -582,12 +585,14 @@ MyApp.module("CManager", function(CManager){
       $("#errorwidget-content").html("<img src='img/ctmobile.logo.png'></img><h3>"+mes+"</h3>");  
   };
   this.showHomePage=function() {
-        if (this.isSlideValid() == false) {
-           this.showErrorPage();
-           return; 
+        if (MyApp.local==false) {
+            if (this.isSlideValid() == false) {
+                this.showErrorPage();
+            return; 
+            }
+            MyApp.CManager.seOpen();
+            return;
         }
-        MyApp.CManager.seOpen();
-        return;
         //MyApp.rm.get("homeRegion").show($("#home-page-template").html());   
         MyApp.rm.get("homeRegion").show(this.home_page_view);   
         MyApp.CManager.showBlockType();

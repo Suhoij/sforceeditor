@@ -23,6 +23,7 @@
 	.top-bar-section ul {display: table; margin: 0 auto;padding: 10px; background-image: linear-gradient(to right, #81A550 0%, #BBD160 100%);}
     .top-bar-section ul li {display: table-cell;}
      #errorwidget-content {text-align:center;color:red;}
+     .empty-block {float:left;display: inline-block;font-size:0.88889rem;}
   </style>
   <body>
     
@@ -85,13 +86,11 @@
  	 <script type="text/template" id="main-sortable-template">
  	 	<div class="large-12  columns  content__main">
 				<div class="row">
-					<div class="large-4 columns placeholder-controls">
-						<a  id="sortable-control-btn<%= n_str %>" class="button" data-reveal-id="sortableControlModal">Sortable controls</a>
-						<a  id="sortable-data-btn<%= n_str %>" class="button" data-reveal-id="sortableDataModal">Sortable   data</a>
+					<div class="large-12 columns placeholder-controls">
+						<a  id="sortable-control-btn<%= n_str %>" class="button" data-reveal-id="sortableControlModal">Controls</a>
+						<a  id="sortable-data-btn<%= n_str %>" class="button" data-reveal-id="sortableDataModal">Data</a>
 					</div>
-					<div class="large-4 columns" id="slider-logo">
-					
-					</div>
+				
 				</div>
 		</div>
 		<div class="large-12 column left ui-island placeholder-content" >
@@ -110,7 +109,7 @@
 			<div class="large-12  columns  content__main">
 				<div class="row">
 					<div class="large-6 columns placeholder-controls">
-						<a  id="slider-control-btn<%= n_str %>" class="button" data-reveal-id="sliderControlModal">Slider controls</a>
+						<a  id="slider-control-btn<%= n_str %>" class="button" data-reveal-id="sliderControlModal">Controls</a>
 					</div>
 					<div class="large-4 columns" id="slider-logo">
 					
@@ -134,7 +133,7 @@
 
 				<div class="large-4 columns placeholder-controls">
 					<br><br>
-					<a  id="video-control-btn<%= n_str %>" class="button" data-reveal-id="videoControlModal">Video controls</a>
+					<a  id="video-control-btn<%= n_str %>" class="button" data-reveal-id="videoControlModal">Controls</a>
 				</div>
 				<div class="large-4 columns" id="video-logo<%= n_str %>">
 					
@@ -167,9 +166,9 @@
      
         <div id="body-chart" class="ui-island placeholder-content">
          
-         <!-- <div class="row center block-type bt-3 placeholder-type"></div> -->
+      
           <div class="chart<%= n_str %>">
-         <!--    <a href="#" data-reveal-id="myModal">Chart control</a>-->
+       
          	 
              <div class="row center">
              		<!-- 
@@ -177,14 +176,12 @@
 						<div class="block-type bt-3 row placeholder-type">Type</div>
              		</div>
              		-->
-             		<div class="placeholder-controls">
-	             		<div class="columns large-4">
-							<a class="button lage left"  id="chart-control-btn<%= n_str %>"  data-reveal-id="chartControlModal">Chart control</a>
-	             		</div>
-	             		<div class="columns large-4">
-							<a class="button lage right" id="chart-data-btn<%= n_str %>" data-reveal-id="chartDataModal">Chart data</a>
-	             		</div>
+             		<div class="columns large-11 placeholder-controls">	             		
+							<a class="button"  id="chart-control-btn<%= n_str %>"  data-reveal-id="chartControlModal">Controls</a>	             			             		
+							<a class="button" id="chart-data-btn<%= n_str %>" data-reveal-id="chartDataModal">Data</a>
+	             		    
              		</div>
+             		<div class="columns large-1 end "><span> </span></div>
              </div>
              <div class="row">
 			      <figure class="chart-figure">
