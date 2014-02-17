@@ -858,7 +858,7 @@ MyApp.module("RichText", function(RichText){
         if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
            //console.info("RichText  FillModelFromCLM set,get,WidgetID=",prop.WidgetID,this.model.get("WidgetID"));
-        };
+        } else { this.model.set("WidgetID",MyApp.slide_id);};
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
         };
@@ -960,7 +960,7 @@ MyApp.module("Sortable", function(Sortable){
     this.FillModelFromCLM=function(prop){
        if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
-       };
+       } else { this.model.set("WidgetID",MyApp.slide_id);};
        if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
        };
@@ -1204,7 +1204,7 @@ MyApp.module("Slider", function(Slider){
     this.FillModelFromCLM=function(prop){
         if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
-        };
+        } else { this.model.set("WidgetID",MyApp.slide_id);};
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
         };
@@ -1378,7 +1378,7 @@ MyApp.module("Video", function(Video){
     this.FillModelFromCLM=function(prop){
         if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
-        };
+        } else { this.model.set("WidgetID",MyApp.slide_id);};
         if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
         };
@@ -1632,7 +1632,7 @@ MyApp.module("Chart", function(Chart){
        if (prop.WidgetID != undefined) {
            this.model.set("WidgetID",prop.WidgetID);
            //console.info("Chart  FillModelFromCLM WidgetID=",prop.WidgetID);
-       };
+       } else { this.model.set("WidgetID",MyApp.slide_id);};
        if (prop.PlaceholderId != undefined) {
            this.model.set("PlaceholderId",prop.PlaceholderId);
        };
