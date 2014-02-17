@@ -792,6 +792,9 @@ MyApp.module("CManager", function(CManager){
               if (w_type == "RichText") {
                   //MyApp.RichText.clearContent(n);
               }
+              if  ((MyApp[w_type].model.get("WidgetID") =="")||(MyApp[w_type].model.get("WidgetID")==undefined) ) {
+                      MyApp[w_type].model.set("WidgetID",MyApp.slide_id);
+              }
               if (w_type == "Chart") {
                   MyApp.Chart.draw(n);
               } else {
@@ -800,7 +803,8 @@ MyApp.module("CManager", function(CManager){
                       MyApp[w_type].model=cm_model;
                   } else {
                       //console.info('ERROR showWidgetContent ',w_type,cm_model,MyApp[w_type].model.get('model_name'));
-                  }               
+                  }
+
                   MyApp[w_type].model.set("n_str","-"+n);
                   MyApp[w_type].showContent(n);
                   MyApp[w_type].draw();
