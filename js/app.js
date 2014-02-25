@@ -572,6 +572,7 @@ MyApp.module("CManager", function(CManager){
                   this.showWidgetContent(i);
           }
           this.bindPlShowHidecontrols();
+          this.showSlideIndexFile();
           //console.log('buildSEPage AFTER home_page_model=',this.home_page_model);
     } catch (e) {
           console.info("ERROR build slide page ",e.name,e.lineNumber);
@@ -605,7 +606,12 @@ MyApp.module("CManager", function(CManager){
             this.showWidgetContent(i);
         }
         this.bindPlShowHidecontrols();
-       
+        this.showSlideIndexFile();
+  };
+  this.showSlideIndexFile=function() {
+    MyApp.slide_url = MyApp.base_url+'/preview/slide/'+MyApp.org_id+'/'+MyApp.app_id+'/'+MyApp.slide_id;
+    //console.log("slide_url="+slide_url);
+    $("#bgslide").attr('src',MyApp.slide_url);
   };
   this.getPage=function() { //--from server--
     //--- fill blocks_list

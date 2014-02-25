@@ -22,18 +22,19 @@
 	.nav-center {text-align:center;}
 	.top-bar-section ul {display: table; margin: 0 auto;padding: 10px; background-image: linear-gradient(to right, #81A550 0%, #BBD160 100%);}
     .top-bar-section ul li {display: table-cell;}
-     #errorwidget-content {text-align:center;color:red;}
-     .empty-block {float:left;display: inline-block;font-size:0.88889rem;}
+    #errorwidget-content {text-align:center;color:red;}
+    .empty-block {float:left;display: inline-block;font-size:0.88889rem;}
+    #bgslide {position: absolute;top:0;bottom: 0;left: 0;right: 0;padding 0; margin: 0;border: 0;width: 100%; height: 100%;z-index: -1;}
   </style>
   <body>
-    
+    <iframe id="bgslide" src="" ></iframe>
     <header class="header">
 
       <nav class="row  top-bar  mainNav " data-topbar>
 
         <section class="top-bar-section">
           <ul>
-            <li><a href="#" id="se-open" >Open</a></li>
+            <li><a href="#" id="se-open">Open</a></li>
             <li><a href="#" id="se-save">Save</a></li>
             <li class='nav_menu_item'>
             		<input class="small nav_menu_pl" id="se-plband" type="checkbox" checked onclick="MyApp.CManager.changePlBand(this);" > Show placeholders</input>
